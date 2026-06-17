@@ -15,10 +15,10 @@ namespace Beautify.Universal {
 
         void FixedUpdate () {
             if (transform.position.z < 0.5f) {
-                rb.velocity = Vector3.forward * SPEED;
+                rb.linearVelocity = Vector3.forward * SPEED;
             }
             else if (transform.position.z > 8f) {
-                rb.velocity = Vector3.back * SPEED;
+                rb.linearVelocity = Vector3.back * SPEED;
             }
         }
 
