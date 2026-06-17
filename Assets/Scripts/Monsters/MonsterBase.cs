@@ -79,4 +79,43 @@ public abstract class MonsterBase : MonoBehaviour
         MonsterManager.Instance?.Unregister(this);
         Destroy(gameObject);
     }
+
+    // ===== ギズモ =====
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = GizmoColor();
+        Gizmos.DrawWireSphere(transform.position, 0.4f);
+
+        var style = new GUIStyle { fontSize = 10 };
+        style.normal.textColor = GizmoColor();
+        string label = isActive
+            ? $"{MonsterType}\n{currentLocation}"
+            : $"{MonsterType}  [待機]";
+        UnityEditor.Handles.Label(transform.position + Vector3.up * 0.65f, label, style);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (movePath == null || movePath.Count == 0) return;
+
+        var style = new GUIStyle { fontSize = 9 };
+        style.normal.textColor = Color.white;
+        UnityEditor.Handles.Label(
+            transform.position + Vector3.up * 1.3f,
+            $"step {pathIndex}/{movePath.Count}  {moveTimer:F1}/{moveInterval:F1}s",
+            style);
+    }
+
+    private Color GizmoColor() => MonsterType switch
+    {
+        MonsterType.Crawler => Color.red,
+        MonsterType.Jammer  => new Color(1f, 0.55f, 0f),
+        MonsterType.Rusher  => Color.yellow,
+        MonsterType.Lurker  => new Color(0.6f, 0.1f, 1f),
+        MonsterType.Mimic   => new Color(0f, 1f, 1f),
+        MonsterType.Knocker => new Color(1f, 0.1f, 0.5f),
+        _                   => Color.white,
+    };
+#endif
 }

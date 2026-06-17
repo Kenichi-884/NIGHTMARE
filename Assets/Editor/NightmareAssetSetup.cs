@@ -22,6 +22,14 @@ public static class NightmareAssetSetup
     private const string SFX_DIR  = ROOT + "/Audio";
 
     // =========================================================
+    [MenuItem("NIGHTMARE/Wire Audio Only", priority = 12)]
+    public static void WireAudioOnly()
+    {
+        WireAudioManager();
+        AssetDatabase.SaveAssets();
+    }
+
+    // =========================================================
     [MenuItem("NIGHTMARE/Generate All Assets %#g", priority = 2)]
     public static void GenerateAll()
     {

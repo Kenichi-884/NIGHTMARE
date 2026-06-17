@@ -314,6 +314,63 @@ public class SecurityCameraSystem : MonoBehaviour
         };
     }
 
+    // ===== ギズモ =====
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        var cfgs = (cameraConfigs != null && cameraConfigs.Count > 0)
+            ? cameraConfigs : GizmoDefaultConfigs();
+
+        foreach (var cfg in cfgs)
+        {
+            var go = GameObject.Find($"SceneCam_{cfg.id}");
+            if (go == null) continue;
+
+            Color col = cfg.isExternal ? new Color(0.2f, 0.85f, 1f) : new Color(0.25f, 1f, 0.5f);
+            Gizmos.color = col;
+            Gizmos.DrawWireSphere(go.transform.position, 0.25f);
+            Gizmos.DrawRay(go.transform.position, go.transform.forward * 4f);
+
+            var style = new GUIStyle { fontSize = 10 };
+            style.normal.textColor = col;
+            UnityEditor.Handles.Label(go.transform.position + Vector3.up * 0.45f, cfg.displayName, style);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        var cfgs = (cameraConfigs != null && cameraConfigs.Count > 0)
+            ? cameraConfigs : GizmoDefaultConfigs();
+
+        foreach (var cfg in cfgs)
+        {
+            var go = GameObject.Find($"SceneCam_{cfg.id}");
+            if (go == null) continue;
+
+            var cam = go.GetComponent<Camera>();
+            if (cam == null) continue;
+
+            Gizmos.color = new Color(1f, 1f, 0.3f, 0.25f);
+            Matrix4x4 prev = Gizmos.matrix;
+            Gizmos.matrix = go.transform.localToWorldMatrix;
+            Gizmos.DrawFrustum(Vector3.zero, cam.fieldOfView, 10f, cam.nearClipPlane, cam.aspect);
+            Gizmos.matrix = prev;
+        }
+    }
+
+    private static List<CameraConfig> GizmoDefaultConfigs() => new List<CameraConfig>
+    {
+        new CameraConfig { id = CameraID.OUT_N,   displayName = "OUT-N  北ゲート",  isExternal = true  },
+        new CameraConfig { id = CameraID.OUT_E,   displayName = "OUT-E  東側",      isExternal = true  },
+        new CameraConfig { id = CameraID.OUT_W,   displayName = "OUT-W  西側",      isExternal = true  },
+        new CameraConfig { id = CameraID.OUT_TOP, displayName = "OUT-TOP 入口真上", isExternal = true  },
+        new CameraConfig { id = CameraID.IN_1F_A, displayName = "IN-1F-A ロビー",   isExternal = false },
+        new CameraConfig { id = CameraID.IN_1F_B, displayName = "IN-1F-B 階段前",   isExternal = false },
+        new CameraConfig { id = CameraID.IN_B1_A, displayName = "IN-B1-A B1廊下",  isExternal = false },
+        new CameraConfig { id = CameraID.IN_B1_B, displayName = "IN-B1-B 管理室前",isExternal = false },
+    };
+#endif
+
     // ===== エディタセットアップ =====
     public void AutoFindMonitors()
     {

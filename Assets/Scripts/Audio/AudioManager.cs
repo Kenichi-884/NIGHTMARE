@@ -88,6 +88,11 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[AudioManager] GameManager が見つかりません。BGM/SFXイベントのSubscribeをスキップします。");
+            return;
+        }
         GameManager.Instance.OnPhaseChanged += OnPhaseChanged;
         GameManager.Instance.OnDayStarted   += d => { currentDay = d; };
         GameManager.Instance.OnGameOver      += () => CrossfadeBGM(bgmGameOver, 0.8f);
