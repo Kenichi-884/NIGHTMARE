@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e794c9c757e5f6e409be0dcdc71952eb
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320572
+  packageName: "DECAL COLLIDER \u2013 Ultimate Runtime Mesh & Collision Decals"
+  packageVersion: 1.1.3
+  assetPath: Assets/Occlusionn/DecalCollider/Renderers/URP.unitypackage
+  uploadId: 898670

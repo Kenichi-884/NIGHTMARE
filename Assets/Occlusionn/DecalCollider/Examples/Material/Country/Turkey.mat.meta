@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e13abf51a062c4b4cabe932c3100fa6b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320572
+  packageName: "DECAL COLLIDER \u2013 Ultimate Runtime Mesh & Collision Decals"
+  packageVersion: 1.1.3
+  assetPath: Assets/Occlusionn/DecalCollider/Examples/Material/Country/Turkey.mat
+  uploadId: 898670

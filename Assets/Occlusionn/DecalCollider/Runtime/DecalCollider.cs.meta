@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 55b8a9171568cef4586436fc1d37d71a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320572
+  packageName: "DECAL COLLIDER \u2013 Ultimate Runtime Mesh & Collision Decals"
+  packageVersion: 1.1.3
+  assetPath: Assets/Occlusionn/DecalCollider/Runtime/DecalCollider.cs
+  uploadId: 898670

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cb32edddf1b404e47800c722a4700b5f
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320572
+  packageName: "DECAL COLLIDER \u2013 Ultimate Runtime Mesh & Collision Decals"
+  packageVersion: 1.1.3
+  assetPath: Assets/Occlusionn/DecalCollider/Examples/SampleScene.unity
+  uploadId: 898670

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e078d737e228b5e42b4d80029bad3704
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 320572
+  packageName: "DECAL COLLIDER \u2013 Ultimate Runtime Mesh & Collision Decals"
+  packageVersion: 1.1.3
+  assetPath: Assets/Occlusionn/DecalCollider/Editor/PipelineImporter.cs
+  uploadId: 898670
