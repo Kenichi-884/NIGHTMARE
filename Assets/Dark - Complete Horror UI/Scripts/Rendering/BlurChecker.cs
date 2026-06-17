@@ -8,7 +8,7 @@ namespace Michsky.UI.Dark
     {
         void OnEnable()
         {
-            if (GraphicsSettings.renderPipelineAsset != null && gameObject.activeSelf == true)
+            if (GraphicsSettings.defaultRenderPipeline != null && gameObject.activeSelf == true)
                 gameObject.SetActive(false);
         }
     }
