@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 69aded07077184cc1af5570864022c7a
+timeCreated: 1529587019
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 103056
+  packageName: HUD Navigation System
+  packageVersion: 3.0.0
+  assetPath: Assets/Sickscore Games/HUD-Navigation-System/_Examples/HUDPrefabs/House_Door/IndicatorPrefab_OpenDoor.prefab
+  uploadId: 884440

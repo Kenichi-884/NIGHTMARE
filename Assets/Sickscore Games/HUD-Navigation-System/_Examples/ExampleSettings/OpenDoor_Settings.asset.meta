@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7ace3123c868542879e01ac849c5a93f
+timeCreated: 1547389478
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 103056
+  packageName: HUD Navigation System
+  packageVersion: 3.0.0
+  assetPath: Assets/Sickscore Games/HUD-Navigation-System/_Examples/ExampleSettings/OpenDoor_Settings.asset
+  uploadId: 884440

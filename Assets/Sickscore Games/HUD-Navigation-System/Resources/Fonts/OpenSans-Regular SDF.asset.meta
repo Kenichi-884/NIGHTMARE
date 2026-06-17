@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cc3844638b1362867bf8cac6146a53ec
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 103056
+  packageName: HUD Navigation System
+  packageVersion: 3.0.0
+  assetPath: Assets/Sickscore Games/HUD-Navigation-System/Resources/Fonts/OpenSans-Regular
+    SDF.asset
+  uploadId: 884440

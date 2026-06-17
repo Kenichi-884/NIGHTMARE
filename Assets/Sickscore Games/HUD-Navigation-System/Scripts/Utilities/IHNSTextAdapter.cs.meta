@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 2dcc006e740743efa40392f576a56dd4
+timeCreated: 1773740708
+AssetOrigin:
+  serializedVersion: 1
+  productId: 103056
+  packageName: HUD Navigation System
+  packageVersion: 3.0.0
+  assetPath: Assets/Sickscore Games/HUD-Navigation-System/Scripts/Utilities/IHNSTextAdapter.cs
+  uploadId: 884440
