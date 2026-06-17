@@ -1,0 +1,214 @@
+fileFormatVersion: 2
+guid: 91b24747d305c1843aba1c062eb93baf
+ModelImporter:
+  serializedVersion: 19301
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: ms._h04_1
+  - first:
+      1: 100002
+    second: ms._h04_1base
+  - first:
+      1: 100004
+    second: ms._h04_f
+  - first:
+      1: 100006
+    second: ms._h04_shutter
+  - first:
+      1: 100008
+    second: //RootNode
+  - first:
+      4: 400000
+    second: ms._h04_1
+  - first:
+      4: 400002
+    second: ms._h04_1base
+  - first:
+      4: 400004
+    second: ms._h04_f
+  - first:
+      4: 400006
+    second: ms._h04_shutter
+  - first:
+      4: 400008
+    second: //RootNode
+  - first:
+      23: 2300000
+    second: ms._h04_1
+  - first:
+      23: 2300002
+    second: ms._h04_1base
+  - first:
+      23: 2300004
+    second: ms._h04_f
+  - first:
+      23: 2300006
+    second: ms._h04_shutter
+  - first:
+      23: 2300008
+    second: //RootNode
+  - first:
+      33: 3300000
+    second: ms._h04_1
+  - first:
+      33: 3300002
+    second: ms._h04_1base
+  - first:
+      33: 3300004
+    second: ms._h04_f
+  - first:
+      33: 3300006
+    second: ms._h04_shutter
+  - first:
+      33: 3300008
+    second: //RootNode
+  - first:
+      43: 4300000
+    second: ms_h04
+  - first:
+      43: 4300002
+    second: ms._h04_1base
+  - first:
+      43: 4300004
+    second: ms._h04_shutter
+  - first:
+      43: 4300006
+    second: ms._h04_f
+  - first:
+      43: 4300008
+    second: ms._h04_1
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bil-kabe01
+    second: {fileID: 2100000, guid: e8feecfa5a7655045a2edcce66e8201f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bil-kabe0_wood2
+    second: {fileID: 2100000, guid: 88d12b0b2eef30a4295b3b3c44add3fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ie kabe1
+    second: {fileID: 2100000, guid: 52acf06082fd59c438b80884b93cab34, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ie kabe2
+    second: {fileID: 2100000, guid: 85eeced6f82a7474a9234ff238edfcab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: matcolor_AlbedoTransparency.png
+    second: {fileID: 2100000, guid: d71543517e41312439cb0f43cb2f3155, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: shop02
+    second: {fileID: 2100000, guid: d5049e95b0d4e074080941aefb136f9f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: totan
+    second: {fileID: 2100000, guid: 5507a3e5aa832f84fa5d9642554c7b7d, type: 2}
+  materials:
+    materialImportMode: 0
+    materialName: 0
+    materialSearch: 2
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 0
+  humanoidOversampling: 1
+  avatarSetup: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 127437
+  packageName: '"Shouwa" 80''s Japanese town model set vol.3 -Mall'
+  packageVersion: 1.2a
+  assetPath: Assets/FUNSET/shouwatownmodel/swt_model/mall_set/building/ms_h04.fbx
+  uploadId: 598124
