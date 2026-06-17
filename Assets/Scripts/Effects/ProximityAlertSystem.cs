@@ -22,6 +22,7 @@ public class ProximityAlertSystem : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        if (dangerVignette == null) AutoFindReferences();
     }
 
     private void Start()

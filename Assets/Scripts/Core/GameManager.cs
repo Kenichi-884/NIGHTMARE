@@ -34,7 +34,8 @@ public class GameManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // シングルシーン構成のため DontDestroyOnLoad は使わない
+        // SceneManager.LoadScene でシーンリロード時に全マネージャーが一緒にリセットされる
     }
 
     private void Start()
@@ -51,8 +52,16 @@ public class GameManager : MonoBehaviour
         phaseTimer = 0f;
         CurrentPhase = GamePhase.Silence;
         isActive = true;
+        Debug.Log($"[GameManager] StartNight Day={CurrentDay} → State=Night");
         OnDayStarted?.Invoke(CurrentDay);
         OnPhaseChanged?.Invoke(CurrentPhase);
+    }
+
+    // ステージ選択から呼ぶ: 指定した日付から開始
+    public void StartNight(int day)
+    {
+        CurrentDay = day;
+        StartNight();
     }
 
     private void Update()

@@ -63,8 +63,9 @@ public class PhenomenaManager : MonoBehaviour
             if (lastOccurred.TryGetValue(entry.type, out float last))
                 if (Time.time - last < entry.cooldown) continue;
 
-            // 日数が増えるほど発生確率上昇
-            float chance = Mathf.Min(entry.chance + (day - entry.fromDay) * 0.05f, 0.9f);
+            // 日数 + 天気による発生確率上昇
+            float weatherMult = WeatherManager.Instance != null ? WeatherManager.Instance.PhenomenaChanceMultiplier : 1f;
+            float chance = Mathf.Min((entry.chance + (day - entry.fromDay) * 0.05f) * weatherMult, 0.9f);
             if (Random.value < chance)
             {
                 TriggerPhenomena(entry.type, day);

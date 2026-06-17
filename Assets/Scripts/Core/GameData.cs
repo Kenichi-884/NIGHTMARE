@@ -77,3 +77,10 @@ public enum PhenomenaType
     GhostSignal,        // 偽モンスターがカメラに映る
     Blackout            // 全カメラが5秒暗転する
 }
+
+public enum WeatherType
+{
+    Sunny,  // 晴れ (Day 1-3): 変化なし
+    Rain,   // 雨   (Day 4-6): 敵15%速く、現象1.3倍
+    Storm   // 嵐   (Day 7  ): 敵30%速く、現象1.6倍 + 定期砂嵐
+}

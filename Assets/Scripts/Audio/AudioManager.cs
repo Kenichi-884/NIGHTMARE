@@ -49,6 +49,7 @@ public class AudioManager : MonoBehaviour
         "knock_regular",
         "knock_irregular",
         "lurker_appear",
+        "rusher_stomp",
         "power_out",
         "power_restore",
         "power_flicker",
@@ -66,6 +67,11 @@ public class AudioManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        // AudioSourceが未割り当ての場合、GetComponentsで自動取得（セットアップ後にInspector割当が不要）
+        var sources = GetComponents<AudioSource>();
+        if (bgmSource == null && sources.Length > 0) bgmSource = sources[0];
+        if (sfxSource == null && sources.Length > 1) sfxSource = sources[1];
 
         // デフォルトエントリ補完（インスペクタ未設定のキーを埋める）
         var existingKeys = new HashSet<string>();
@@ -169,10 +175,10 @@ public class AudioManager : MonoBehaviour
     public void SetBGMVolume(float v)
     {
         bgmVolume = v;
-        bgmSource.volume = v;
+        if (bgmSource) bgmSource.volume = v;
     }
 
-    public void SetSFXVolume(float v) => sfxSource.volume = v;
+    public void SetSFXVolume(float v) { if (sfxSource) sfxSource.volume = v; }
 
     // 環境音などで特定のSFXをループ再生
     public void PlayLoop(string key)

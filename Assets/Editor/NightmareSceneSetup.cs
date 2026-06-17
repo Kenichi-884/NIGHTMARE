@@ -48,6 +48,11 @@ public static class NightmareSceneSetup
         m.AddComponent<GameManager>();
         m.AddComponent<PowerManager>();
         m.AddComponent<PhenomenaManager>();
+        m.AddComponent<WeatherManager>();
+
+        // DontDestroyOnLoad なので独立したオブジェクトに配置
+        var progress = Child(root, "StageProgress");
+        progress.AddComponent<StageProgressManager>();
 
         var audio = Child(root, "AudioManager");
         audio.AddComponent<AudioManager>();
@@ -59,6 +64,7 @@ public static class NightmareSceneSetup
         sys.AddComponent<MonsterManager>();
         sys.AddComponent<MonsterSpawner>();
         sys.AddComponent<ProximityAlertSystem>();
+        sys.AddComponent<InputHandler>();
     }
 
     // ===== Canvas =====
@@ -282,7 +288,7 @@ public static class NightmareSceneSetup
         Lbl("MenuVersion", main, "v0.1.0  PROTOTYPE", 10, 8, 8, 200, 16, C(0.3f, 0.3f, 0.35f), TextAnchor.MiddleLeft);
 
         // ── 設定パネル ──
-        var settings = Panel("SettingsPanel", mm, C(0.04f, 0.06f, 0.10f, 0.97f));
+        var settings = Panel("SettingsPanel", mm, C(0.04f, 0.06f, 0.10f, 1f));
         Rect(settings, 0, 0, W, H);
         settings.SetActive(false);
 
@@ -298,7 +304,7 @@ public static class NightmareSceneSetup
         Btn("BtnSettingsBack", settings, "← 戻る", W * 0.5f - 80, H * 0.5f - 200, 160, 44, C(0.20f, 0.28f, 0.42f));
 
         // ── 記録（ロア）パネル ──
-        var lore = Panel("LorePanel", mm, C(0.02f, 0.03f, 0.05f, 0.98f));
+        var lore = Panel("LorePanel", mm, C(0.02f, 0.03f, 0.05f, 1f));
         Rect(lore, 0, 0, W, H);
         lore.SetActive(false);
 
@@ -312,6 +318,37 @@ public static class NightmareSceneSetup
         loreText.GetComponent<Text>().supportRichText = true;
 
         Btn("BtnLoreBack", lore, "← 戻る", W * 0.5f - 80, 70, 160, 44, C(0.20f, 0.28f, 0.42f));
+
+        // ── ステージ選択パネル ──
+        var ss = Panel("StageSelectPanel", mm, C(0.02f, 0.03f, 0.07f, 1f));
+        Rect(ss, 0, 0, W, H);
+        ss.SetActive(false);
+
+        Lbl("SSTitle",    ss, "ステージ選択",           48, 0, H * 0.5f + 228, W, 72,  C(0.7f, 0.8f, 1f));
+        Lbl("SSSubtitle", ss, "クリアした夜から再挑戦できます", 16, 0, H * 0.5f + 206, W, 30, C(0.4f, 0.5f, 0.7f));
+        Lbl("SSWeatherNote", ss,
+            "晴れ: Day 1-3  /  雨: Day 4-6  /  嵐: Day 7",
+            13, 0, H * 0.5f + 186, W, 22, C(0.35f, 0.45f, 0.60f));
+
+        float dayBtnW = 300f, dayBtnH = 52f, dayBtnSpacing = 58f;
+        float dayBtnX = W * 0.5f - dayBtnW * 0.5f;
+        float dayBtnStartY = H * 0.5f + 144f;
+
+        string[] weatherLabels = { "晴れ", "晴れ", "晴れ", "雨", "雨", "雨", "嵐" };
+        for (int i = 0; i < 7; i++)
+        {
+            int day = i + 1;
+            Color btnCol = day <= 3 ? C(0.12f, 0.22f, 0.15f) :
+                           day <= 6 ? C(0.10f, 0.14f, 0.28f) :
+                                      C(0.22f, 0.10f, 0.10f);
+            Btn($"BtnDay{day}", ss,
+                $"Day {day}  [{weatherLabels[i]}]",
+                dayBtnX, dayBtnStartY - i * dayBtnSpacing,
+                dayBtnW, dayBtnH, btnCol);
+        }
+
+        Btn("BtnStageSelectBack", ss, "← 戻る",
+            W * 0.5f - 80, H * 0.5f - 260, 160, 44, C(0.20f, 0.28f, 0.42f));
     }
 
     static void BuildSettingsSlider(string name, GameObject parent, float x, float y, float w, float h)

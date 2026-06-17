@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d75f49f91a6b484c852271911e711f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSprite: {fileID: 0}
+  cameraSprite: {fileID: 21300000, guid: ef97339d4134fbc47ade8d1b7085c662, type: 3}
   baseMoveInterval: 60

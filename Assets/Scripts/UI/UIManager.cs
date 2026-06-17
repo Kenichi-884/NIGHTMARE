@@ -70,10 +70,15 @@ public class UIManager : MonoBehaviour
     private Coroutine powerPulseRoutine;
     private GamePhase lastPhase;
 
+    // Mimic 時刻ズレ演出
+    private bool wasMimicActive = false;
+    private float mimicFakeHourOffset = 0f;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        if (timeText == null) AutoFindChildren();
     }
 
     private void Start()
@@ -107,8 +112,23 @@ public class UIManager : MonoBehaviour
     private void Update()
     {
         if (GameManager.Instance == null) return;
-        if (timeText) timeText.text = GameManager.Instance.GetDisplayTime();
-        if (dayText)  dayText.text  = $"Day {GameManager.Instance.CurrentDay}  ―  {PhaseJP(GameManager.Instance.CurrentPhase)}";
+
+        // Mimic がアクティブなカメラを乗っ取っているとき時刻をズラして表示する
+        if (timeText)
+        {
+            bool mimicActive = SecurityCameraSystem.Instance != null && (
+                SecurityCameraSystem.Instance.IsCameraMimicked(SecurityCameraSystem.Instance.ActiveExternal) ||
+                SecurityCameraSystem.Instance.IsCameraMimicked(SecurityCameraSystem.Instance.ActiveInternal));
+            if (mimicActive && !wasMimicActive)
+                mimicFakeHourOffset = Random.Range(-2f, -0.5f); // 30〜120分前の映像に見せる
+            wasMimicActive = mimicActive;
+            timeText.text = mimicActive ? GetFakeDisplayTime() : GameManager.Instance.GetDisplayTime();
+        }
+        if (dayText)
+        {
+            string wStr = WeatherManager.Instance != null ? $"  [{WeatherJP(WeatherManager.Instance.CurrentWeather)}]" : "";
+            dayText.text = $"Day {GameManager.Instance.CurrentDay}  ―  {PhaseJP(GameManager.Instance.CurrentPhase)}{wStr}";
+        }
 
         if (PowerManager.Instance != null && powerSlider)
         {
@@ -335,7 +355,14 @@ public class UIManager : MonoBehaviour
         if (day >= 7) return;
         dayTransitionPanel?.SetActive(true);
         if (dayTransitionText)
-            dayTransitionText.text = $"<b>Day {day}  クリア</b>\n\n{DayBriefing(day + 1)}\n\n<size=18>Day {day + 1}の夜が迫っている...</size>";
+        {
+            string nextWeather = WeatherJP(WeatherManager.GetWeather(day + 1));
+            dayTransitionText.text =
+                $"<b>Day {day}  クリア</b>\n\n" +
+                $"{DayBriefing(day + 1)}\n\n" +
+                $"<size=16>明日の天候: {nextWeather}</size>\n\n" +
+                $"<size=18>Day {day + 1}の夜が迫っている...</size>";
+        }
         nextNightButton?.onClick.RemoveAllListeners();
         nextNightButton?.onClick.AddListener(() => GameManager.Instance.ProceedToNextDay());
     }
@@ -343,7 +370,7 @@ public class UIManager : MonoBehaviour
     private void OnTrueEnding() => ShowPanel(clearPanel);
 
     // ===== マップ / メニュー =====
-    private void ToggleMap()
+    public void ToggleMap()
     {
         if (mapPanel) mapPanel.SetActive(!mapPanel.activeSelf);
     }
@@ -381,6 +408,25 @@ public class UIManager : MonoBehaviour
         MonsterType.Mimic   => "ミミック    ―  映像の偽造者",
         MonsterType.Knocker => "ノッカー    ―  扉を叩くもの",
         _ => t.ToString()
+    };
+
+    // Mimic 時刻ズレ: 実時刻から offset 時間ずらした表示を返す
+    private string GetFakeDisplayTime()
+    {
+        float fakeHour = GameManager.Instance.GameTimeInHours + mimicFakeHourOffset;
+        if (fakeHour < 20f) fakeHour += 10f;
+        float displayHour = fakeHour >= 24f ? fakeHour - 24f : fakeHour;
+        int ih = (int)displayHour;
+        int im = (int)(GameManager.Instance.PhaseProgress * 60f);
+        return $"{ih:D2}:{im:D2}";
+    }
+
+    private string WeatherJP(WeatherType w) => w switch
+    {
+        WeatherType.Sunny => "晴れ",
+        WeatherType.Rain  => "雨",
+        WeatherType.Storm => "嵐",
+        _ => ""
     };
 
     private string DayBriefing(int next) => next switch

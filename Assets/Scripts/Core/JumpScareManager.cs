@@ -34,6 +34,7 @@ public class JumpScareManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        if (flashOverlay == null) AutoFindChildren();
     }
 
     private void Start()

@@ -23,7 +23,9 @@ public abstract class MonsterBase : MonoBehaviour
         currentLocation = spawnLocation;
         // 日数が上がるほど移動が速くなる (最大50%速く)
         float speedMultiplier = 1f - Mathf.Min((day - 1) * 0.07f, 0.5f);
-        moveInterval = baseMoveInterval * speedMultiplier;
+        // 天気による速度補正（雨=0.85倍、嵐=0.70倍）
+        float weatherMult = WeatherManager.Instance != null ? WeatherManager.Instance.MoveIntervalMultiplier : 1f;
+        moveInterval = baseMoveInterval * speedMultiplier * weatherMult;
         pathIndex = 0;
         moveTimer = 0f;
         movePath = BuildPath();

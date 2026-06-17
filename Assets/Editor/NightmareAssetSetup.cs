@@ -40,6 +40,10 @@ public static class NightmareAssetSetup
 
         AssetDatabase.Refresh();
 
+        // 5.5 生成したすべてのPNGをSpriteとしてインポート設定
+        SetAllGeneratedSprites();
+        AssetDatabase.Refresh();
+
         // 6. モンスターPrefab作成
         CreateMonsterPrefabs();
         // 7. シーンのMonsterManagerに接続
@@ -732,6 +736,37 @@ public static class NightmareAssetSetup
         var configsProp = so.FindProperty("cameraConfigs");
         if (configsProp == null || !configsProp.isArray) return;
 
+        // Editor上では Awake() が実行されないため cameraConfigs が空のまま。
+        // 空の場合は Awake() と同じデフォルトエントリを先に生成する。
+        if (configsProp.arraySize == 0)
+        {
+            var defaults = new (CameraID id, string name, FacilityLocation loc, bool ext)[]
+            {
+                (CameraID.OUT_N,   "OUT-N  北ゲート",   FacilityLocation.Outside_North, true),
+                (CameraID.OUT_E,   "OUT-E  東側",        FacilityLocation.Outside_East,  true),
+                (CameraID.OUT_W,   "OUT-W  西側搬入口",  FacilityLocation.Outside_West,  true),
+                (CameraID.OUT_TOP, "OUT-TOP 入口真上",   FacilityLocation.Outside_Top,   true),
+                (CameraID.IN_1F_A, "IN-1F-A ロビー",     FacilityLocation.Lobby_Main,    false),
+                (CameraID.IN_1F_B, "IN-1F-B 階段前",     FacilityLocation.Lobby_Stairs,  false),
+                (CameraID.IN_B1_A, "IN-B1-A B1廊下",     FacilityLocation.B1_Corridor,   false),
+                (CameraID.IN_B1_B, "IN-B1-B 管理人室前", FacilityLocation.B1_DoorFront,  false),
+            };
+
+            configsProp.arraySize = defaults.Length;
+            for (int i = 0; i < defaults.Length; i++)
+            {
+                var (id, name, loc, ext) = defaults[i];
+                var elem = configsProp.GetArrayElementAtIndex(i);
+                elem.FindPropertyRelative("id").enumValueIndex           = (int)id;
+                elem.FindPropertyRelative("displayName").stringValue     = name;
+                elem.FindPropertyRelative("isExternal").boolValue        = ext;
+                var locsProp = elem.FindPropertyRelative("coveredLocations");
+                locsProp.arraySize = 1;
+                locsProp.GetArrayElementAtIndex(0).enumValueIndex        = (int)loc;
+            }
+            Debug.Log("[NIGHTMARE] cameraConfigs にデフォルトエントリを生成しました");
+        }
+
         // カメラIDとスプライトのマッピング
         var spriteMap = new System.Collections.Generic.Dictionary<string, string>
         {
@@ -745,10 +780,11 @@ public static class NightmareAssetSetup
             {"IN_B1_B", "cam_in_b1_b"},
         };
 
+        int wired = 0;
         for (int i = 0; i < configsProp.arraySize; i++)
         {
-            var elem     = configsProp.GetArrayElementAtIndex(i);
-            var idProp   = elem.FindPropertyRelative("id");
+            var elem       = configsProp.GetArrayElementAtIndex(i);
+            var idProp     = elem.FindPropertyRelative("id");
             var spriteProp = elem.FindPropertyRelative("backgroundSprite");
             if (idProp == null || spriteProp == null) continue;
 
@@ -756,12 +792,12 @@ public static class NightmareAssetSetup
             if (spriteMap.TryGetValue(idName, out var spriteName))
             {
                 var sprite = LoadSprite($"{CAM_DIR}/{spriteName}.png");
-                if (sprite != null) spriteProp.objectReferenceValue = sprite;
+                if (sprite != null) { spriteProp.objectReferenceValue = sprite; wired++; }
             }
         }
         so.ApplyModifiedProperties();
         EditorUtility.SetDirty(sys);
-        Debug.Log("[NIGHTMARE] SecurityCameraSystem スプライト接続完了");
+        Debug.Log($"[NIGHTMARE] SecurityCameraSystem スプライト接続完了 ({wired}/8 枚)");
     }
 
     // =========================================================
@@ -1000,6 +1036,32 @@ public static class NightmareAssetSetup
     }
 
     // =========================================================
+    // 生成した全PNGをSpriteインポート設定にまとめて適用
+    // =========================================================
+    static void SetAllGeneratedSprites()
+    {
+        string[] spriteDirs = { CAM_DIR, MON_DIR, JS_DIR, UI_DIR };
+        int count = 0;
+        foreach (var dir in spriteDirs)
+        {
+            if (!Directory.Exists(dir)) continue;
+            foreach (var png in Directory.GetFiles(dir, "*.png"))
+            {
+                string assetPath = "Assets" + png.Replace(Application.dataPath, "").Replace("\\", "/");
+                var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+                if (importer == null) continue;
+                if (importer.textureType == TextureImporterType.Sprite) continue;
+                importer.textureType        = TextureImporterType.Sprite;
+                importer.spriteImportMode   = SpriteImportMode.Single;
+                importer.alphaIsTransparency = true;
+                AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+                count++;
+            }
+        }
+        Debug.Log($"[NIGHTMARE] {count} 枚のPNGをSpriteインポート設定に変更しました");
+    }
+
+    // =========================================================
     // ユーティリティ
     // =========================================================
     static void EnsureDirs()
@@ -1028,10 +1090,17 @@ public static class NightmareAssetSetup
 
     static Sprite LoadSprite(string assetPath)
     {
-        var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
-        if (tex == null) return null;
-        return AssetDatabase.LoadAssetAtPath<Sprite>(assetPath) ??
-               Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
+        // TextureImporter で Sprite 設定にしてからロード
+        var importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+        if (importer != null && importer.textureType != TextureImporterType.Sprite)
+        {
+            importer.textureType       = TextureImporterType.Sprite;
+            importer.spriteImportMode  = SpriteImportMode.Single;
+            importer.alphaIsTransparency = true;
+            AssetDatabase.ImportAsset(assetPath, ImportAssetOptions.ForceUpdate);
+        }
+
+        return AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
     }
 
     // ─── 描画プリミティブ ───
