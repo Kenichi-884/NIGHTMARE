@@ -2,21 +2,27 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-// モンスターが管理人室に近づいたとき、ハートビート音と赤いビネットで警告する
-// B1_DoorFront = 高危険、B1_Corridor = 中危険
+// モンスターが管理人室に近づいたとき、段階的な警告を行う
+// Lobby → Corridor → B1_DoorFront と近づくほど演出が激しくなる
 public class ProximityAlertSystem : MonoBehaviour
 {
     public static ProximityAlertSystem Instance { get; private set; }
 
     [SerializeField] private Image dangerVignette;
-    [SerializeField] private float highDangerHeartbeatInterval = 1.0f;
+    [SerializeField] private float lobbyHeartbeatInterval    = 4.5f;
     [SerializeField] private float midDangerHeartbeatInterval  = 2.5f;
+    [SerializeField] private float highDangerHeartbeatInterval = 1.0f;
 
     private DangerLevel currentLevel = DangerLevel.None;
-    private float heartbeatTimer = 0f;
-    private Coroutine vignetteRoutine;
+    private float       heartbeatTimer = 0f;
+    private Coroutine   vignetteRoutine;
 
-    private enum DangerLevel { None, Mid, High }
+    private enum DangerLevel { None, Lobby, Mid, High }
+
+    // 危険レベルごとのビネット色 (RGB)
+    private static readonly Color ColLobby  = new Color(0.5f, 0.5f, 0.0f); // 黄色
+    private static readonly Color ColMid    = new Color(0.8f, 0.3f, 0.0f); // オレンジ
+    private static readonly Color ColHigh   = new Color(0.9f, 0.0f, 0.0f); // 赤
 
     private void Awake()
     {
@@ -40,15 +46,20 @@ public class ProximityAlertSystem : MonoBehaviour
         var newLevel = EvaluateDanger();
         if (newLevel != currentLevel)
         {
+            var prev = currentLevel;
             currentLevel = newLevel;
-            ApplyDangerLevel();
+            OnLevelChanged(prev, newLevel);
         }
 
         if (currentLevel == DangerLevel.None) return;
 
-        float interval = currentLevel == DangerLevel.High
-            ? highDangerHeartbeatInterval
-            : midDangerHeartbeatInterval;
+        // ハートビート間隔
+        float interval = currentLevel switch
+        {
+            DangerLevel.High  => highDangerHeartbeatInterval,
+            DangerLevel.Mid   => midDangerHeartbeatInterval,
+            _                 => lobbyHeartbeatInterval
+        };
         heartbeatTimer += Time.deltaTime;
         if (heartbeatTimer >= interval)
         {
@@ -59,25 +70,32 @@ public class ProximityAlertSystem : MonoBehaviour
 
     private DangerLevel EvaluateDanger()
     {
-        bool atDoor = false, atCorridor = false;
+        bool atDoor = false, atCorridor = false, atLobby = false;
         foreach (var m in MonsterManager.Instance.ActiveMonsters)
         {
-            if (m.CurrentLocation == FacilityLocation.B1_DoorFront) atDoor = true;
-            if (m.CurrentLocation == FacilityLocation.B1_Corridor)  atCorridor = true;
+            var loc = m.CurrentLocation;
+            if (loc == FacilityLocation.B1_DoorFront)                      atDoor     = true;
+            if (loc == FacilityLocation.B1_Corridor)                       atCorridor = true;
+            if (loc == FacilityLocation.Lobby_Main || loc == FacilityLocation.Lobby_Stairs) atLobby = true;
         }
         if (atDoor)     return DangerLevel.High;
         if (atCorridor) return DangerLevel.Mid;
+        if (atLobby)    return DangerLevel.Lobby;
         return DangerLevel.None;
     }
 
-    private void ApplyDangerLevel()
+    private void OnLevelChanged(DangerLevel prev, DangerLevel next)
     {
         heartbeatTimer = 0f;
         if (vignetteRoutine != null) StopCoroutine(vignetteRoutine);
 
-        if (currentLevel == DangerLevel.None)
+        // 危険度が上がったとき: カメラグリッチ音
+        if (next > prev && next != DangerLevel.None)
+            AudioManager.Instance?.Play("camera_static");
+
+        if (next == DangerLevel.None)
         {
-            if (dangerVignette) dangerVignette.gameObject.SetActive(false);
+            if (dangerVignette) vignetteRoutine = StartCoroutine(FadeOutVignette());
         }
         else
         {
@@ -92,45 +110,64 @@ public class ProximityAlertSystem : MonoBehaviour
 
         while (currentLevel != DangerLevel.None)
         {
-            float baseA  = currentLevel == DangerLevel.High ? 0.38f : 0.18f;
-            float speed  = currentLevel == DangerLevel.High ? 3.0f  : 1.4f;
-            float a = baseA + Mathf.Sin(Time.time * speed) * (baseA * 0.45f);
-            var c = dangerVignette.color;
-            c.a = a;
-            dangerVignette.color = c;
+            Color targetColor = currentLevel switch
+            {
+                DangerLevel.High  => ColHigh,
+                DangerLevel.Mid   => ColMid,
+                _                 => ColLobby
+            };
+            float baseA = currentLevel switch
+            {
+                DangerLevel.High  => 0.42f,
+                DangerLevel.Mid   => 0.24f,
+                _                 => 0.12f
+            };
+            float speed = currentLevel switch
+            {
+                DangerLevel.High  => 3.2f,
+                DangerLevel.Mid   => 1.6f,
+                _                 => 0.8f
+            };
+
+            float a = baseA + Mathf.Sin(Time.time * speed) * (baseA * 0.4f);
+            dangerVignette.color = new Color(targetColor.r, targetColor.g, targetColor.b, a);
             yield return null;
         }
 
-        // フェードアウト
-        float fade = dangerVignette.color.a;
-        while (fade > 0f)
+        yield return FadeOutVignette();
+    }
+
+    private IEnumerator FadeOutVignette()
+    {
+        if (dangerVignette == null) yield break;
+        float startA = dangerVignette.color.a;
+        float t      = 0f;
+        float dur    = 0.5f;
+        while (t < dur)
         {
-            fade -= Time.deltaTime * 3f;
+            t += Time.deltaTime;
             var c = dangerVignette.color;
-            c.a = Mathf.Max(0f, fade);
+            c.a = Mathf.Lerp(startA, 0f, t / dur);
             dangerVignette.color = c;
             yield return null;
         }
-
         dangerVignette.gameObject.SetActive(false);
     }
 
     private void ResetAlert()
     {
-        currentLevel = DangerLevel.None;
+        currentLevel   = DangerLevel.None;
         heartbeatTimer = 0f;
         if (vignetteRoutine != null) StopCoroutine(vignetteRoutine);
         if (dangerVignette) dangerVignette.gameObject.SetActive(false);
     }
 
-    // エディタセットアップから呼ぶ
     public void AutoFindReferences()
     {
         dangerVignette = FindDeep<Image>("DangerVignette");
     }
 
-    private T FindDeep<T>(string name) where T : Component
-        => FindIn<T>(transform, name);
+    private T FindDeep<T>(string name) where T : Component => FindIn<T>(transform, name);
 
     private T FindIn<T>(Transform root, string name) where T : Component
     {

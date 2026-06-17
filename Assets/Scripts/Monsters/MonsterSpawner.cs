@@ -20,6 +20,9 @@ public class MonsterSpawner : MonoBehaviour
     // エディタで追加・編集可能なリスト（デフォルト値はStart()で設定）
     [SerializeField] private List<SpawnEntry> spawnTable = new List<SpawnEntry>();
 
+    // デバッグ用
+    public IReadOnlyList<SpawnEntry> SpawnTable => spawnTable;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }

@@ -27,16 +27,8 @@ public class InputHandler : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance == null)
-        {
-            if (Input.anyKeyDown) Debug.LogWarning("[InputHandler] キー入力検出 - GameManager.Instance が null");
-            return;
-        }
-        if (GameManager.Instance.CurrentState != GameState.Night)
-        {
-            if (Input.anyKeyDown) Debug.Log($"[InputHandler] キー入力検出 - GameState={GameManager.Instance.CurrentState} (Night でないため無視)");
-            return;
-        }
+        if (GameManager.Instance == null) return;
+        if (GameManager.Instance.CurrentState != GameState.Night) return;
 
         HandleCameraInput();
         HandleDoorInput();
@@ -47,10 +39,10 @@ public class InputHandler : MonoBehaviour
     private void HandleCameraInput()
     {
         var cam = SecurityCameraSystem.Instance;
-        if (cam == null) { Debug.LogWarning("[InputHandler] SecurityCameraSystem.Instance が null"); return; }
+        if (cam == null) return;
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow))  { Debug.Log("[InputHandler] ← → CycleCamera(-1)"); cam.CycleCamera(-1); }
-        if (Input.GetKeyDown(KeyCode.RightArrow)) { Debug.Log("[InputHandler] → CycleCamera(+1)");   cam.CycleCamera(+1); }
+        if (Input.GetKeyDown(KeyCode.LeftArrow))  cam.CycleCamera(-1);
+        if (Input.GetKeyDown(KeyCode.RightArrow)) cam.CycleCamera(+1);
 
         // 1〜8 キーで直接選択（テンキーも対応）
         for (int i = 0; i < 8; i++)
@@ -67,13 +59,13 @@ public class InputHandler : MonoBehaviour
     private void HandleDoorInput()
     {
         var door = DoorManager.Instance;
-        if (door == null) { Debug.LogWarning("[InputHandler] DoorManager.Instance が null"); return; }
+        if (door == null) return;
 
-        if (Input.GetKeyDown(KeyCode.Z))     { Debug.Log("[InputHandler] Z → Gate Toggle");           door.Toggle(DoorID.Gate); }
-        if (Input.GetKeyDown(KeyCode.X))     { Debug.Log("[InputHandler] X → Entrance Toggle");       door.Toggle(DoorID.Entrance); }
-        if (Input.GetKeyDown(KeyCode.C))     { Debug.Log("[InputHandler] C → BasementStairs Toggle"); door.Toggle(DoorID.BasementStairs); }
-        if (Input.GetKeyDown(KeyCode.V))     { Debug.Log("[InputHandler] V → B1Corridor Toggle");     door.Toggle(DoorID.B1Corridor); }
-        if (Input.GetKeyDown(KeyCode.Space)) { Debug.Log("[InputHandler] Space → EmergencyLockdown"); door.EmergencyLockdown(); }
+        if (Input.GetKeyDown(KeyCode.Z))     door.Toggle(DoorID.Gate);
+        if (Input.GetKeyDown(KeyCode.X))     door.Toggle(DoorID.Entrance);
+        if (Input.GetKeyDown(KeyCode.C))     door.Toggle(DoorID.BasementStairs);
+        if (Input.GetKeyDown(KeyCode.V))     door.Toggle(DoorID.B1Corridor);
+        if (Input.GetKeyDown(KeyCode.Space)) door.EmergencyLockdown();
     }
 
     // ===== その他アクション =====

@@ -23,7 +23,6 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Stage Select")]
     [SerializeField] private Button btnStageSelectBack;
-    // BtnDay1 〜 BtnDay7 という名前のボタンを自動取得する
     private readonly Button[] dayButtons  = new Button[7];
     private readonly Text[]   dayBtnTexts = new Text[7];
 
@@ -33,7 +32,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button btnSettingsBack;
 
     [Header("Lore")]
-    [SerializeField] private Text loreText;
+    [SerializeField] private Text   loreText;
     [SerializeField] private Button btnLoreBack;
 
     [Header("Game Screen")]
@@ -41,6 +40,13 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Intro Fade")]
     [SerializeField] private Image fadeOverlay;
+
+    [Header("Title")]
+    [SerializeField] private Text titleText;  // メインメニューのタイトル文字列
+
+    // パネルスライドアニメーション幅 (px)
+    private const float SLIDE_DIST    = 80f;
+    private const float SLIDE_DUR     = 0.18f;
 
     private const string LORE_TEXT =
         "<b>202X年 某所</b>\n\n" +
@@ -68,24 +74,51 @@ public class MainMenuManager : MonoBehaviour
         SetupButtons();
         SetupDayButtons();
         ShowMainMenu();
-        StartCoroutine(FadeIn());
 
+        // 起動演出
+        StartCoroutine(IntroSequence());
+
+        AudioManager.Instance?.PlayLoop("title_bgm");
         AudioManager.Instance?.Play("menu_ambience");
+    }
+
+    // ── 起動演出: フェードイン + タイトルフリッカー ─────────────────────
+    private IEnumerator IntroSequence()
+    {
+        yield return Fade(1f, 0f, 0.9f);
+
+        // タイトルテキストが存在すれば CRT 点灯フリッカー
+        if (titleText != null) yield return TitleFlicker();
+    }
+
+    private IEnumerator TitleFlicker()
+    {
+        Color orig = titleText.color;
+        float[] alphas = { 0f, 0.9f, 0.2f, 1f, 0.5f, 0f, 1f };
+        float[] waits  = { 0.04f, 0.06f, 0.04f, 0.10f, 0.05f, 0.06f, 0f };
+
+        for (int i = 0; i < alphas.Length; i++)
+        {
+            var c = orig; c.a = alphas[i]; titleText.color = c;
+            yield return new WaitForSeconds(waits[i]);
+        }
+        titleText.color = orig;
     }
 
     private void SetupButtons()
     {
-        btnStart?.onClick.AddListener(ShowStageSelect);
-        btnSettings?.onClick.AddListener(() => SwitchPanel(settingsPanel));
+        btnStart?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); ShowStageSelect(); });
+        btnSettings?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToPanel(settingsPanel); });
         btnLore?.onClick.AddListener(() =>
         {
+            AudioManager.Instance?.Play("button_click");
             if (loreText) loreText.text = LORE_TEXT;
-            SwitchPanel(lorePanel);
+            SlideToPanel(lorePanel);
         });
         btnQuit?.onClick.AddListener(() => Application.Quit());
-        btnSettingsBack?.onClick.AddListener(ShowMainMenu);
-        btnLoreBack?.onClick.AddListener(ShowMainMenu);
-        btnStageSelectBack?.onClick.AddListener(ShowMainMenu);
+        btnSettingsBack?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
+        btnLoreBack?.onClick.AddListener(()     => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
+        btnStageSelectBack?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
 
         bgmSlider?.onValueChanged.AddListener(v => AudioManager.Instance?.SetBGMVolume(v));
         sfxSlider?.onValueChanged.AddListener(v => AudioManager.Instance?.SetSFXVolume(v));
@@ -94,7 +127,7 @@ public class MainMenuManager : MonoBehaviour
         if (sfxSlider) sfxSlider.value = 1.0f;
     }
 
-    // BtnDay1 〜 BtnDay7 を名前で探し、クリック時に対応する日を開始する
+    // BtnDay1 〜 BtnDay7 を名前で探してクリック時に StartNight を呼ぶ
     private void SetupDayButtons()
     {
         for (int i = 0; i < 7; i++)
@@ -103,7 +136,6 @@ public class MainMenuManager : MonoBehaviour
             var btn = FindChild<Button>($"BtnDay{day}");
             dayButtons[i]  = btn;
             dayBtnTexts[i] = btn != null ? btn.GetComponentInChildren<Text>() : null;
-
             if (btn != null)
             {
                 int captured = day;
@@ -117,12 +149,11 @@ public class MainMenuManager : MonoBehaviour
     private void ShowStageSelect()
     {
         RefreshDayButtons();
-        SwitchPanel(stageSelectPanel);
+        SlideToPanel(stageSelectPanel);
     }
 
     private void RefreshDayButtons()
     {
-        // StageProgressManager が存在しない場合は PlayerPrefs を直接参照
         int maxUnlocked = StageProgressManager.Instance != null
             ? StageProgressManager.Instance.MaxUnlockedDay
             : PlayerPrefs.GetInt("MaxUnlockedDay", 1);
@@ -131,10 +162,8 @@ public class MainMenuManager : MonoBehaviour
         {
             int day = i + 1;
             if (dayButtons[i] == null) continue;
-
             bool unlocked = day <= maxUnlocked;
             dayButtons[i].interactable = unlocked;
-
             if (dayBtnTexts[i] != null)
             {
                 string weatherStr = WeatherLabel(WeatherManager.GetWeather(day));
@@ -145,20 +174,15 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    private void OnSelectDay(int day)
-    {
-        StartCoroutine(StartGameRoutine(day));
-    }
+    private void OnSelectDay(int day) => StartCoroutine(StartGameRoutine(day));
 
     private IEnumerator StartGameRoutine(int day)
     {
-        yield return Fade(1f, 0.5f);
-        mainMenuPanel?.SetActive(false);
-        stageSelectPanel?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        lorePanel?.SetActive(false);
+        AudioManager.Instance?.StopLoop();
+        yield return Fade(0f, 1f, 0.45f);
+        HideAllPanels();
         gameScreen?.SetActive(true);
-        yield return Fade(0f, 0.5f);
+        yield return Fade(1f, 0f, 0.45f);
         GameManager.Instance.StartNight(day);
     }
 
@@ -170,7 +194,9 @@ public class MainMenuManager : MonoBehaviour
         _ => ""
     };
 
-    // ===== パネル切替 =====
+    // ===== パネル切替 (スライドアニメーション付き) =====
+
+    private Coroutine _slideRoutine;
 
     private void ShowMainMenu()
     {
@@ -181,40 +207,96 @@ public class MainMenuManager : MonoBehaviour
         lorePanel?.SetActive(false);
     }
 
-    private void SwitchPanel(GameObject panel)
+    private void SlideToMainMenu()
+    {
+        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
+        _slideRoutine = StartCoroutine(SlideTransition(null, mainMenuPanel));
+    }
+
+    private void SlideToPanel(GameObject next)
+    {
+        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
+        // 現在表示中のパネルを探す
+        GameObject current = null;
+        foreach (var p in new[] { mainMenuPanel, stageSelectPanel, settingsPanel, lorePanel })
+        {
+            if (p != null && p.activeSelf) { current = p; break; }
+        }
+        _slideRoutine = StartCoroutine(SlideTransition(current, next));
+    }
+
+    private IEnumerator SlideTransition(GameObject from, GameObject to)
+    {
+        // from をスライドアウト (右→見えなくなる)
+        if (from != null)
+        {
+            var rt = from.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                Vector2 origin = rt.anchoredPosition;
+                float t = 0f;
+                while (t < SLIDE_DUR)
+                {
+                    t += Time.deltaTime;
+                    float p = Mathf.SmoothStep(0f, 1f, t / SLIDE_DUR);
+                    rt.anchoredPosition = origin + new Vector2(SLIDE_DIST * p, 0f);
+                    yield return null;
+                }
+                rt.anchoredPosition = origin;
+            }
+            from.SetActive(false);
+        }
+
+        // to をスライドイン (左から右へ)
+        if (to != null)
+        {
+            HideAllPanels();
+            to.SetActive(true);
+            var rt = to.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                Vector2 origin = rt.anchoredPosition;
+                rt.anchoredPosition = origin + new Vector2(-SLIDE_DIST, 0f);
+                float t = 0f;
+                while (t < SLIDE_DUR)
+                {
+                    t += Time.deltaTime;
+                    float p = Mathf.SmoothStep(0f, 1f, t / SLIDE_DUR);
+                    rt.anchoredPosition = Vector2.Lerp(origin + new Vector2(-SLIDE_DIST, 0f), origin, p);
+                    yield return null;
+                }
+                rt.anchoredPosition = origin;
+            }
+        }
+
+        _slideRoutine = null;
+    }
+
+    private void HideAllPanels()
     {
         gameScreen?.SetActive(false);
         mainMenuPanel?.SetActive(false);
         stageSelectPanel?.SetActive(false);
         settingsPanel?.SetActive(false);
         lorePanel?.SetActive(false);
-        panel?.SetActive(true);
     }
 
     // ===== フェード =====
 
-    private IEnumerator FadeIn()
-    {
-        if (fadeOverlay == null) yield break;
-        yield return Fade(0f, 0.8f);
-    }
-
-    private IEnumerator Fade(float targetAlpha, float duration)
+    private IEnumerator Fade(float fromAlpha, float targetAlpha, float duration)
     {
         if (fadeOverlay == null) yield break;
         fadeOverlay.raycastTarget = true;
-        float start = fadeOverlay.color.a;
         float t = 0f;
         while (t < duration)
         {
             t += Time.deltaTime;
             var c = fadeOverlay.color;
-            c.a = Mathf.Lerp(start, targetAlpha, t / duration);
+            c.a = Mathf.Lerp(fromAlpha, targetAlpha, t / duration);
             fadeOverlay.color = c;
             yield return null;
         }
         var fc = fadeOverlay.color; fc.a = targetAlpha; fadeOverlay.color = fc;
-        // 透明になったらraycastをオフ（ゲームUIのクリックを阻害しないよう）
         if (targetAlpha == 0f) fadeOverlay.raycastTarget = false;
     }
 
@@ -237,10 +319,10 @@ public class MainMenuManager : MonoBehaviour
         loreText         = FindChild<Text>("LoreText");
         btnLoreBack      = FindChild<Button>("BtnLoreBack");
         fadeOverlay      = FindChild<Image>("MenuFadeOverlay");
+        titleText        = FindChild<Text>("TitleText");
     }
 
-    private T FindChild<T>(string name) where T : Component
-        => FindIn<T>(transform, name);
+    private T FindChild<T>(string name) where T : Component => FindIn<T>(transform, name);
 
     private GameObject FindChildGO(string name)
         => FindIn<Transform>(transform, name)?.gameObject;

@@ -245,12 +245,18 @@ public class FacilityMapUI : MonoBehaviour
 
             Img($"Zone_{i}", transform, cols[i], V2(0, yBot), V2(mapW, yH), V2(0, 0));
 
-            // 上境界線
+            // 上境界線（2px でより明確に）
             if (i > 0)
                 Img($"ZoneLine_{i}", transform, C_ZoneBorder,
-                    V2(0, yBot + yH - 1f), V2(mapW, 1f), V2(0, 0));
+                    V2(0, yBot + yH - 2f), V2(mapW, 2f), V2(0, 0));
 
-            // ゾーンラベル (右端に縦配置)
+            // ゾーンラベル（右端縦配置 + 左端に細い色帯）
+            Color zoneAccent = i == 0 ? new Color(0.30f, 0.55f, 0.85f, 0.70f)
+                             : i == 1 ? new Color(0.28f, 0.52f, 0.80f, 0.60f)
+                                      : new Color(0.18f, 0.32f, 0.58f, 0.80f);
+            Img($"ZoneAccent_{i}", transform, zoneAccent,
+                V2(0, yBot), V2(3f, yH), V2(0, 0));
+
             Txt($"ZoneLbl_{i}", transform, jp, 9,
                 V2(mapW - 10f, yBot + yH * 0.5f), V2(10f, yH),
                 C_Sub, TextAnchor.MiddleCenter);
@@ -266,15 +272,16 @@ public class FacilityMapUI : MonoBehaviour
         float   dist  = Vector2.Distance(p1, p2);
         float   angle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
 
-        // ── ライン ──
+        // ── メインライン（2.5px で少し太く鮮明に）──
+        float lw = Mathf.Max(2.5f, C_LineW);
         var line = Img($"Line_{from}_{to}", transform, C_Line,
-            mid, V2(dist, C_LineW), V2(0.5f, 0.5f));
+            mid, V2(dist, lw), V2(0.5f, 0.5f));
         line.localEulerAngles = V3(0, 0, angle);
 
-        // ── 方向矢印 (60% 地点に ">" を回転配置) ──
+        // ── 方向矢印（▶ で視認性向上、60% 地点）──
         Vector2 arrPos = Vector2.Lerp(p1, p2, 0.60f);
-        var arr = Txt($"Arr_{from}_{to}", transform, ">", 10,
-            arrPos, V2(14f, 14f), C_Arrow, TextAnchor.MiddleCenter);
+        var arr = Txt($"Arr_{from}_{to}", transform, "▶", 9,
+            arrPos, V2(16f, 16f), C_Arrow, TextAnchor.MiddleCenter);
         arr.localEulerAngles = V3(0, 0, angle);
     }
 
@@ -286,15 +293,32 @@ public class FacilityMapUI : MonoBehaviour
         Vector2 mid   = (p1 + p2) * 0.5f;
         float   angle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
 
-        // ドア開閉バー (接続線と直交した太い横棒)
+        // ── シャッターフレーム（外枠 - 暗い背景）──
+        var outer = Img($"DoorOuter_{id}", transform, new Color(0.10f, 0.14f, 0.22f),
+            mid, V2(28f, 12f), V2(0.5f, 0.5f));
+        outer.localEulerAngles = V3(0, 0, angle);
+
+        // ── シャッターバー（メイン - 開閉で色変化）──
         var bar = Img($"DoorBar_{id}", transform, C_DoorOpen,
-            mid, V2(20f, 5f), V2(0.5f, 0.5f));
+            mid, V2(22f, 8f), V2(0.5f, 0.5f));
         bar.localEulerAngles = V3(0, 0, angle);
         doorBars[id] = bar.GetComponent<Image>();
 
-        // ドアラベル (バーの右横/上横)
-        bool isVert = Mathf.Abs(Mathf.Sin(angle * Mathf.Deg2Rad)) > 0.5f;
-        Vector2 lblOff = isVert ? V2(22f, 0f) : V2(0f, 11f);
+        // ── シャッタースラット（横線 × 2 でシャッター感を演出）──
+        // バーと同じ回転を持つ細い暗い横線を上下 2 本追加
+        float rad = angle * Mathf.Deg2Rad;
+        Vector2 perpDir = new Vector2(-Mathf.Sin(rad), Mathf.Cos(rad));
+        for (int s = -1; s <= 1; s += 2)
+        {
+            var slat = Img($"DoorSlat_{id}_{s}", transform,
+                new Color(0.08f, 0.11f, 0.18f, 0.80f),
+                mid + perpDir * (s * 2.2f), V2(22f, 1.5f), V2(0.5f, 0.5f));
+            slat.localEulerAngles = V3(0, 0, angle);
+        }
+
+        // ── ラベル ──
+        bool isVert = Mathf.Abs(Mathf.Sin(rad)) > 0.5f;
+        Vector2 lblOff = isVert ? V2(22f, 0f) : V2(0f, 13f);
         string lbl = id switch
         {
             DoorID.Gate           => "Gate",
@@ -346,16 +370,25 @@ public class FacilityMapUI : MonoBehaviour
         }
 
         // ── フォールバック: コードで直接生成 ──────────────────────────
-        var panel = Img($"Room_{loc}", transform, bgCol, pos, sz, V2(0.5f, 0.5f));
+        var panel   = Img($"Room_{loc}", transform, bgCol, pos, sz, V2(0.5f, 0.5f));
         var bgImage = panel.GetComponent<Image>();
 
         var outline = panel.gameObject.AddComponent<Outline>();
         outline.effectColor    = bdCol;
-        outline.effectDistance = V2(1.5f, 1.5f);
+        outline.effectDistance = V2(2f, 2f);  // 少し太く
 
         int fontSize = isYou ? 11 : isSide ? 8 : 10;
+
+        // ラベル（通常どおり panel の子）
         Txt($"RoomLbl_{loc}", panel, label, fontSize,
             Vector2.zero, sz - V2(4f, 0f), C_RoomLabel, TextAnchor.MiddleCenter);
+
+        // 左端カラーアクセントバー（transform の子として canvas 座標で配置）
+        Color accentCol = isYou  ? new Color(0.22f, 0.82f, 0.36f, 0.90f)
+                        : isSide ? new Color(0.26f, 0.44f, 0.70f, 0.70f)
+                                 : new Color(0.22f, 0.40f, 0.65f, 0.60f);
+        Img($"RoomAccent_{loc}", transform, accentCol,
+            pos + V2(-sz.x * 0.5f + 1.5f, 0f), V2(3f, sz.y - 2f), V2(0.5f, 0.5f));
 
         var roomNode = panel.gameObject.AddComponent<MapRoomNode>();
         roomNode.Init(loc, isYou, bgImage, outline, bgCol, C_RoomDanger, bdCol);
@@ -368,16 +401,27 @@ public class FacilityMapUI : MonoBehaviour
         Vector2 center = ToUI(loc);
         Vector2 sz     = RoomSize[loc];
 
-        // 部屋の左上コーナーに配置 (7×7 の小さな四角)
+        // 部屋の左上コーナーに配置
         Vector2 iconPos = center + V2(-sz.x * 0.5f + 5f, sz.y * 0.5f - 8f);
+
+        // カメラアイコン本体（◉ 風の2重四角）
+        // 外枠（少し大きめの暗い四角）
+        var outerFrame = Img($"CamOuter_{camId}", transform, new Color(0.08f, 0.12f, 0.20f),
+            iconPos, V2(10f, 8f), V2(0.5f, 0.5f));
+
+        // 内側（実際の状態色を持つ四角）
         var icon = Img($"Cam_{camId}", transform, C_CamNormal,
-            iconPos, V2(7f, 7f), V2(0.5f, 0.5f));
+            iconPos, V2(7f, 5f), V2(0.5f, 0.5f));
         camIcons[camId] = icon.GetComponent<Image>();
 
-        // カメラIDのミニラベル (アイコン左側)
+        // レンズドット（中央の小さな四角）
+        Img($"CamLens_{camId}", transform, new Color(0.02f, 0.04f, 0.08f),
+            iconPos, V2(3f, 3f), V2(0.5f, 0.5f));
+
+        // カメラ ID ラベル（アイコン左側）
         string shortId = camId.ToString().Replace("OUT_", "").Replace("IN_", "");
         Txt($"CamTxt_{camId}", transform, shortId, 7,
-            iconPos + V2(-2f, 0f), V2(28f, 10f), C_CamNormal, TextAnchor.MiddleRight);
+            iconPos + V2(-3f, 0f), V2(28f, 10f), C_CamNormal, TextAnchor.MiddleRight);
     }
 
     // ─────────────────────────────────────────────────────

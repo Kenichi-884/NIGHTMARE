@@ -98,6 +98,22 @@ public class PowerManager : MonoBehaviour
     public void AddDrain(string key, float perSecond) => drains[key] = perSecond;
     public void RemoveDrain(string key) => drains.Remove(key);
 
+    public void AddPower(float amount)
+    {
+        currentPower = Mathf.Clamp(currentPower + amount, 0f, maxPower);
+        OnPowerChanged?.Invoke(currentPower);
+    }
+
+    // デバッグ用: 現在の合計ドレイン速度 (%/秒) と個別ドレインのスナップショット
+    public float TotalDrainPerSecond()
+    {
+        float total = 0f;
+        foreach (var v in drains.Values) total += v;
+        return total;
+    }
+    public Dictionary<string, float> DrainSnapshot()
+        => new Dictionary<string, float>(drains);
+
     // 即時消費（失敗したらfalseを返す）
     public bool Consume(float amount)
     {

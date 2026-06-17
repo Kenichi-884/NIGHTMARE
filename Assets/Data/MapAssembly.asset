@@ -24,5 +24,23 @@ MonoBehaviour:
   areaRoof: {fileID: 4726625817280791438, guid: c0c09113958e8b546aba6613b175925a, type: 3}
   areaSignage: {fileID: 1324103513892943572, guid: ef96068b1ede4a94c892a539e88fafdd, type: 3}
   areaCCTV: {fileID: 4946741371898080785, guid: 474363eeb2f6f5141be5b2676cb734f1, type: 3}
+  securityCameraVisualPrefab: {fileID: 4596681799432764383, guid: 7df662408c2f05544abc179ef996b237, type: 3}
+  camPrefab_OUT_N: {fileID: 0}
+  camPrefab_OUT_E: {fileID: 0}
+  camPrefab_OUT_W: {fileID: 0}
+  camPrefab_OUT_TOP: {fileID: 0}
+  camPrefab_IN_1F_A: {fileID: 0}
+  camPrefab_IN_1F_B: {fileID: 0}
+  camPrefab_IN_B1_A: {fileID: 0}
+  camPrefab_IN_B1_B: {fileID: 0}
   uiRoomNodeTemplate: {fileID: 0}
   uiConnectionTemplate: {fileID: 0}
+  matWall: {fileID: 0}
+  matConcrete: {fileID: 0}
+  matB1Wall: {fileID: 0}
+  matB1Floor: {fileID: 0}
+  matDoorFrame: {fileID: 0}
+  matDoorPanel: {fileID: 0}
+  matMgrFloor: {fileID: 0}
+  matMetal: {fileID: 0}
+  matPavement: {fileID: 0}

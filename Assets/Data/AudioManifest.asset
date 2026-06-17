@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36c20664b058f7044bd1f2057c4665bb, type: 3}
+  m_Name: AudioManifest
+  m_EditorClassIdentifier: 
+  bgm:
+  - id: silence
+    phases: 00000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.6
+  - id: omen
+    phases: 01000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.7
+  - id: contact
+    phases: 0200000003000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.8
+  - id: intense
+    phases: 040000000500000006000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.85
+  - id: critical
+    phases: 070000000800000009000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.9
+  - id: final
+    phases: 0200000003000000040000000500000006000000070000000800000009000000
+    fromDay: 7
+    day7Only: 1
+    clip: {fileID: 0}
+    volume: 0.95
+  - id: gameover
+    phases: 
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.8
+  - id: clear
+    phases: 
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 0}
+    volume: 0.9
+  sfx: []
+  crossfadeDuration: 1.5

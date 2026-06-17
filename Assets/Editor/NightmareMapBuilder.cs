@@ -96,6 +96,7 @@ public static class NightmareMapBuilder
 
         GenTextures();
         InitMaterials();
+        ApplyMaterialOverrides();
 
         var root = new GameObject("[NIGHTMARE Map]");
 
@@ -418,8 +419,9 @@ public static class NightmareMapBuilder
         var fa = G(ext, "Facade");
         C("Fa_E",    fa, new Vector3( 7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f),   "wall");
         C("Fa_W",    fa, new Vector3(-7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f),   "wall");
-        C("FaFr_E",  fa, new Vector3( 4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
-        C("FaFr_W",  fa, new Vector3(-4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
+        // ファサードフレーム: 北壁開口 6m に合わせて x=[3,7.15] / [-7.15,-3]
+        C("FaFr_E",  fa, new Vector3( 5.075f, F1H*0.5f, -8.3f), new Vector3(4.15f, F1H, 0.4f), "concrete");
+        C("FaFr_W",  fa, new Vector3(-5.075f, F1H*0.5f, -8.3f), new Vector3(4.15f, F1H, 0.4f), "concrete");
         C("FaTop",   fa, new Vector3(0,      F1H+0.2f,  -8.3f), new Vector3(15f,  0.4f, 0.5f),"concrete");
         // 玄関キャノピー（庇）
         C("Canopy",  fa, new Vector3(0, F1H-0.1f, -10.5f), new Vector3(10f, 0.25f, 4.5f), "concrete");
@@ -447,9 +449,10 @@ public static class NightmareMapBuilder
         Ceil(lb,  "Ceil",   0,   -1.5f, 14.4f, 13f);
         Wall(lb,  "W_E",    7.15f, WH*0.5f,  -1.5f, 0.3f, WH, 13f);
         Wall(lb,  "W_W",   -7.15f, WH*0.5f,  -1.5f, 0.3f, WH, 13f);
-        // 北壁（入口開口の両脇）
-        Wall(lb,  "W_N_E",  4.2f,  WH*0.5f, -8.15f, 4.4f, WH, 0.3f);
-        Wall(lb,  "W_N_W", -4.2f,  WH*0.5f, -8.15f, 4.4f, WH, 0.3f);
+        // 北壁（入口開口 6m を確保して左右に分割）
+        // 開口: x = [-3, +3] = 6m → 壁ピースは [3, 7.15] と [-7.15, -3]
+        Wall(lb,  "W_N_E",  5.075f, WH*0.5f, -8.15f, 4.15f, WH, 0.3f);
+        Wall(lb,  "W_N_W", -5.075f, WH*0.5f, -8.15f, 4.15f, WH, 0.3f);
 
         // サポートピラー（4本）
         var pil = G(f, "Pillars");
@@ -479,7 +482,6 @@ public static class NightmareMapBuilder
         {
             float z = 16.5f + i * 0.72f;
             float y = i * B1Y / n;  // 0 → B1Y
-            // 踏み板（表面が前ステップと重複しないように厚み小さめ）
             C($"Step_{i:D2}", s,
                 new Vector3(0, y - 0.12f, z), new Vector3(7.5f, 0.24f, 0.72f), "conc_dark");
         }
@@ -489,6 +491,13 @@ public static class NightmareMapBuilder
         // 側壁
         Wall(s, "SW_E",  4.15f, -2f, 20f, 0.3f, 5.5f, 8f);
         Wall(s, "SW_W", -4.15f, -2f, 20f, 0.3f, 5.5f, 8f);
+
+        // 1F 入口アーチ（階段降り口フレーム）
+        var arch = G(s, "Arch_1F");
+        C("Arch_L",  arch, new Vector3(-3.9f, 1.15f, 16.1f), new Vector3(0.3f, 2.3f, 0.45f), "concrete");
+        C("Arch_R",  arch, new Vector3( 3.9f, 1.15f, 16.1f), new Vector3(0.3f, 2.3f, 0.45f), "concrete");
+        C("Arch_T",  arch, new Vector3( 0f,   2.42f, 16.1f), new Vector3(7.8f, 0.3f, 0.45f), "concrete");
+        C("Arch_Sg", arch, new Vector3( 0f,   2.25f, 16.05f), new Vector3(1.2f, 0.25f, 0.06f), "sign_exit");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -500,7 +509,11 @@ public static class NightmareMapBuilder
 
         // ── B1廊下 (Z: 22〜32) ──
         B1Room(b, "B1_Corridor",  27f, 10f, "b1_floor");
-        Wall(b, "W_N_B1", 0, B1Y + B1CH*0.5f, 22.15f, 8f, B1CH, 0.3f);
+        // 北壁: 7.5m ドア開口を残して左右に分割（完全な壁では開口が塞がれる）
+        Wall(b, "W_N_B1_E",  3.875f, B1Y + B1CH*0.5f, 22.15f, 0.25f, B1CH, 0.3f);
+        Wall(b, "W_N_B1_W", -3.875f, B1Y + B1CH*0.5f, 22.15f, 0.25f, B1CH, 0.3f);
+        // 入口まぐさ（ドア開口上部）
+        C("Lintel_B1N", b, new Vector3(0, B1Y+B1CH*0.94f, 22.15f), new Vector3(8f, 0.12f, 0.4f), "b1_wall");
 
         // ── 管理人室前廊下 (Z: 32〜42) ──
         B1Room(b, "B1_DoorFront", 37f, 10f, "b1_floor");
@@ -534,6 +547,28 @@ public static class NightmareMapBuilder
             C($"HB_{i}", hz, new Vector3(0, B1Y+SY, 32.6f+i*0.9f), new Vector3(8f,  0.04f, 0.45f), mc);
             C($"HM_{i}", hz, new Vector3(0, B1Y+SY, 42.2f+i*0.9f), new Vector3(4.5f,0.04f, 0.45f), mc);
         }
+
+        // ── B1 壁面フィクスチャ（配電盤・消火器・緊急ボタン）──
+        var fx = G(b, "B1_Fixtures");
+        // 東壁：配電盤
+        C("ElecPanel",   fx, new Vector3( 3.88f, B1Y+1.45f, 26.5f), new Vector3(0.06f, 0.9f, 0.55f), "wall");
+        C("ElecPanel_L", fx, new Vector3( 3.84f, B1Y+1.72f, 26.5f), new Vector3(0.04f, 0.22f, 0.48f), "em_amber");
+        C("ElecPanel_L2",fx, new Vector3( 3.84f, B1Y+1.38f, 26.5f), new Vector3(0.04f, 0.12f, 0.48f), "em_green");
+        // 西壁：消火器
+        C("FireExt",     fx, new Vector3(-3.88f, B1Y+0.65f, 28.5f), new Vector3(0.14f, 0.55f, 0.14f), "em_red");
+        C("FireBracket", fx, new Vector3(-3.86f, B1Y+0.95f, 28.5f), new Vector3(0.05f, 0.12f, 0.20f), "door_frame");
+        // 東壁：緊急ボタン
+        C("EmgBtn_Box",  fx, new Vector3( 3.87f, B1Y+1.25f, 31.5f), new Vector3(0.06f, 0.18f, 0.18f), "wall");
+        C("EmgBtn_Face", fx, new Vector3( 3.84f, B1Y+1.25f, 31.5f), new Vector3(0.04f, 0.10f, 0.10f), "em_red");
+        // 廊下中央: 床の誘導ストライプ（B1_DoorFront 前）
+        for (int i = 0; i < 6; i++)
+        {
+            string fc = i % 2 == 0 ? "em_caution" : "b1_wall";
+            C($"GS_{i}", fx, new Vector3(0, B1Y+SY, 42.6f+i*0.55f), new Vector3(5f, 0.04f, 0.38f), fc);
+        }
+        // 通気口グレーチング（天井）
+        C("Vent_B1_A", fx, new Vector3(2f, B1Y+B1CH+0.08f, 24f), new Vector3(0.6f, 0.1f, 0.6f), "wall");
+        C("Vent_B1_B", fx, new Vector3(2f, B1Y+B1CH+0.08f, 36f), new Vector3(0.6f, 0.1f, 0.6f), "wall");
     }
 
     // B1ルーム共通（床・天井・側壁） ── B1Yベースで正しく配置
@@ -547,72 +582,79 @@ public static class NightmareMapBuilder
     }
 
     // ═══════════════════════════════════════════════════════════════
-    //  ドア
+    //  ドア（全てシャッター式：上から下に閉じる）
     // ═══════════════════════════════════════════════════════════════
     static void BuildDoors(GameObject root)
     {
-        // prefab が設定されていれば UseDoor でインスタンス化、なければ Door() でキューブ生成
         if (!UseDoor(root, DoorID.Gate, "Door_Gate  [外壁ゲート -3%/分]",
                 _asm?.doorGate, new Vector3(0, 0, -17.2f)))
             Door(root, DoorID.Gate,
                 name: "Door_Gate  [外壁ゲート -3%/分]",
                 cen: new Vector3(0, 0, -17.2f),
-                ow: 14f, oh: 3f, pt: 0.28f,
-                slide: new Vector3(15f, 0, 0), fh: 4f);
+                ow: 14f, oh: 3f, pt: 0.28f, fh: 4f);
 
         if (!UseDoor(root, DoorID.Entrance, "Door_Entrance  [地上入口 -2%/分]",
                 _asm?.doorEntrance, new Vector3(0, 0, -8.2f)))
             Door(root, DoorID.Entrance,
                 name: "Door_Entrance  [地上入口 -2%/分]",
                 cen: new Vector3(0, 0, -8.2f),
-                ow: 8f, oh: 3f, pt: 0.22f,
-                slide: new Vector3(0, 3.4f, 0), fh: 3.7f);
+                ow: 6f, oh: 3f, pt: 0.22f, fh: 3.0f);  // ow: 壁開口 6m に合わせる、fh: 天井高を超えない
 
         if (!UseDoor(root, DoorID.BasementStairs, "Door_BasementStairs  [地下階段 -4%/分]",
                 _asm?.doorBasementStairs, new Vector3(0, B1Y, 22.2f)))
             Door(root, DoorID.BasementStairs,
                 name: "Door_BasementStairs  [地下階段 -4%/分]",
                 cen: new Vector3(0, B1Y, 22.2f),
-                ow: 7.5f, oh: B1CH, pt: 0.25f,
-                slide: new Vector3(0, B1CH+0.4f, 0), fh: B1CH);
+                ow: 7.5f, oh: B1CH, pt: 0.25f, fh: B1CH);
 
         if (!UseDoor(root, DoorID.B1Corridor, "Door_B1Corridor  [B1廊下 -5%/分]",
                 _asm?.doorB1Corridor, new Vector3(0, B1Y, 32.2f)))
             Door(root, DoorID.B1Corridor,
                 name: "Door_B1Corridor  [B1廊下 -5%/分]",
                 cen: new Vector3(0, B1Y, 32.2f),
-                ow: 7.5f, oh: B1CH, pt: 0.25f,
-                slide: new Vector3(8f, 0, 0), fh: B1CH);
+                ow: 7.5f, oh: B1CH, pt: 0.25f, fh: B1CH);
     }
 
+    // シャッター式ドアを生成する
+    // ・ShutterPanel が DoorAnimator によって上から下に閉じる
+    // ・水平スラット装飾でシャッターらしい外観を演出
     static void Door(GameObject root, DoorID id, string name,
-        Vector3 cen, float ow, float oh, float pt, Vector3 slide, float fh)
+        Vector3 cen, float ow, float oh, float pt, float fh)
     {
         const float pw = 0.45f, fd = 0.52f, th = 0.48f;
 
         var dr = G(root, name);
         dr.transform.position = cen;
 
-        // フレーム
+        // ── フレーム ──
         var fr = G(dr, "Frame");
-        C("Pil_L", fr, cen + new Vector3(-(ow*.5f+pw*.5f), fh*.5f, 0), new Vector3(pw, fh, fd), "door_frame");
-        C("Pil_R", fr, cen + new Vector3(  ow*.5f+pw*.5f,  fh*.5f, 0), new Vector3(pw, fh, fd), "door_frame");
-        C("TopBar",fr, cen + new Vector3(0, oh+th*.5f, 0), new Vector3(ow+pw*2, th, fd+.1f), "door_frame");
+        C("Pil_L",  fr, cen + new Vector3(-(ow*.5f+pw*.5f), fh*.5f, 0), new Vector3(pw, fh, fd), "door_frame");
+        C("Pil_R",  fr, cen + new Vector3(  ow*.5f+pw*.5f,  fh*.5f, 0), new Vector3(pw, fh, fd), "door_frame");
+        C("TopBar", fr, cen + new Vector3(0, oh+th*.5f, 0), new Vector3(ow+pw*2, th, fd+.1f), "door_frame");
+        // シャッターガイドレール（パネル左右の溝）
+        C("Rail_L", fr, cen + new Vector3(-ow*.5f+.04f, oh*.5f, 0), new Vector3(.08f, oh, fd+.06f), "door_frame");
+        C("Rail_R", fr, cen + new Vector3( ow*.5f-.04f, oh*.5f, 0), new Vector3(.08f, oh, fd+.06f), "door_frame");
 
-        // パネル（DoorAnimator が動かす）
-        Vector3 pw2 = cen + new Vector3(0, oh*.5f, 0);
-        var panel = C("DoorPanel", dr, pw2, new Vector3(ow-.06f, oh-.06f, pt), "door_panel");
+        // ── シャッターパネル（DoorAnimator が動かす）──
+        Vector3 panelCen = cen + new Vector3(0, oh*.5f, 0);
+        var panel = C("ShutterPanel", dr, panelCen, new Vector3(ow-.16f, oh-.04f, pt), "door_panel");
 
-        // パネル装飾ライン（パネルの子 → アニメーション追従）
-        for (int i = -1; i <= 1; i += 2)
-            C($"Line_{(i<0?"L":"R")}", panel,
-                pw2 + new Vector3(i*ow*.3f, 0, -(pt*.5f+.02f)),
-                new Vector3(.07f, oh*.9f, .04f), "door_frame");
+        // ── 水平スラット装飾（シャッター横線）── パネルの子 → アニメーション追従
+        int slats = Mathf.Max(3, Mathf.RoundToInt(oh / 0.42f));
+        float slotH = (oh - .04f) / slats;
+        for (int i = 0; i < slats; i++)
+        {
+            float wy = panelCen.y + (oh - .04f) * .5f - slotH * (i + .5f);
+            C($"Slat_{i}", panel,
+                new Vector3(panelCen.x, wy, panelCen.z - (pt*.5f + .018f)),
+                new Vector3(ow - .22f, slotH * .72f, .036f),
+                i % 2 == 0 ? "door_frame" : "door_panel");
+        }
 
-        // 警告ランプ
+        // ── 警告ランプ ──
         C("WL", dr, cen + new Vector3(0, oh+th+.3f, -.2f), new Vector3(.38f,.38f,.38f), "em_amber");
 
-        // 床警告ストライプ（Y = 表面 + 0.05f）
+        // ── 床警告ストライプ ──
         for (int i = 0; i < 3; i++)
         {
             string mc = i%2==0 ? "em_caution" : "wall";
@@ -621,8 +663,9 @@ public static class NightmareMapBuilder
             C($"SB_{i}", dr, new Vector3(0, sy, cen.z+.55f+i*.55f), new Vector3(ow*.85f,.04f,.42f), mc);
         }
 
+        // DoorAnimator: shutterMode=true で上から下に閉じる動作
         var anim = dr.AddComponent<DoorAnimator>();
-        anim.Setup(id, panel.transform, slide);
+        anim.Setup(id, panel.transform, Vector3.zero, 0.45f, isShutter: true);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -755,35 +798,159 @@ public static class NightmareMapBuilder
 
     // ═══════════════════════════════════════════════════════════════
     //  CCTV プロップ
+    //  MapAssembly.securityCameraVisualPrefab が設定されていればそれを使う。
+    //  null の場合はキューブでフォールバック生成する。
+    //  プレハブ差し替え手順:
+    //   1. NIGHTMARE > Generate CCTV Prefab で初期プレハブを生成
+    //   2. Assets/NightmareAssets/Prefabs/CCTVMount.prefab を Prefab Mode で開く
+    //   3. 中身を任意の3Dモデルに差し替える
+    //   4. NIGHTMARE > Build Temp 3D Map で再ビルド
     // ═══════════════════════════════════════════════════════════════
     static void BuildCCTVMounts(GameObject root)
     {
         var cc = G(root, "CCTVMounts");
+        // UpdateSceneCamPositions と傾き角を一致させる
         (string n, Vector3 e)[] cams =
         {
-            ("SceneCam_OUT_N",   new Vector3(20,   0, 0)),
+            ("SceneCam_OUT_N",   new Vector3(18,   0, 0)),
             ("SceneCam_OUT_E",   new Vector3(15, -90, 0)),
             ("SceneCam_OUT_W",   new Vector3(15,  90, 0)),
-            ("SceneCam_OUT_TOP", new Vector3(35,   0, 0)),
-            ("SceneCam_IN_1F_A", new Vector3(15, 180, 0)),
-            ("SceneCam_IN_1F_B", new Vector3(15, 180, 0)),
-            ("SceneCam_IN_B1_A", new Vector3(15, 180, 0)),
-            ("SceneCam_IN_B1_B", new Vector3(15, 180, 0)),
+            ("SceneCam_OUT_TOP", new Vector3(42,   0, 0)),
+            ("SceneCam_IN_1F_A", new Vector3(25, 180, 0)),
+            ("SceneCam_IN_1F_B", new Vector3(25, 180, 0)),
+            ("SceneCam_IN_B1_A", new Vector3(25, 180, 0)),
+            ("SceneCam_IN_B1_B", new Vector3(25, 180, 0)),
         };
+
         foreach (var (cn, euler) in cams)
         {
             var go = GameObject.Find(cn);
             if (go == null) continue;
-            Vector3 pos = go.transform.position;
-            Vector3 fwd = Quaternion.Euler(euler) * Vector3.forward;
+            Vector3    pos = go.transform.position;
+            Quaternion rot = Quaternion.Euler(euler);
             var m = G(cc, $"CCTV_{cn}");
-            C("Bracket", m, pos+Vector3.up*.18f, new Vector3(.05f,.36f,.05f), "door_frame");
-            var body = C("Body", m, pos, new Vector3(.16f,.12f,.24f), "cctv_body");
-            body.transform.rotation = Quaternion.LookRotation(fwd.normalized);
-            var lens = C("Lens", m, pos+fwd.normalized*.13f, new Vector3(.08f,.08f,.07f), "cctv_lens");
-            lens.transform.rotation = body.transform.rotation;
-            C("LED",  m, pos+fwd.normalized*.11f+body.transform.up*.04f, new Vector3(.02f,.02f,.02f),"em_red");
+
+            // SceneCam_OUT_N → suffix = "OUT_N"
+            string suffix = cn.StartsWith("SceneCam_") ? cn.Substring("SceneCam_".Length) : cn;
+            var visPrefab = _asm?.GetCamPrefab(suffix);
+
+            if (visPrefab != null)
+            {
+                var vis = PrefabUtility.InstantiatePrefab(visPrefab, m.transform) as GameObject
+                       ?? Object.Instantiate(visPrefab, m.transform);
+                vis.name = "Visual";
+                vis.transform.position = pos;
+                vis.transform.rotation = rot;
+                EditorUtility.SetDirty(vis);
+            }
+            else
+            {
+                // フォールバック: キューブで生成
+                // 室内（天井マウント）と屋外でブラケット方向を変える
+                bool isIndoor = cn.Contains("_IN_");
+                Vector3 fwd = rot * Vector3.forward;
+                if (isIndoor)
+                {
+                    // 天井マウントプレート（天井側へ小さなプレート）
+                    C("Plate",   m, pos + Vector3.up * .06f, new Vector3(.22f,.06f,.22f), "door_frame");
+                    C("Arm",     m, pos - Vector3.up * .07f, new Vector3(.05f,.14f,.05f), "wall");
+                }
+                else
+                {
+                    // 屋外: 壁/ポール取付ブラケット（上方向）
+                    C("Bracket", m, pos + Vector3.up * .18f, new Vector3(.05f,.36f,.05f), "door_frame");
+                }
+                var body = C("Body", m, pos, new Vector3(.16f,.12f,.24f), "cctv_body");
+                body.transform.rotation = Quaternion.LookRotation(fwd.normalized);
+                var lens = C("Lens", m, pos + fwd.normalized * .13f, new Vector3(.08f,.08f,.07f), "cctv_lens");
+                lens.transform.rotation = body.transform.rotation;
+                C("LED", m, pos + fwd.normalized * .11f + body.transform.up * .04f,
+                    new Vector3(.02f,.02f,.02f), "em_red");
+            }
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  CCTV ビジュアル一括差し替え
+    //  MapAssembly.securityCameraVisualPrefab を変更した後に実行すると
+    //  シーン内の全 CCTV_ ノードが新しいプレハブに置き換わる。
+    //  マップ全体を再ビルドしなくてよい。
+    // ═══════════════════════════════════════════════════════════════
+    [MenuItem("NIGHTMARE/Rebuild CCTV Visuals %#7", priority = 6)]
+    public static void RebuildCCTVVisuals()
+    {
+        LoadAssembly();
+        var prefab = _asm?.securityCameraVisualPrefab;
+        if (prefab == null)
+        {
+            EditorUtility.DisplayDialog("NIGHTMARE",
+                "MapAssembly.securityCameraVisualPrefab が未設定です。\n" +
+                "NIGHTMARE > Generate CCTV Prefab を先に実行するか、" +
+                "MapAssembly の securityCameraVisualPrefab スロットに Prefab を割り当ててください。", "OK");
+            return;
+        }
+
+        // CCTVMounts グループを探す
+        var mapRoot = GameObject.Find("[NIGHTMARE Map]");
+        if (mapRoot == null)
+        {
+            EditorUtility.DisplayDialog("NIGHTMARE",
+                "[NIGHTMARE Map] が見つかりません。\nNIGHTMARE > Build Temp 3D Map を先に実行してください。", "OK");
+            return;
+        }
+
+        Transform cctvSection = mapRoot.transform.Find("CCTVMounts");
+        if (cctvSection == null)
+        {
+            Debug.LogError("[NIGHTMARE] CCTVMounts セクションが見つかりません");
+            return;
+        }
+
+        Undo.SetCurrentGroupName("Rebuild CCTV Visuals");
+        int replaced = 0;
+
+        foreach (Transform cctv in cctvSection)
+        {
+            if (!cctv.name.StartsWith("CCTV_")) continue;
+
+            // 古いビジュアルを削除
+            var oldVis = cctv.Find("Visual");
+            if (oldVis != null)
+            {
+                Undo.DestroyObjectImmediate(oldVis.gameObject);
+            }
+            else
+            {
+                // フォールバック生成のキューブ群も削除
+                for (int i = cctv.childCount - 1; i >= 0; i--)
+                    Undo.DestroyObjectImmediate(cctv.GetChild(i).gameObject);
+            }
+
+            // SceneCam の位置・向きを取得
+            string camName = cctv.name.Substring("CCTV_".Length); // "SceneCam_OUT_N" etc.
+            var cam = GameObject.Find(camName);
+            if (cam == null) continue;
+
+            // カメラ個別プレハブ → なければ共通プレハブ
+            string suffix2 = camName.StartsWith("SceneCam_") ? camName.Substring("SceneCam_".Length) : camName;
+            var camPrefab = _asm?.GetCamPrefab(suffix2) ?? prefab;
+
+            // 新プレハブをインスタンス化（プレハブリンクを維持）
+            var vis = PrefabUtility.InstantiatePrefab(camPrefab, cctv) as GameObject
+                   ?? Object.Instantiate(camPrefab, cctv);
+            vis.name = "Visual";
+            vis.transform.position = cam.transform.position;
+            vis.transform.rotation = cam.transform.rotation;
+            Undo.RegisterCreatedObjectUndo(vis, "Rebuild CCTV Visual");
+            EditorUtility.SetDirty(cctv.gameObject);
+            replaced++;
+        }
+
+        Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
+        EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
+        Debug.Log($"[NIGHTMARE] {replaced} 台のカメラビジュアルを {prefab.name} に差し替えました");
+        EditorUtility.DisplayDialog("NIGHTMARE",
+            $"{replaced} 台のカメラビジュアルを差し替えました。\n使用 Prefab: {prefab.name}", "OK");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -791,16 +958,23 @@ public static class NightmareMapBuilder
     // ═══════════════════════════════════════════════════════════════
     static void UpdateSceneCamPositions()
     {
+        // 室内カメラ: 天井直下 (天井内面 = F1H or B1Y+B1CH)
+        const float camY1F = F1H  - 0.12f;       // 2.88 — 1F 天井スラブ直下
+        const float camYB1 = B1Y + B1CH - 0.35f; // -1.65 — B1 天井直下（スラブ厚考慮）
+
         (string n, Vector3 pos, Vector3 rot)[] cams =
         {
-            ("SceneCam_OUT_N",   new Vector3(  0, 3.0f,-23f),    new Vector3(20,  0,0)),
-            ("SceneCam_OUT_E",   new Vector3( 22, 3.0f, -5f),    new Vector3(15,-90,0)),
-            ("SceneCam_OUT_W",   new Vector3(-22, 3.0f, -5f),    new Vector3(15, 90,0)),
-            ("SceneCam_OUT_TOP", new Vector3(  0, 5.0f,-12.5f),  new Vector3(35,  0,0)),
-            ("SceneCam_IN_1F_A", new Vector3(  0, 3.0f, -1.5f),  new Vector3(15,180,0)),
-            ("SceneCam_IN_1F_B", new Vector3(  0, 3.0f, 10.5f),  new Vector3(15,180,0)),
-            ("SceneCam_IN_B1_A", new Vector3(  0, B1Y+2.1f, 27f),new Vector3(15,180,0)),
-            ("SceneCam_IN_B1_B", new Vector3(  0, B1Y+2.1f, 37f),new Vector3(15,180,0)),
+            // OUT_N: 北フェンス上に移動（駐車場全体をカバー）
+            ("SceneCam_OUT_N",   new Vector3(  0, 3.2f,       -27.5f),  new Vector3(18,   0, 0)),
+            ("SceneCam_OUT_E",   new Vector3( 22, 2.8f,         -5f),   new Vector3(15, -90, 0)),
+            ("SceneCam_OUT_W",   new Vector3(-22, 2.8f,         -5f),   new Vector3(15,  90, 0)),
+            // OUT_TOP: 玄関キャノピー天板上
+            ("SceneCam_OUT_TOP", new Vector3(  0, F1H + 0.14f, -11f),   new Vector3(42,   0, 0)),
+            // 室内: 天井マウント、南向き (180°)、視野角を広くするため傾き増
+            ("SceneCam_IN_1F_A", new Vector3(  0, camY1F,      -1.5f),  new Vector3(25, 180, 0)),
+            ("SceneCam_IN_1F_B", new Vector3(  0, camY1F,      10.5f),  new Vector3(25, 180, 0)),
+            ("SceneCam_IN_B1_A", new Vector3(  0, camYB1,      27f),    new Vector3(25, 180, 0)),
+            ("SceneCam_IN_B1_B", new Vector3(  0, camYB1,      37f),    new Vector3(25, 180, 0)),
         };
         int moved = 0;
         foreach (var (n, pos, rot) in cams)
@@ -858,6 +1032,23 @@ public static class NightmareMapBuilder
         if (!AssetDatabase.Contains(mat)) AssetDatabase.CreateAsset(mat, path);
         EditorUtility.SetDirty(mat);
         Mats[key] = mat;
+    }
+
+    // MapAssembly のマテリアルスロットで上書き（null = プロシージャル生成をそのまま使用）
+    static void ApplyMaterialOverrides()
+    {
+        if (_asm == null) return;
+        void O(string key, Material mat) { if (mat != null) Mats[key] = mat; }
+
+        O("wall",       _asm.matWall);
+        O("concrete",   _asm.matConcrete);
+        O("b1_floor",   _asm.matB1Floor);
+        O("b1_wall",    _asm.matB1Wall);
+        O("door_frame", _asm.matDoorFrame);
+        O("door_panel", _asm.matDoorPanel);
+        O("mgr_floor",  _asm.matMgrFloor);
+        O("cctv_body",  _asm.matMetal);
+        O("pavement",   _asm.matPavement);
     }
 
     static void ME(string key, Color col, float em)

@@ -55,6 +55,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Text phenomenaWarningText;
     [SerializeField] private Image ghostSignalOverlay;
 
+    [Header("Weather / Power")]
+    [SerializeField] private Text weatherStatusText;
+    [SerializeField] private Text weatherTimerText;
+    [SerializeField] private Text powerWarnText;
+
     [Header("Map")]
     [SerializeField] private GameObject mapPanel;
     [SerializeField] private Button btnToggleMap;
@@ -136,9 +141,59 @@ public class UIManager : MonoBehaviour
             if (powerText) powerText.text = $"{(int)(pct * 100)}%";
             UpdatePowerColor(pct);
             HandlePowerPulse(pct);
+
+            // 電力警告テキスト
+            if (powerWarnText)
+            {
+                if (PowerManager.Instance.IsPowerOut)
+                {
+                    powerWarnText.text  = "!! 停電中 !!";
+                    powerWarnText.color = new Color(1f, 0.2f, 0.1f);
+                }
+                else if (pct <= 0.1f)
+                {
+                    powerWarnText.text  = "電力危機";
+                    powerWarnText.color = new Color(1f, 0.3f, 0.1f);
+                }
+                else if (pct <= 0.25f)
+                {
+                    powerWarnText.text  = "電力低下";
+                    powerWarnText.color = new Color(1f, 0.75f, 0.1f);
+                }
+                else
+                {
+                    powerWarnText.text = "";
+                }
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.M)) ToggleMap();
+        // 天候表示
+        if (weatherStatusText && WeatherManager.Instance != null)
+        {
+            var weather = WeatherManager.Instance.CurrentWeather;
+            switch (weather)
+            {
+                case WeatherType.Sunny:
+                    weatherStatusText.text  = "  晴";
+                    weatherStatusText.color = new Color(0.8f, 0.9f, 1f);
+                    break;
+                case WeatherType.Rain:
+                    weatherStatusText.text  = "  雨";
+                    weatherStatusText.color = new Color(0.4f, 0.7f, 1f);
+                    break;
+                case WeatherType.Storm:
+                    weatherStatusText.text  = "  嵐";
+                    weatherStatusText.color = new Color(1f, 0.4f, 0.1f);
+                    break;
+            }
+        }
+        if (weatherTimerText && WeatherManager.Instance != null)
+        {
+            var weather = WeatherManager.Instance.CurrentWeather;
+            weatherTimerText.text = weather == WeatherType.Sunny ? ""
+                : weather == WeatherType.Rain  ? "敵+15%速  現象+30%"
+                :                                "敵+30%速  現象+60%";
+        }
     }
 
     // ===== 電力表示 =====
@@ -447,6 +502,9 @@ public class UIManager : MonoBehaviour
         powerFill         = FindChild<Image>("PowerFill");
         phenomenaWarningText = FindChild<Text>("PhenomenaWarning");
         ghostSignalOverlay   = FindChild<Image>("GhostSignalOverlay");
+        weatherStatusText    = FindChild<Text>("WeatherStatus");
+        weatherTimerText     = FindChild<Text>("WeatherTimer");
+        powerWarnText        = FindChild<Text>("PowerWarn");
         mapPanel          = FindChildGO("MapPanel");
         btnToggleMap      = FindChild<Button>("BtnMap");
         gameOverPanel     = FindChildGO("GameOverPanel");

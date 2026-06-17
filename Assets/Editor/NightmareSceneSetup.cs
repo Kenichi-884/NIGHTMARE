@@ -68,6 +68,7 @@ public static class NightmareSceneSetup
         sys.AddComponent<MonsterSpawner>();
         sys.AddComponent<ProximityAlertSystem>();
         sys.AddComponent<InputHandler>();
+        sys.AddComponent<DebugOverlay>();
     }
 
     // ===== セキュリティカメラ (3D空間用 Unity Camera × 8) =====
@@ -192,6 +193,11 @@ public static class NightmareSceneSetup
         // スタティックオーバーレイ（死亡 / Mimic）
         Img("MonitorStaticOverlay",  panel, C(0.8f, 0.8f, 0.8f, 0f));
         Rect(Find(panel, "MonitorStaticOverlay"),  vx, vy, vw, vh);
+        // モンスターオーバーレイ（カメラ映像上にスプライトを表示）
+        var monOverlay = Img("MonitorMonsterOverlay", panel, Color.white);
+        Rect(Find(panel, "MonitorMonsterOverlay"), vx + vw * 0.15f, vy + 10f, vw * 0.7f, vh - 20f);
+        monOverlay.GetComponent<Image>().preserveAspect = true;
+        monOverlay.GetComponent<Image>().enabled = false;
 
         // ── ラベル行（映像の上端）──
         // 左: カメラ名
@@ -230,12 +236,13 @@ public static class NightmareSceneSetup
         Lbl("TimeText", tp, "20:00", 52, 0, 42, 250, 64, C(0.7f, 1f, 0.7f));
         Lbl("DayText",  tp, "Day 1 ― 静寂", 13, 0, 22, 250, 22, C(0.5f, 0.7f, 1f));
 
-        // 電力パネル
+        // 電力パネル（強調表示・大型テキスト）
         var pp = Panel("PowerPanel", hud, C(0.07f, 0.10f, 0.16f));
         Rect(pp, 272, 10, 260, 118);
-        Lbl("PowerLabel", pp, "POWER", 12, 10, 96, 100, 18, C(0.5f, 0.7f, 1f), TextAnchor.MiddleLeft);
-        Lbl("PowerText",  pp, "100%",  28, 10, 52, 120, 38, C(0.2f, 0.9f, 0.2f), TextAnchor.MiddleLeft);
-        BuildSlider("PowerSlider", "PowerFill", pp, 10, 10, 240, 36);
+        Lbl("PowerLabel", pp, "POWER",  13, 10, 98, 100, 18, C(0.5f, 0.7f, 1f),         TextAnchor.MiddleLeft);
+        Lbl("PowerText",  pp, "100%",   36, 10, 50, 130, 46, C(0.2f, 0.9f, 0.2f),        TextAnchor.MiddleLeft);
+        Lbl("PowerWarn",  pp, "",       13, 10, 18, 240, 20, C(1f, 0.3f, 0.1f),           TextAnchor.MiddleCenter);
+        BuildSlider("PowerSlider", "PowerFill", pp, 10, 10, 240, 42);
 
         // ドアパネル
         var dp = Panel("DoorPanel", hud, C(0.07f, 0.10f, 0.16f));
@@ -247,9 +254,16 @@ public static class NightmareSceneSetup
         BuildDoorButton("BtnB1",       "IndB1",       dp, "B1廊下",     506,  4);
         Btn("BtnEmergency", dp, "緊急封鎖", 638,  38, 52, 78, C(0.7f, 0.10f, 0.08f));
 
+        // 天候/現象パネル
+        var wp = Panel("WeatherPanel", hud, C(0.07f, 0.10f, 0.16f));
+        Rect(wp, 1252, 10, 180, 118);
+        Lbl("WeatherTitle",  wp, "PHENOMENA",   11,  6, 98, 168, 18, C(0.5f, 0.7f, 1f),   TextAnchor.MiddleLeft);
+        Lbl("WeatherStatus", wp, "  -",         14,  6, 52, 168, 42, C(0.9f, 0.8f, 0.3f), TextAnchor.MiddleLeft);
+        Lbl("WeatherTimer",  wp, "",            11,  6, 14, 168, 36, C(0.7f, 0.7f, 0.7f), TextAnchor.MiddleLeft);
+
         // カメラ操作パネル
         var cp = Panel("CamPanel", hud, C(0.07f, 0.10f, 0.16f));
-        Rect(cp, 1252, 10, 330, 118);
+        Rect(cp, 1442, 10, 330, 118);
         Lbl("CamTitle", cp, "CAMERA CONTROL", 11, 4, 100, 330, 16, C(0.5f, 0.7f, 1f), TextAnchor.MiddleLeft);
         Btn("BtnResetCam", cp, "カメラ リセット  (-3%)", 8, 68, 314, 34, C(0.18f, 0.30f, 0.50f));
         Btn("BtnEliminate", cp, "Jammer 駆除  (-5%)",   8, 30, 314, 34, C(0.4f, 0.08f, 0.55f));

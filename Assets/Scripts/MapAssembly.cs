@@ -71,6 +71,49 @@ public class MapAssembly : ScriptableObject
     //  UI マップ ── テンプレート
     // ────────────────────────────────────────────────────────────────
 
+    // ────────────────────────────────────────────────────────────────
+    //  監視カメラ ── ビジュアルプレハブ
+    // ────────────────────────────────────────────────────────────────
+
+    [Header("── 監視カメラ（共通モデル） ───────────────────────────")]
+    [Tooltip("全カメラに使う既定の CCTV 外観プレハブ。\n" +
+             "NIGHTMARE > Generate CCTV Prefab で自動生成。\n" +
+             "このプレハブを Prefab Mode で変更すると全台が更新される。\n" +
+             "個別スロットに設定すると、そのカメラだけ上書きできる。")]
+    public GameObject securityCameraVisualPrefab;
+
+    [Header("── 監視カメラ（個別オーバーライド / null = 共通モデル使用）──")]
+    [Tooltip("null のカメラは securityCameraVisualPrefab を使用する。")]
+    public GameObject camPrefab_OUT_N;
+    public GameObject camPrefab_OUT_E;
+    public GameObject camPrefab_OUT_W;
+    public GameObject camPrefab_OUT_TOP;
+    public GameObject camPrefab_IN_1F_A;
+    public GameObject camPrefab_IN_1F_B;
+    public GameObject camPrefab_IN_B1_A;
+    public GameObject camPrefab_IN_B1_B;
+
+    /// <summary>カメラ名（SceneCam_XXX の XXX 部分）に対応するプレハブを返す。</summary>
+    public GameObject GetCamPrefab(string camSuffix)
+    {
+        switch (camSuffix)
+        {
+            case "OUT_N":   return camPrefab_OUT_N   ?? securityCameraVisualPrefab;
+            case "OUT_E":   return camPrefab_OUT_E   ?? securityCameraVisualPrefab;
+            case "OUT_W":   return camPrefab_OUT_W   ?? securityCameraVisualPrefab;
+            case "OUT_TOP": return camPrefab_OUT_TOP ?? securityCameraVisualPrefab;
+            case "IN_1F_A": return camPrefab_IN_1F_A ?? securityCameraVisualPrefab;
+            case "IN_1F_B": return camPrefab_IN_1F_B ?? securityCameraVisualPrefab;
+            case "IN_B1_A": return camPrefab_IN_B1_A ?? securityCameraVisualPrefab;
+            case "IN_B1_B": return camPrefab_IN_B1_B ?? securityCameraVisualPrefab;
+            default:        return securityCameraVisualPrefab;
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────────
+    //  UI マップ ── テンプレート
+    // ────────────────────────────────────────────────────────────────
+
     [Header("── UI マップ ─────────────────────────────────────")]
     [Tooltip("FacilityMapUI が各部屋ノード生成時に使う UI テンプレート。\n" +
              "null = コードで直接生成にフォールバック。\n" +
@@ -79,4 +122,37 @@ public class MapAssembly : ScriptableObject
 
     [Tooltip("接続線のテンプレート。null = コード生成。")]
     public GameObject uiConnectionTemplate;
+
+    // ────────────────────────────────────────────────────────────────
+    //  3D マップ ── マテリアル差し替え
+    //  null = プロシージャル生成、設定済み = そのマテリアルを使用
+    // ────────────────────────────────────────────────────────────────
+
+    [Header("── 3Dマップ マテリアル（null = プロシージャル生成）──────────")]
+    [Tooltip("外壁・廊下の壁マテリアル。null = 内部生成（wall_dark テクスチャ）")]
+    public Material matWall;
+
+    [Tooltip("1F コンクリート床マテリアル。null = 内部生成（concrete テクスチャ）")]
+    public Material matConcrete;
+
+    [Tooltip("B1 壁マテリアル。null = matWall と同じプロシージャル生成にフォールバック")]
+    public Material matB1Wall;
+
+    [Tooltip("B1 床マテリアル。null = 内部生成（b1_floor テクスチャ）")]
+    public Material matB1Floor;
+
+    [Tooltip("ドア枠・レールのマテリアル。null = 内部生成（metal テクスチャ）")]
+    public Material matDoorFrame;
+
+    [Tooltip("シャッターパネルのマテリアル。null = 内部生成（metal テクスチャ）")]
+    public Material matDoorPanel;
+
+    [Tooltip("管理人室床マテリアル。null = 内部生成（mgr_floor テクスチャ）")]
+    public Material matMgrFloor;
+
+    [Tooltip("金属マテリアル（CCTV 本体・手すりなど）。null = 内部生成")]
+    public Material matMetal;
+
+    [Tooltip("外装コンクリートマテリアル（歩道など）。null = 内部生成（pavement テクスチャ）")]
+    public Material matPavement;
 }

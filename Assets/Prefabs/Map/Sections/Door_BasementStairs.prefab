@@ -400,7 +400,10 @@ MonoBehaviour:
   doorID: 2
   doorPanel: {fileID: 2635517454373596178}
   animDuration: 0.45
+  shutterMode: 1
   openSlideOffset: {x: 0, y: 3.1000001, z: 0}
+  bounceOvershoot: 0.06
+  bounceCount: 2
 --- !u!1 &3431870085021155577
 GameObject:
   m_ObjectHideFlags: 0

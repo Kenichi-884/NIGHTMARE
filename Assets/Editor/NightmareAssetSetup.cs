@@ -5,6 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Collections.Generic;
 
 public static class NightmareAssetSetup
 {
@@ -22,11 +23,208 @@ public static class NightmareAssetSetup
     private const string SFX_DIR  = ROOT + "/Audio";
 
     // =========================================================
+    //  Extract Map Sections
+    //  [NIGHTMARE Map] の子ごとに Prefab を保存し MapAssembly に登録する。
+    //  保存後は各 .prefab を Prefab Mode で開いてモデルを差し替えること。
+    // =========================================================
+    [MenuItem("NIGHTMARE/Extract Map Sections", priority = 8)]
+    public static void ExtractMapSections()
+    {
+        var root = GameObject.Find("[NIGHTMARE Map]");
+        if (root == null)
+        {
+            EditorUtility.DisplayDialog("NIGHTMARE",
+                "[NIGHTMARE Map] が見つかりません。\nNIGHTMARE > Build Temp 3D Map を先に実行してください。", "OK");
+            return;
+        }
+
+        const string sectionsDir = "Assets/Prefabs/Map/Sections";
+        if (!AssetDatabase.IsValidFolder("Assets/Prefabs"))       AssetDatabase.CreateFolder("Assets", "Prefabs");
+        if (!AssetDatabase.IsValidFolder("Assets/Prefabs/Map"))   AssetDatabase.CreateFolder("Assets/Prefabs", "Map");
+        if (!AssetDatabase.IsValidFolder(sectionsDir))            AssetDatabase.CreateFolder("Assets/Prefabs/Map", "Sections");
+
+        const string asmPath = "Assets/Data/MapAssembly.asset";
+        if (!AssetDatabase.IsValidFolder("Assets/Data")) AssetDatabase.CreateFolder("Assets", "Data");
+        var asm = AssetDatabase.LoadAssetAtPath<MapAssembly>(asmPath);
+        if (asm == null)
+        {
+            asm = ScriptableObject.CreateInstance<MapAssembly>();
+            AssetDatabase.CreateAsset(asm, asmPath);
+        }
+        var so = new SerializedObject(asm);
+
+        var nameToField = new Dictionary<string, string>
+        {
+            { "Exterior",   "areaExterior"   },
+            { "1F",         "area1F"          },
+            { "Staircase",  "areaStaircase"   },
+            { "B1",         "areaB1"          },
+            { "Props",      "areaProps"       },
+            { "Roof",       "areaRoof"        },
+            { "Signage",    "areaSignage"     },
+            { "CCTVMounts", "areaCCTV"        },
+        };
+
+        int saved = 0;
+        foreach (Transform child in root.transform)
+        {
+            if (!nameToField.TryGetValue(child.name, out var fieldName)) continue;
+            string prefabPath = $"{sectionsDir}/{child.name}.prefab";
+            PrefabUtility.SaveAsPrefabAsset(child.gameObject, prefabPath, out bool ok);
+            if (!ok) { Debug.LogWarning($"[NIGHTMARE] Prefab保存に失敗: {prefabPath}"); continue; }
+
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            var prop = so.FindProperty(fieldName);
+            if (prop != null) prop.objectReferenceValue = prefab;
+            saved++;
+        }
+
+        so.ApplyModifiedProperties();
+        EditorUtility.SetDirty(asm);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"[NIGHTMARE] {saved} セクションを Prefab として保存し MapAssembly に登録しました");
+        EditorUtility.DisplayDialog("NIGHTMARE",
+            $"{saved} セクションを保存しました。\n保存先: {sectionsDir}/\n\n各 .prefab を Prefab Mode で開いてモデルを差し替えてください。", "OK");
+    }
+
+    // =========================================================
+    //  Generate Audio Manifest
+    //  AudioManifest.asset を生成し、デフォルト BGM エントリを追加する。
+    //  AudioManager がシーンにあれば manifest スロットを自動接続する。
+    // =========================================================
+    [MenuItem("NIGHTMARE/Generate Audio Manifest", priority = 13)]
+    public static void GenerateAudioManifest()
+    {
+        const string dataDir = "Assets/Data";
+        const string asmPath = dataDir + "/AudioManifest.asset";
+        if (!AssetDatabase.IsValidFolder(dataDir)) AssetDatabase.CreateFolder("Assets", "Data");
+
+        var manifest = AssetDatabase.LoadAssetAtPath<AudioManifest>(asmPath);
+        if (manifest == null)
+        {
+            manifest = ScriptableObject.CreateInstance<AudioManifest>();
+            AssetDatabase.CreateAsset(manifest, asmPath);
+        }
+
+        if (manifest.bgm.Count == 0)
+        {
+            manifest.bgm.AddRange(new[]
+            {
+                new AudioManifest.BgmEntry { id = "silence",  phases = new[]{ GamePhase.Silence  }, volume = 0.6f },
+                new AudioManifest.BgmEntry { id = "omen",     phases = new[]{ GamePhase.Omen     }, volume = 0.7f },
+                new AudioManifest.BgmEntry { id = "contact",  phases = new[]{ GamePhase.Contact,  GamePhase.Increase }, volume = 0.8f },
+                new AudioManifest.BgmEntry { id = "intense",  phases = new[]{ GamePhase.Erosion,  GamePhase.Infiltration, GamePhase.Siege }, volume = 0.85f },
+                new AudioManifest.BgmEntry { id = "critical", phases = new[]{ GamePhase.Collapse, GamePhase.Abyss, GamePhase.BeforeDawn }, volume = 0.9f },
+                new AudioManifest.BgmEntry { id = "final",    phases = new[]{ GamePhase.Contact,  GamePhase.Increase, GamePhase.Erosion, GamePhase.Infiltration, GamePhase.Siege, GamePhase.Collapse, GamePhase.Abyss, GamePhase.BeforeDawn }, fromDay = 7, day7Only = true, volume = 0.95f },
+                new AudioManifest.BgmEntry { id = "gameover", volume = 0.8f },
+                new AudioManifest.BgmEntry { id = "clear",    volume = 0.9f },
+            });
+            // SFX: title_bgm はループSE扱い（loopSource で再生）
+            if (manifest.sfx.Count == 0 || !manifest.sfx.Exists(s => s.key == "title_bgm"))
+                manifest.sfx.Add(new AudioManifest.SfxEntry { key = "title_bgm", volume = 0.7f });
+            EditorUtility.SetDirty(manifest);
+        }
+
+        var am = Object.FindObjectOfType<AudioManager>();
+        if (am != null)
+        {
+            var amSo = new SerializedObject(am);
+            var prop  = amSo.FindProperty("manifest");
+            if (prop != null) { prop.objectReferenceValue = manifest; amSo.ApplyModifiedProperties(); EditorUtility.SetDirty(am); }
+            Debug.Log("[NIGHTMARE] AudioManifest を AudioManager に登録しました");
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Selection.activeObject = manifest;
+        Debug.Log($"[NIGHTMARE] AudioManifest 生成: {asmPath}");
+        EditorUtility.DisplayDialog("NIGHTMARE",
+            $"AudioManifest を生成しました。\n{asmPath}\n\nInspector で各 BGM/SFX に AudioClip をアサインしてください。", "OK");
+    }
+
+    // =========================================================
     [MenuItem("NIGHTMARE/Wire Audio Only", priority = 12)]
     public static void WireAudioOnly()
     {
         WireAudioManager();
         AssetDatabase.SaveAssets();
+    }
+
+    // =========================================================
+    // CCTV ビジュアルプレハブ生成
+    // 生成後は Assets/NightmareAssets/Prefabs/CCTVMount.prefab を
+    // Prefab Mode で開いて任意のモデルに差し替えることができる。
+    // =========================================================
+    [MenuItem("NIGHTMARE/Generate CCTV Prefab", priority = 14)]
+    public static void GenerateCCTVPrefab()
+    {
+        const string prefabDir  = ROOT + "/Prefabs";
+        const string prefabPath = prefabDir + "/CCTVMount.prefab";
+        const string matDir     = "Assets/NightmareAssets/Materials/TempMap";
+
+        EnsureDirs();
+        if (!AssetDatabase.IsValidFolder(prefabDir))
+            AssetDatabase.CreateFolder(ROOT, "Prefabs");
+
+        // ── ルートオブジェクト ──
+        var root = new GameObject("CCTVMount");
+
+        // ブラケット（壁取り付け金具）
+        var bracket = Cube("Bracket", root, new Vector3(0, 0.18f, 0), new Vector3(.05f,.36f,.05f));
+        // カメラ本体
+        var body    = Cube("Body",    root, Vector3.zero,              new Vector3(.16f,.12f,.24f));
+        // レンズ
+        var lens    = Cube("Lens",    root, new Vector3(0, 0, .13f),   new Vector3(.08f,.08f,.07f));
+        // LED インジケーター
+        var led     = Cube("LED",     root, new Vector3(0,.04f,.11f),  new Vector3(.02f,.02f,.02f));
+
+        // マテリアル割り当て（存在する場合のみ）
+        ApplyMat(bracket, matDir + "/door_frame.mat");
+        ApplyMat(body,    matDir + "/cctv_body.mat");
+        ApplyMat(lens,    matDir + "/cctv_lens.mat");
+        ApplyMat(led,     matDir + "/em_red.mat");
+
+        // プレハブとして保存
+        PrefabUtility.SaveAsPrefabAsset(root, prefabPath, out bool ok);
+        Object.DestroyImmediate(root);
+
+        // MapAssembly に自動登録（asset が存在する場合）
+        const string asmPath = "Assets/Data/MapAssembly.asset";
+        var asm = AssetDatabase.LoadAssetAtPath<MapAssembly>(asmPath);
+        if (asm != null)
+        {
+            var so  = new SerializedObject(asm);
+            var pfb = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+            so.FindProperty("securityCameraVisualPrefab").objectReferenceValue = pfb;
+            so.ApplyModifiedProperties();
+            Debug.Log("[NIGHTMARE] CCTVMount.prefab を MapAssembly に登録しました");
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log(ok
+            ? $"[NIGHTMARE] CCTV Prefab 生成: {prefabPath}\n" +
+              "Prefab Mode で開いてモデルを差し替えてください。"
+            : "[NIGHTMARE] CCTV Prefab 保存に失敗");
+    }
+
+    static GameObject Cube(string name, GameObject parent, Vector3 localPos, Vector3 localScale)
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        go.name = name;
+        go.transform.SetParent(parent.transform);
+        go.transform.localPosition = localPos;
+        go.transform.localScale    = localScale;
+        Object.DestroyImmediate(go.GetComponent<Collider>());
+        return go;
+    }
+
+    static void ApplyMat(GameObject go, string matPath)
+    {
+        var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+        if (mat != null && go.TryGetComponent<MeshRenderer>(out var mr))
+            mr.sharedMaterial = mat;
     }
 
     // =========================================================
@@ -357,132 +555,131 @@ public static class NightmareAssetSetup
         Save(DrawKnocker(),  MON_DIR + "/monster_knocker.png");
     }
 
-    // Crawler: 猫背の人型
+    // ── カメラオーバーレイ用スプライト ────────────────────────────────
+    // 背景は透明、シルエットは明るいグレー〜白で描くことで
+    // 暗いカメラ映像の上でも視認できるようにする。
+    // 目の色だけモンスターごとに差別化。
+
+    // Crawler: 猫背の人型（赤目）
     static Texture2D DrawCrawler()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.15f,0.10f,0.08f,0.95f);
-        Fill(t, 28, 100, 24, 24, c); // 頭
-        Fill(t, 24, 80,  32,  24, c); // 首〜肩
-        Fill(t, 16, 52,  48,  36, c); // 胴体（猫背で前傾）
-        Fill(t, 16, 16,  12,  40, c); // 左腕（下に長い）
-        Fill(t, 52, 26,  12,  36, c); // 右腕
-        Fill(t, 22,  8,  16,  52, c); // 左脚
-        Fill(t, 42,  8,  16,  52, c); // 右脚
-        // 目の光（赤）
-        Fill(t, 32, 114, 4, 4, C(0.8f,0.1f,0.05f,1f));
-        Fill(t, 44, 114, 4, 4, C(0.8f,0.1f,0.05f,1f));
-        Noise(t, 0.05f); t.Apply(); return t;
+        Color c = C(0.82f, 0.80f, 0.78f, 0.92f); // 明るいグレー
+        Fill(t, 28, 100, 24, 24, c);
+        Fill(t, 24, 80,  32, 24, c);
+        Fill(t, 16, 52,  48, 36, c);
+        Fill(t, 16, 16,  12, 40, c);
+        Fill(t, 52, 26,  12, 36, c);
+        Fill(t, 22,  8,  16, 52, c);
+        Fill(t, 42,  8,  16, 52, c);
+        Fill(t, 32, 114, 5, 5, C(1.0f, 0.1f, 0.05f, 1f));
+        Fill(t, 43, 114, 5, 5, C(1.0f, 0.1f, 0.05f, 1f));
+        Noise(t, 0.03f); t.Apply(); return t;
     }
 
-    // Rusher: 前傾姿勢で走る細身
+    // Rusher: 前傾姿勢で走る細身（オレンジ目）
     static Texture2D DrawRusher()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.12f,0.08f,0.06f,0.95f);
-        Fill(t, 36, 108, 22, 22, c); // 頭（前傾）
-        Fill(t, 20, 86,  36, 28, c); // 胴体（斜め）
-        Fill(t, 10, 60,  10, 36, c); // 左腕（後方）
-        Fill(t, 54, 72,  14, 28, c); // 右腕（前方）
-        Fill(t, 18,  8,  14, 58, c); // 左脚（長い）
-        Fill(t, 36, 18,  14, 48, c); // 右脚
-        Fill(t, 38, 114, 4, 4, C(1.0f,0.5f,0.0f,1f)); // 目（オレンジ）
-        Fill(t, 48, 114, 4, 4, C(1.0f,0.5f,0.0f,1f));
-        Noise(t, 0.04f); t.Apply(); return t;
+        Color c = C(0.85f, 0.83f, 0.78f, 0.92f);
+        Fill(t, 36, 108, 22, 22, c);
+        Fill(t, 20, 86,  36, 28, c);
+        Fill(t, 10, 60,  10, 36, c);
+        Fill(t, 54, 72,  14, 28, c);
+        Fill(t, 18,  8,  14, 58, c);
+        Fill(t, 36, 18,  14, 48, c);
+        Fill(t, 38, 114, 5, 5, C(1.0f, 0.55f, 0.0f, 1f));
+        Fill(t, 48, 114, 5, 5, C(1.0f, 0.55f, 0.0f, 1f));
+        Noise(t, 0.03f); t.Apply(); return t;
     }
 
-    // Jammer: 配線が絡まった丸い生物
+    // Jammer: 配線が絡まった丸い生物（紫目）
     static Texture2D DrawJammer()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.10f,0.08f,0.15f,0.95f);
-        // 本体（楕円っぽい）
+        Color c = C(0.80f, 0.76f, 0.88f, 0.90f); // 薄紫がかったグレー
         Fill(t, 20, 60, 40, 50, c);
         Fill(t, 14, 70, 52, 32, c);
-        // 触手/配線
-        Fill(t,  6, 80,  20, 4, c);
-        Fill(t,  4, 68,  16, 4, c);
-        Fill(t, 54, 76,  20, 4, c);
-        Fill(t, 56, 62,  16, 4, c);
-        Fill(t, 28, 56,   4, 16, c);
-        Fill(t, 48, 52,   4, 18, c);
-        // 目（紫）
-        Fill(t, 30, 88, 6, 6, C(0.7f,0.1f,1.0f,1f));
-        Fill(t, 44, 88, 6, 6, C(0.7f,0.1f,1.0f,1f));
-        // ノイズ効果（Jammer専用）
+        Fill(t,  6, 80, 20,  4, c);
+        Fill(t,  4, 68, 16,  4, c);
+        Fill(t, 54, 76, 20,  4, c);
+        Fill(t, 56, 62, 16,  4, c);
+        Fill(t, 28, 56,  4, 16, c);
+        Fill(t, 48, 52,  4, 18, c);
+        Fill(t, 30, 88, 7, 7, C(0.8f, 0.1f, 1.0f, 1f));
+        Fill(t, 43, 88, 7, 7, C(0.8f, 0.1f, 1.0f, 1f));
         for (int i = 0; i < 20; i++)
         {
             int nx = (i * 17 + 5) % MON_W;
             int ny = 50 + (i * 13 + 3) % 60;
-            Fill(t, nx, ny, 2, 1, C(0.7f,0.2f,1.0f,0.5f));
+            Fill(t, nx, ny, 2, 1, C(0.9f, 0.5f, 1.0f, 0.6f));
         }
-        Noise(t, 0.06f); t.Apply(); return t;
+        Noise(t, 0.04f); t.Apply(); return t;
     }
 
-    // Lurker: 非常に背が高く細い
+    // Lurker: 長身細身（ほぼ白いシルエット・目なし）
     static Texture2D DrawLurker()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.06f,0.06f,0.08f,0.88f); // 半透明の暗い影
-        Fill(t, 32, 118, 16, 16, c); // 頭
-        Fill(t, 30, 96,  20, 28, c); // 首
-        Fill(t, 28, 52,  24, 52, c); // 胴体（細い）
-        Fill(t, 16, 68,  14, 48, c); // 左腕（長い）
-        Fill(t, 50, 60,  14, 54, c); // 右腕
-        Fill(t, 28,  6,  10, 52, c); // 左脚
-        Fill(t, 42,  6,  10, 52, c); // 右脚
-        // 目が見えない（Lurkerは不可視）
+        Color c = C(0.90f, 0.90f, 0.95f, 0.75f); // 薄い白
+        Fill(t, 32, 118, 16, 16, c);
+        Fill(t, 30, 96,  20, 28, c);
+        Fill(t, 28, 52,  24, 52, c);
+        Fill(t, 16, 68,  14, 48, c);
+        Fill(t, 50, 60,  14, 54, c);
+        Fill(t, 28,  6,  10, 52, c);
+        Fill(t, 42,  6,  10, 52, c);
+        // 目は薄く光る（不気味な効果）
+        Fill(t, 34, 122, 4, 4, C(0.7f, 0.85f, 1.0f, 0.7f));
+        Fill(t, 42, 122, 4, 4, C(0.7f, 0.85f, 1.0f, 0.7f));
         t.Apply(); return t;
     }
 
-    // Mimic: グリッチした人型
+    // Mimic: グリッチした人型（水色目）
     static Texture2D DrawMimic()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.05f,0.15f,0.15f,0.90f);
-        // 基本の人型（ずれた感じ）
+        Color c  = C(0.70f, 0.90f, 0.88f, 0.88f); // 水色がかったグレー
+        Color c2 = C(0.50f, 0.80f, 0.78f, 0.50f); // グリッチコピー
         Fill(t, 30, 104, 20, 22, c);
         Fill(t, 26, 82,  28, 26, c);
         Fill(t, 22, 52,  12, 38, c);
         Fill(t, 46, 56,  12, 38, c);
         Fill(t, 26,  8,  12, 50, c);
         Fill(t, 42,  8,  12, 50, c);
-        // グリッチライン（水平ずれ）
+        // グリッチライン
         for (int y = 50; y < 130; y += 8)
         {
             int offset = ((y / 8) % 3 == 0) ? 6 : 0;
-            Fill(t, offset, y, 60, 3, C(0.1f,0.7f,0.7f,0.3f));
+            Fill(t, offset, y, 60, 3, c2);
         }
-        // 目（水色）
-        Fill(t, 33, 116, 4, 4, C(0.2f,0.9f,0.9f,1f));
-        Fill(t, 43, 116, 4, 4, C(0.2f,0.9f,0.9f,1f));
-        Noise(t, 0.10f); t.Apply(); return t;
+        Fill(t, 33, 116, 5, 5, C(0.2f, 1.0f, 0.95f, 1f));
+        Fill(t, 42, 116, 5, 5, C(0.2f, 1.0f, 0.95f, 1f));
+        Noise(t, 0.05f); t.Apply(); return t;
     }
 
-    // Knocker: 重くがっしりした体格
+    // Knocker: がっしり大型（黄目）
     static Texture2D DrawKnocker()
     {
         var t = NewTex(MON_W, MON_H);
         Fill(t, 0, 0, MON_W, MON_H, Color.clear);
-        Color c = C(0.18f,0.14f,0.10f,0.95f);
-        Fill(t, 24, 106, 32, 30, c); // 頭（大きい）
-        Fill(t, 14, 76,  52, 38, c); // 胴体（幅広）
-        Fill(t,  4, 70,  16, 48, c); // 左腕（太い）
-        Fill(t, 60, 70,  16, 48, c); // 右腕（太い）
-        Fill(t, 20,  8,  18, 74, c); // 左脚
-        Fill(t, 42,  8,  18, 74, c); // 右脚
-        // 目（黄色）
-        Fill(t, 32, 120, 6, 6, C(1.0f,0.9f,0.1f,1f));
-        Fill(t, 42, 120, 6, 6, C(1.0f,0.9f,0.1f,1f));
-        // 拳（強調）
-        Fill(t, 2, 62, 20, 16, c);
-        Fill(t, 58,62, 20, 16, c);
-        Noise(t, 0.04f); t.Apply(); return t;
+        Color c = C(0.78f, 0.76f, 0.72f, 0.94f); // やや暖色のグレー
+        Fill(t, 24, 106, 32, 30, c);
+        Fill(t, 14, 76,  52, 38, c);
+        Fill(t,  4, 70,  16, 48, c);
+        Fill(t, 60, 70,  16, 48, c);
+        Fill(t, 20,  8,  18, 74, c);
+        Fill(t, 42,  8,  18, 74, c);
+        Fill(t, 32, 120, 7, 7, C(1.0f, 0.9f, 0.1f, 1f));
+        Fill(t, 41, 120, 7, 7, C(1.0f, 0.9f, 0.1f, 1f));
+        Fill(t,  2, 62, 20, 16, c);
+        Fill(t, 58, 62, 20, 16, c);
+        Noise(t, 0.03f); t.Apply(); return t;
     }
 
     // =========================================================
@@ -675,15 +872,145 @@ public static class NightmareAssetSetup
     // =========================================================
     static void CreateMonsterPrefabs()
     {
-        CreatePrefab<CrawlerAI>("Crawler", "monster_crawler");
-        CreatePrefab<RusherAI> ("Rusher",  "monster_rusher");
-        CreatePrefab<JammerAI> ("Jammer",  "monster_jammer");
-        CreatePrefab<LurkerAI> ("Lurker",  "monster_lurker");
-        CreatePrefab<MimicAI>  ("Mimic",   "monster_mimic");
-        CreatePrefab<KnockerAI>("Knocker", "monster_knocker");
+        CreatePrefab<CrawlerAI>("Crawler", "monster_crawler", BuildCrawlerModel);
+        CreatePrefab<RusherAI> ("Rusher",  "monster_rusher",  BuildRusherModel);
+        CreatePrefab<JammerAI> ("Jammer",  "monster_jammer",  BuildJammerModel);
+        CreatePrefab<LurkerAI> ("Lurker",  "monster_lurker",  BuildLurkerModel);
+        CreatePrefab<MimicAI>  ("Mimic",   "monster_mimic",   BuildMimicModel);
+        CreatePrefab<KnockerAI>("Knocker", "monster_knocker", BuildKnockerModel);
     }
 
-    static void CreatePrefab<T>(string typeName, string spriteName) where T : MonsterBase
+    // ─── モンスター 3D モデル生成 ─────────────────────────────────────
+    // すべてキューブの組み合わせ。diff は色・プロポーションで識別する。
+    // 座標系: Y=0 が床面。各部位は立ち姿勢基準。
+
+    static void BuildCrawlerModel(GameObject root)
+    {
+        // 猫背・低い姿勢
+        var matBody = MonMat(C(0.15f, 0.08f, 0.06f));
+        var matEye  = MonMat(C(0.9f,  0.1f,  0.05f));
+        Part("Body",  root, new Vector3(0,   0.7f, 0),    new Vector3(0.4f, 0.5f, 0.3f), matBody);
+        Part("Head",  root, new Vector3(0,   1.1f, 0.15f),new Vector3(0.3f, 0.28f, 0.28f), matBody);
+        Part("ArmL",  root, new Vector3(-0.3f,0.6f,0.05f),new Vector3(0.12f,0.5f, 0.12f), matBody);
+        Part("ArmR",  root, new Vector3( 0.3f,0.6f,0.05f),new Vector3(0.12f,0.5f, 0.12f), matBody);
+        Part("LegL",  root, new Vector3(-0.12f,0.22f,0),  new Vector3(0.13f,0.44f,0.13f), matBody);
+        Part("LegR",  root, new Vector3( 0.12f,0.22f,0),  new Vector3(0.13f,0.44f,0.13f), matBody);
+        Part("EyeL",  root, new Vector3(-0.07f,1.14f,0.3f),new Vector3(0.05f,0.05f,0.04f), matEye);
+        Part("EyeR",  root, new Vector3( 0.07f,1.14f,0.3f),new Vector3(0.05f,0.05f,0.04f), matEye);
+    }
+
+    static void BuildRusherModel(GameObject root)
+    {
+        // 細身・前傾
+        var matBody = MonMat(C(0.12f, 0.06f, 0.04f));
+        var matEye  = MonMat(C(1.0f,  0.5f,  0.0f));
+        Part("Body",  root, new Vector3(0,    0.9f, 0),   new Vector3(0.28f, 0.6f, 0.22f), matBody);
+        Part("Head",  root, new Vector3(0,    1.45f,0.1f),new Vector3(0.26f, 0.24f,0.24f), matBody);
+        Part("ArmL",  root, new Vector3(-0.22f,0.85f,0),  new Vector3(0.1f, 0.6f, 0.1f),  matBody);
+        Part("ArmR",  root, new Vector3( 0.22f,0.85f,0),  new Vector3(0.1f, 0.6f, 0.1f),  matBody);
+        Part("LegL",  root, new Vector3(-0.1f, 0.3f, 0),  new Vector3(0.11f,0.6f, 0.11f), matBody);
+        Part("LegR",  root, new Vector3( 0.1f, 0.3f, 0),  new Vector3(0.11f,0.6f, 0.11f), matBody);
+        Part("EyeL",  root, new Vector3(-0.06f,1.5f,0.28f),new Vector3(0.05f,0.05f,0.04f),matEye);
+        Part("EyeR",  root, new Vector3( 0.06f,1.5f,0.28f),new Vector3(0.05f,0.05f,0.04f),matEye);
+    }
+
+    static void BuildJammerModel(GameObject root)
+    {
+        // 球体状・触手
+        var matBody = MonMat(C(0.10f, 0.05f, 0.18f));
+        var matEye  = MonMat(C(0.7f,  0.1f,  1.0f));
+        Part("Body",  root, new Vector3(0,   0.7f, 0),    new Vector3(0.55f, 0.55f, 0.55f), matBody);
+        Part("TenL1", root, new Vector3(-0.4f,0.6f,0),    new Vector3(0.08f, 0.08f, 0.3f),  matBody);
+        Part("TenR1", root, new Vector3( 0.4f,0.6f,0),    new Vector3(0.08f, 0.08f, 0.3f),  matBody);
+        Part("TenL2", root, new Vector3(-0.35f,0.9f,0),   new Vector3(0.06f, 0.3f,  0.06f), matBody);
+        Part("TenR2", root, new Vector3( 0.35f,0.9f,0),   new Vector3(0.06f, 0.3f,  0.06f), matBody);
+        Part("EyeL",  root, new Vector3(-0.12f,0.8f,0.3f),new Vector3(0.1f, 0.1f,  0.08f),  matEye);
+        Part("EyeR",  root, new Vector3( 0.12f,0.8f,0.3f),new Vector3(0.1f, 0.1f,  0.08f),  matEye);
+    }
+
+    static void BuildLurkerModel(GameObject root)
+    {
+        // 長身・半透明
+        var matBody = MonMat(C(0.06f, 0.06f, 0.1f), 0.55f);
+        Part("Body",  root, new Vector3(0,    1.0f, 0),   new Vector3(0.22f, 0.8f, 0.18f), matBody);
+        Part("Head",  root, new Vector3(0,    1.75f,0),   new Vector3(0.22f, 0.22f,0.22f), matBody);
+        Part("ArmL",  root, new Vector3(-0.2f,1.0f, 0),  new Vector3(0.08f, 0.7f, 0.08f), matBody);
+        Part("ArmR",  root, new Vector3( 0.2f,1.0f, 0),  new Vector3(0.08f, 0.7f, 0.08f), matBody);
+        Part("LegL",  root, new Vector3(-0.08f,0.3f,0),  new Vector3(0.09f, 0.6f, 0.09f), matBody);
+        Part("LegR",  root, new Vector3( 0.08f,0.3f,0),  new Vector3(0.09f, 0.6f, 0.09f), matBody);
+    }
+
+    static void BuildMimicModel(GameObject root)
+    {
+        // 人型+グリッチ感（ずれたパーツ）
+        var matBody  = MonMat(C(0.05f, 0.14f, 0.14f));
+        var matGlitch= MonMat(C(0.1f,  0.8f,  0.8f), 0.5f);
+        var matEye   = MonMat(C(0.2f,  0.9f,  0.9f));
+        Part("Body",  root, new Vector3(0,    0.9f, 0),   new Vector3(0.32f, 0.6f, 0.26f), matBody);
+        Part("Head",  root, new Vector3(0,    1.45f,0),   new Vector3(0.28f, 0.26f,0.26f), matBody);
+        Part("ArmL",  root, new Vector3(-0.26f,0.9f,0),  new Vector3(0.1f,  0.6f, 0.1f),  matBody);
+        Part("ArmR",  root, new Vector3( 0.26f,0.9f,0),  new Vector3(0.1f,  0.6f, 0.1f),  matBody);
+        Part("LegL",  root, new Vector3(-0.1f, 0.3f,0),  new Vector3(0.11f, 0.6f, 0.11f), matBody);
+        Part("LegR",  root, new Vector3( 0.1f, 0.3f,0),  new Vector3(0.11f, 0.6f, 0.11f), matBody);
+        // グリッチコピー（少しずれている）
+        Part("GBody", root, new Vector3(0.06f, 0.9f,0.04f),new Vector3(0.32f,0.6f,0.26f), matGlitch);
+        Part("EyeL",  root, new Vector3(-0.07f,1.49f,0.28f),new Vector3(0.06f,0.06f,0.05f),matEye);
+        Part("EyeR",  root, new Vector3( 0.07f,1.49f,0.28f),new Vector3(0.06f,0.06f,0.05f),matEye);
+    }
+
+    static void BuildKnockerModel(GameObject root)
+    {
+        // がっしり・幅広
+        var matBody = MonMat(C(0.18f, 0.12f, 0.08f));
+        var matEye  = MonMat(C(1.0f,  0.9f,  0.1f));
+        Part("Body",  root, new Vector3(0,    0.9f, 0),   new Vector3(0.6f,  0.7f, 0.4f),  matBody);
+        Part("Head",  root, new Vector3(0,    1.55f,0),   new Vector3(0.44f, 0.38f,0.38f), matBody);
+        Part("ArmL",  root, new Vector3(-0.45f,0.9f,0),  new Vector3(0.16f, 0.65f,0.16f), matBody);
+        Part("ArmR",  root, new Vector3( 0.45f,0.9f,0),  new Vector3(0.16f, 0.65f,0.16f), matBody);
+        Part("FistL", root, new Vector3(-0.45f,0.5f,0),  new Vector3(0.2f,  0.2f, 0.2f),  matBody);
+        Part("FistR", root, new Vector3( 0.45f,0.5f,0),  new Vector3(0.2f,  0.2f, 0.2f),  matBody);
+        Part("LegL",  root, new Vector3(-0.16f,0.27f,0), new Vector3(0.18f, 0.54f,0.18f), matBody);
+        Part("LegR",  root, new Vector3( 0.16f,0.27f,0), new Vector3(0.18f, 0.54f,0.18f), matBody);
+        Part("EyeL",  root, new Vector3(-0.1f, 1.6f,0.38f),new Vector3(0.08f,0.08f,0.06f),matEye);
+        Part("EyeR",  root, new Vector3( 0.1f, 1.6f,0.38f),new Vector3(0.08f,0.08f,0.06f),matEye);
+    }
+
+    // キューブ1個を生成してマテリアルを設定
+    static void Part(string name, GameObject parent, Vector3 pos, Vector3 scale, Material mat)
+    {
+        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        go.name = name;
+        go.transform.SetParent(parent.transform, false);
+        go.transform.localPosition = pos;
+        go.transform.localScale    = scale;
+        go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+        Object.DestroyImmediate(go.GetComponent<Collider>());
+    }
+
+    // 単色マテリアルを生成（透過オプション付き）
+    static Material MonMat(Color col, float alpha = 1f)
+    {
+        col.a = alpha;
+        var shader = alpha < 1f
+            ? Shader.Find("Transparent/Diffuse") ?? Shader.Find("Standard")
+            : Shader.Find("Standard");
+        var mat = new Material(shader);
+        if (alpha < 1f)
+        {
+            mat.SetFloat("_Mode", 3);
+            mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetInt("_ZWrite", 0);
+            mat.DisableKeyword("_ALPHATEST_ON");
+            mat.EnableKeyword("_ALPHABLEND_ON");
+            mat.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.renderQueue = 3000;
+        }
+        mat.color = col;
+        return mat;
+    }
+
+    static void CreatePrefab<T>(string typeName, string spriteName, System.Action<GameObject> buildModel) where T : MonsterBase
     {
         var prefabPath = $"{PRE_DIR}/Monster_{typeName}.prefab";
         var go = new GameObject($"Monster_{typeName}");
@@ -697,6 +1024,11 @@ public static class NightmareAssetSetup
             so.FindProperty("cameraSprite").objectReferenceValue = sprite;
             so.ApplyModifiedProperties();
         }
+
+        // 3Dモデルを子オブジェクトとして生成
+        var model = new GameObject("Model");
+        model.transform.SetParent(go.transform, false);
+        buildModel(model);
 
         var prefab = PrefabUtility.SaveAsPrefabAsset(go, prefabPath);
         Object.DestroyImmediate(go);

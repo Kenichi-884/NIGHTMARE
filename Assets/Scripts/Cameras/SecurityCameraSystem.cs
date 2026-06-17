@@ -27,6 +27,7 @@ public class SecurityCameraSystem : MonoBehaviour
     [SerializeField] private Text     cameraLocationText;   // 監視中の場所テキスト
     [SerializeField] private Image    noiseOverlay;         // Jammer ノイズ
     [SerializeField] private Image    staticOverlay;        // 死亡/Mimic スタティック
+    [SerializeField] private Image    monsterOverlay;       // モンスター表示オーバーレイ
 
     // 全 8 台のサイクル順序
     private static readonly CameraID[] CycleOrder =
@@ -115,6 +116,37 @@ public class SecurityCameraSystem : MonoBehaviour
         }
 
         RefreshMonitorState();
+        RefreshMonsterOverlay();
+    }
+
+    private void RefreshMonsterOverlay()
+    {
+        if (monsterOverlay == null) return;
+        if (!configs.TryGetValue(_activeCamera, out var cfg)) { monsterOverlay.enabled = false; return; }
+
+        var monsters = MonsterManager.Instance?.ActiveMonsters;
+        if (monsters == null || monsters.Count == 0) { monsterOverlay.enabled = false; return; }
+
+        MonsterBase found = null;
+        foreach (var m in monsters)
+        {
+            if (!m.IsVisible) continue;
+            foreach (var loc in cfg.coveredLocations)
+            {
+                if (m.CurrentLocation == loc) { found = m; break; }
+            }
+            if (found != null) break;
+        }
+
+        if (found != null && found.CameraSprite != null)
+        {
+            monsterOverlay.sprite  = found.CameraSprite;
+            monsterOverlay.enabled = true;
+        }
+        else
+        {
+            monsterOverlay.enabled = false;
+        }
     }
 
     private void RefreshMonitorState()
@@ -379,6 +411,7 @@ public class SecurityCameraSystem : MonoBehaviour
         cameraLocationText  = FindDeep<Text>("CameraLocationText");
         noiseOverlay        = FindDeep<Image>("MonitorNoiseOverlay");
         staticOverlay       = FindDeep<Image>("MonitorStaticOverlay");
+        monsterOverlay      = FindDeep<Image>("MonitorMonsterOverlay");
     }
 
     private T FindDeep<T>(string name) where T : Component

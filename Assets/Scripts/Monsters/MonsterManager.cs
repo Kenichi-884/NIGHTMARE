@@ -57,7 +57,7 @@ public class MonsterManager : MonoBehaviour
         active.Remove(monster);
     }
 
-    private void ClearAll()
+    public void ClearAll()
     {
         foreach (var m in new List<MonsterBase>(active))
             Destroy(m.gameObject);

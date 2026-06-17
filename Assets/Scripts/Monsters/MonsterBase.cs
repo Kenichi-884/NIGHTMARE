@@ -18,6 +18,12 @@ public abstract class MonsterBase : MonoBehaviour
     public Sprite CameraSprite => cameraSprite;
     public abstract MonsterType MonsterType { get; }
 
+    // デバッグ用
+    public int   PathIndex    => pathIndex;
+    public float MoveTimer    => moveTimer;
+    public float MoveInterval => moveInterval;
+    public int   PathLength   => movePath?.Count ?? 0;
+
     public virtual void Initialize(FacilityLocation spawnLocation, int day)
     {
         currentLocation = spawnLocation;
