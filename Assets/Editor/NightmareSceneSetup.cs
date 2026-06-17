@@ -28,6 +28,9 @@ public static class NightmareSceneSetup
         CreateEventSystem();
         SetupCamera();
 
+        // セキュリティカメラ GameObjects（3D空間にカメラを配置）
+        CreateSecurityCameras(root);
+
         // 各コンポーネントの自動接続
         canvas.GetComponent<UIManager>()?.AutoFindChildren();
         canvas.GetComponent<SecurityCameraSystem>()?.AutoFindMonitors();
@@ -65,6 +68,43 @@ public static class NightmareSceneSetup
         sys.AddComponent<MonsterSpawner>();
         sys.AddComponent<ProximityAlertSystem>();
         sys.AddComponent<InputHandler>();
+    }
+
+    // ===== セキュリティカメラ (3D空間用 Unity Camera × 8) =====
+    // 名前は "SceneCam_<CameraID>" 固定。SecurityCameraSystem が名前で検索して RenderTexture に接続する。
+    // Setup 後、各カメラを Inspector で監視したい3D位置へ移動してください。
+    static void CreateSecurityCameras(GameObject root)
+    {
+        var camRoot = Child(root, "SecurityCameras");
+
+        (string name, Vector3 pos, Vector3 rot)[] cams =
+        {
+            ("SceneCam_OUT_N",   new Vector3(  0, 3, -20), new Vector3(15,   0, 0)),
+            ("SceneCam_OUT_E",   new Vector3( 20, 3,   0), new Vector3(15, -90, 0)),
+            ("SceneCam_OUT_W",   new Vector3(-20, 3,   0), new Vector3(15,  90, 0)),
+            ("SceneCam_OUT_TOP", new Vector3(  0, 5, -10), new Vector3(30,   0, 0)),
+            ("SceneCam_IN_1F_A", new Vector3(  0, 3,  10), new Vector3(15, 180, 0)),
+            ("SceneCam_IN_1F_B", new Vector3(  0, 3,  20), new Vector3(15, 180, 0)),
+            ("SceneCam_IN_B1_A", new Vector3(  0, 3,  30), new Vector3(15, 180, 0)),
+            ("SceneCam_IN_B1_B", new Vector3(  0, 3,  40), new Vector3(15, 180, 0)),
+        };
+
+        foreach (var (name, pos, rot) in cams)
+        {
+            var go  = Child(camRoot, name);
+            go.transform.localPosition = pos;
+            go.transform.localEulerAngles = rot;
+            var cam = go.AddComponent<Camera>();
+            cam.clearFlags       = CameraClearFlags.SolidColor;
+            cam.backgroundColor  = new Color(0.05f, 0.05f, 0.07f);
+            cam.nearClipPlane    = 0.1f;
+            cam.farClipPlane     = 100f;
+            cam.fieldOfView      = 70f;
+            cam.enabled          = false; // SecurityCameraSystem が管理
+            // AudioListener は不要（MainCamera のみ持つ）
+        }
+
+        Debug.Log("[NIGHTMARE] SecurityCameras 生成完了 (8台) — Inspector で各カメラ位置を調整してください");
     }
 
     // ===== Canvas =====
@@ -110,19 +150,8 @@ public static class NightmareSceneSetup
         var game = Panel("GameScreen", canvas, Color.clear);
         Rect(game, 0, 0, W, H);
 
-        // 外部モニター（左）
-        BuildMonitor("ExternalMonitorPanel", "ExtBG", "ExtMonsterOverlay",
-            "ExtNoiseOverlay", "ExtStaticOverlay", "ExtCameraLabel",
-            "ExtCameraButtons",
-            new[] { ("OUT-N", "BtnOutN"), ("OUT-E", "BtnOutE"), ("OUT-W", "BtnOutW"), ("OUT-TOP", "BtnOutTop") },
-            game, 20, H - 604, 760, 572);
-
-        // 内部モニター（右）
-        BuildMonitor("InternalMonitorPanel", "IntBG", "IntMonsterOverlay",
-            "IntNoiseOverlay", "IntStaticOverlay", "IntCameraLabel",
-            "IntCameraButtons",
-            new[] { ("IN-1F-A", "BtnIn1FA"), ("IN-1F-B", "BtnIn1FB"), ("IN-B1-A", "BtnInB1A"), ("IN-B1-B", "BtnInB1B") },
-            game, W - 784, H - 604, 760, 572);
+        // 単一モニター（中央上部）
+        BuildSingleMonitor(game);
 
         // 下部HUD
         BuildHUD(game);
@@ -134,42 +163,58 @@ public static class NightmareSceneSetup
         map.SetActive(false);
     }
 
-    static void BuildMonitor(string panelName, string bgName,
-        string monsterName, string noiseName, string staticName, string labelName,
-        string btnGroupName, (string label, string id)[] buttons,
-        GameObject parent, float x, float y, float w, float h)
+    static void BuildSingleMonitor(GameObject parent)
     {
-        var panel = Panel(panelName, parent, C(0.08f, 0.10f, 0.14f));
-        Rect(panel, x, y, w, h);
+        float mw = 960f, mh = 780f;
+        float mx = (W - mw) * 0.5f;
+        float my = 142f;   // HUD(140px) のすぐ上
 
-        var frame = Img("Frame", panel, C(0.15f, 0.20f, 0.30f), stretch: true);
-        frame.AddComponent<Outline>().effectColor = C(0.30f, 0.50f, 0.80f);
+        var panel = Panel("MonitorPanel", parent, C(0.06f, 0.08f, 0.12f));
+        Rect(panel, mx, my, mw, mh);
 
-        // カメラ映像背景 + スキャンライン/ノイズエフェクト
-        var bgGO = new GameObject(bgName, typeof(RectTransform), typeof(Image));
-        bgGO.transform.SetParent(panel.transform, false);
-        Rect(bgGO, 8, 30, w - 16, h - 40);
-        var bgImg = bgGO.GetComponent<Image>();
-        bgImg.color = C(0.08f, 0.08f, 0.10f);
-        bgImg.preserveAspect = false;
-        bgGO.AddComponent<CameraViewEffect>();
+        // 外枠
+        var frame = Img("MonitorFrame", panel, C(0.15f, 0.22f, 0.35f), stretch: true);
+        frame.AddComponent<Outline>().effectColor = C(0.30f, 0.55f, 0.85f);
 
-        // オーバーレイ群
-        Img(noiseName,   panel, C(0.5f, 0.5f, 0.5f, 0.05f)); Rect(Find(panel, noiseName),  8, 30, w - 16, h - 40);
-        Img(staticName,  panel, C(0.8f, 0.8f, 0.8f, 0f));    Rect(Find(panel, staticName), 8, 30, w - 16, h - 40);
-        Img(monsterName, panel, Color.clear);                  Rect(Find(panel, monsterName),8, 30, w - 16, h - 40);
+        // ── 映像エリア ──
+        float vx = 8f, vy = 34f, vw = mw - 16f, vh = mh - 70f;
 
-        // カメララベル
-        Lbl(labelName, panel, "CAMERA", 13, 8, 8, 400, 20, C(0.4f, 0.8f, 1f), TextAnchor.MiddleLeft);
+        // RawImage（RenderTexture を表示する）
+        var rawGO = new GameObject("MonitorDisplay", typeof(RectTransform), typeof(UnityEngine.UI.RawImage));
+        rawGO.transform.SetParent(panel.transform, false);
+        Rect(rawGO, vx, vy, vw, vh);
+        rawGO.GetComponent<UnityEngine.UI.RawImage>().color = C(0.05f, 0.05f, 0.07f);
+        rawGO.AddComponent<CameraViewEffect>();
 
-        // カメラ切替ボタン
-        var btnGroup = Panel(btnGroupName, panel, Color.clear);
-        Rect(btnGroup, 8, -4, w - 16, 28);
-        float bx = 0f;
-        foreach (var (lbl, id) in buttons)
+        // Jammer ノイズオーバーレイ
+        Img("MonitorNoiseOverlay",   panel, C(0.5f, 0.5f, 0.5f, 0.05f));
+        Rect(Find(panel, "MonitorNoiseOverlay"),   vx, vy, vw, vh);
+        // スタティックオーバーレイ（死亡 / Mimic）
+        Img("MonitorStaticOverlay",  panel, C(0.8f, 0.8f, 0.8f, 0f));
+        Rect(Find(panel, "MonitorStaticOverlay"),  vx, vy, vw, vh);
+
+        // ── ラベル行（映像の上端）──
+        // 左: カメラ名
+        Lbl("CameraNameText",     panel, "OUT-N  北ゲート", 13,
+            vx, vy + vh + 2f, vw * 0.5f, 20f, C(0.4f, 0.8f, 1f), TextAnchor.MiddleLeft);
+        // 右: 監視中の場所
+        Lbl("CameraLocationText", panel, "監視中:  北ゲート外部", 13,
+            vx + vw * 0.5f, vy + vh + 2f, vw * 0.5f, 20f, C(0.6f, 1f, 0.6f), TextAnchor.MiddleRight);
+
+        // ── カメラ切替ボタン（8台、映像エリアの下）──
+        (string label, string id)[] cams =
         {
-            Btn(id, btnGroup, lbl, bx, 0, (w - 24) / 4, 26, C(0.12f, 0.18f, 0.28f));
-            bx += (w - 24) / 4 + 2;
+            ("OUT-N",   "BtnOutN"),  ("OUT-E",   "BtnOutE"),
+            ("OUT-W",   "BtnOutW"),  ("OUT-TOP", "BtnOutTop"),
+            ("IN-1F-A", "BtnIn1FA"),("IN-1F-B", "BtnIn1FB"),
+            ("IN-B1-A", "BtnInB1A"),("IN-B1-B", "BtnInB1B"),
+        };
+        float btnW = (vw - 14f) / 8f;
+        float bx = vx;
+        for (int i = 0; i < cams.Length; i++)
+        {
+            Btn(cams[i].id, panel, cams[i].label, bx, 4f, btnW, 28f, C(0.10f, 0.16f, 0.28f));
+            bx += btnW + 2f;
         }
     }
 
@@ -200,16 +245,15 @@ public static class NightmareSceneSetup
         BuildDoorButton("BtnEntrance", "IndEntrance", dp, "地上入口",   174,  4);
         BuildDoorButton("BtnBasement", "IndBasement", dp, "地下階段",   340,  4);
         BuildDoorButton("BtnB1",       "IndB1",       dp, "B1廊下",     506,  4);
-        Btn("BtnEmergency", dp, "緊急封鎖", 638,  68, 52, 44, C(0.7f, 0.10f, 0.08f));
-        Btn("BtnEliminate", dp, "駆除\n-5%",638,  20, 52, 44, C(0.4f, 0.08f, 0.55f));
+        Btn("BtnEmergency", dp, "緊急封鎖", 638,  38, 52, 78, C(0.7f, 0.10f, 0.08f));
 
         // カメラ操作パネル
         var cp = Panel("CamPanel", hud, C(0.07f, 0.10f, 0.16f));
         Rect(cp, 1252, 10, 330, 118);
         Lbl("CamTitle", cp, "CAMERA CONTROL", 11, 4, 100, 330, 16, C(0.5f, 0.7f, 1f), TextAnchor.MiddleLeft);
-        Btn("BtnResetExt", cp, "外部カメラ リセット  (-3%)", 8, 68, 314, 34, C(0.18f, 0.30f, 0.50f));
-        Btn("BtnResetInt", cp, "内部カメラ リセット  (-3%)", 8, 30, 314, 34, C(0.18f, 0.30f, 0.50f));
-        Btn("BtnMap",      cp, "[M] 施設マップ",             8,  -8, 314, 30, C(0.14f, 0.20f, 0.30f));
+        Btn("BtnResetCam", cp, "カメラ リセット  (-3%)", 8, 68, 314, 34, C(0.18f, 0.30f, 0.50f));
+        Btn("BtnEliminate", cp, "Jammer 駆除  (-5%)",   8, 30, 314, 34, C(0.4f, 0.08f, 0.55f));
+        Btn("BtnMap",       cp, "[M] 施設マップ",        8,  -8, 314, 30, C(0.14f, 0.20f, 0.30f));
 
         // 異常現象テキスト
         var warn = Lbl("PhenomenaWarning", hud, "", 22,

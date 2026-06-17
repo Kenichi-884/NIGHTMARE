@@ -21,8 +21,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button btnB1;
     [SerializeField] private Button btnEmergency;
     [SerializeField] private Button btnEliminate;
-    [SerializeField] private Button btnResetExtCam;
-    [SerializeField] private Button btnResetIntCam;
+    [SerializeField] private Button btnResetCam;
 
     [SerializeField] private Image indGate;
     [SerializeField] private Image indEntrance;
@@ -190,10 +189,8 @@ public class UIManager : MonoBehaviour
         btnB1?.onClick.AddListener(() => DoorManager.Instance.Toggle(DoorID.B1Corridor));
         btnEmergency?.onClick.AddListener(() => DoorManager.Instance.EmergencyLockdown());
         btnEliminate?.onClick.AddListener(() => JammerAI.TryEliminateVisible());
-        btnResetExtCam?.onClick.AddListener(() =>
-            SecurityCameraSystem.Instance.TryResetCamera(SecurityCameraSystem.Instance.ActiveExternal));
-        btnResetIntCam?.onClick.AddListener(() =>
-            SecurityCameraSystem.Instance.TryResetCamera(SecurityCameraSystem.Instance.ActiveInternal));
+        btnResetCam?.onClick.AddListener(() =>
+            SecurityCameraSystem.Instance.TryResetCamera(SecurityCameraSystem.Instance.ActiveCamera));
     }
 
     private void OnDoorChangedAnim(DoorID id, bool closed)
@@ -468,8 +465,7 @@ public class UIManager : MonoBehaviour
         btnB1        = FindChild<Button>("BtnB1");
         btnEmergency = FindChild<Button>("BtnEmergency");
         btnEliminate = FindChild<Button>("BtnEliminate");
-        btnResetExtCam = FindChild<Button>("BtnResetExt");
-        btnResetIntCam = FindChild<Button>("BtnResetInt");
+        btnResetCam    = FindChild<Button>("BtnResetCam");
 
         indGate      = FindChild<Image>("IndGate");
         indEntrance  = FindChild<Image>("IndEntrance");
