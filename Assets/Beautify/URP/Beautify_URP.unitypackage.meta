@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b5a026086e55c4223bca096f44d38711
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 233073
+  packageName: Beautify 3 - Advanced Post Processing
+  packageVersion: 30.0.2
+  assetPath: Assets/Beautify/URP/Beautify_URP.unitypackage
+  uploadId: 908918

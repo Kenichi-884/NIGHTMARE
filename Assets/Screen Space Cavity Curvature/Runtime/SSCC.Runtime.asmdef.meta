@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 85820f79590499445879fb52e62eb068
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216995
+  packageName: Screen Space Cavity & Curvature (Built-In/URP/HDRP)
+  packageVersion: 6.0.0
+  assetPath: Assets/Screen Space Cavity Curvature/Runtime/SSCC.Runtime.asmdef
+  uploadId: 879086

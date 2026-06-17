@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 80618c7fb55148147b616bb1a96ad689
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 216995
+  packageName: Screen Space Cavity & Curvature (Built-In/URP/HDRP)
+  packageVersion: 6.0.0
+  assetPath: Assets/Screen Space Cavity Curvature/README.txt
+  uploadId: 879086
