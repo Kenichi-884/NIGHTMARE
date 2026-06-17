@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dabe469cdf6057d45a87372a42574168, type: 3}
+  m_Name: MapAssembly
+  m_EditorClassIdentifier: 
+  areaExterior: {fileID: 3886240365762146313, guid: bd32ebef9467d98478cea1e7961e774d, type: 3}
+  area1F: {fileID: 480317474491944687, guid: 6743ab3d4e95d2443a783f2a0283826e, type: 3}
+  areaStaircase: {fileID: 5157586208165594698, guid: 2c4e32e9c0ed11347aa0f0d988b05520, type: 3}
+  areaB1: {fileID: 8908613636303505883, guid: d6efc5bcd1751df4dabd5f8b9bd296c2, type: 3}
+  doorGate: {fileID: 605481328721293439, guid: d18975e9c6359f943a42ba7608aa6c55, type: 3}
+  doorEntrance: {fileID: 5329469737196988341, guid: 31dd6f778e05a504cb889bc0ca085541, type: 3}
+  doorBasementStairs: {fileID: 2177691599316017050, guid: 217f7e3d2fc554e4db33d35e3a0d18bc, type: 3}
+  doorB1Corridor: {fileID: 536987141197779297, guid: b6ca20371a45de6419b40e98411fc673, type: 3}
+  areaProps: {fileID: 2004110403424452276, guid: d8db02fe0def7fb42b5b663be2b24523, type: 3}
+  areaRoof: {fileID: 4726625817280791438, guid: c0c09113958e8b546aba6613b175925a, type: 3}
+  areaSignage: {fileID: 1324103513892943572, guid: ef96068b1ede4a94c892a539e88fafdd, type: 3}
+  areaCCTV: {fileID: 4946741371898080785, guid: 474363eeb2f6f5141be5b2676cb734f1, type: 3}
+  uiRoomNodeTemplate: {fileID: 0}
+  uiConnectionTemplate: {fileID: 0}

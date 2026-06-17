@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f550bfda5bdccd240b8c013ed42cb945, type: 3}
+  m_Name: MapTheme
+  m_EditorClassIdentifier: 
+  mapBg: {r: 0.04, g: 0.06, b: 0.1, a: 0.97}
+  zoneOutdoor: {r: 0.06, g: 0.1, b: 0.18, a: 0.55}
+  zone1F: {r: 0.08, g: 0.13, b: 0.22, a: 0.5}
+  zoneB1: {r: 0.04, g: 0.07, b: 0.13, a: 0.62}
+  zoneBorder: {r: 0.18, g: 0.28, b: 0.46, a: 0.5}
+  lineColor: {r: 0.22, g: 0.34, b: 0.54, a: 1}
+  arrowColor: {r: 0.32, g: 0.52, b: 0.74, a: 1}
+  lineWidth: 2
+  roomBg: {r: 0.1, g: 0.15, b: 0.24, a: 1}
+  roomBgYou: {r: 0.06, g: 0.2, b: 0.11, a: 1}
+  roomBgSide: {r: 0.08, g: 0.12, b: 0.2, a: 1}
+  roomBorder: {r: 0.28, g: 0.5, b: 0.76, a: 1}
+  roomBorderYou: {r: 0.22, g: 0.72, b: 0.36, a: 1}
+  roomLabel: {r: 0.82, g: 0.93, b: 1, a: 1}
+  roomDanger: {r: 0.4, g: 0.04, b: 0.04, a: 1}
+  doorOpen: {r: 0.14, g: 0.82, b: 0.22, a: 1}
+  doorClosed: {r: 0.9, g: 0.14, b: 0.07, a: 1}
+  camActive: {r: 0.18, g: 0.9, b: 1, a: 1}
+  camNormal: {r: 0.12, g: 0.52, b: 0.82, a: 1}
+  camDead: {r: 0.32, g: 0.32, b: 0.35, a: 1}
+  monCrawler: {r: 1, g: 0.28, b: 0.08, a: 1}
+  monRusher: {r: 1, g: 0.62, b: 0, a: 1}
+  monJammer: {r: 0.68, g: 0.16, b: 1, a: 1}
+  monLurker: {r: 0.5, g: 0.52, b: 0.6, a: 1}
+  monMimic: {r: 0.1, g: 0.9, b: 0.88, a: 1}
+  monKnocker: {r: 1, g: 0.98, b: 0.16, a: 1}
+  textTitle: {r: 0.44, g: 0.76, b: 1, a: 1}
+  textSub: {r: 0.38, g: 0.5, b: 0.7, a: 0.85}
+  textHint: {r: 0.28, g: 0.36, b: 0.5, a: 0.8}
+  textDoorLabel: {r: 0.85, g: 0.82, b: 0.44, a: 0.9}
+  textLegend: {r: 0.72, g: 0.8, b: 0.9, a: 1}

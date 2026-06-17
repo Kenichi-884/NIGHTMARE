@@ -23,7 +23,7 @@ public class InitDarkUI : MonoBehaviour
 				EditorPrefs.SetString("DarkUI.CustomEditorLight", lightPath);
 			}
 
-			if (!EditorPrefs.HasKey("DarkUI.PipelineUpgrader") && GraphicsSettings.renderPipelineAsset != null)
+			if (!EditorPrefs.HasKey("DarkUI.PipelineUpgrader") && GraphicsSettings.defaultRenderPipeline != null)
 			{
 				EditorPrefs.SetInt("DarkUI.PipelineUpgrader", 1);
 				

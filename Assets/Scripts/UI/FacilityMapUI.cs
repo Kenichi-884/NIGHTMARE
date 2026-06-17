@@ -2,27 +2,67 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-// 施設マップをリアルタイムで表示する
-// Mキーまたはマップボタンでトグル
-// このコンポーネントはAwakeで自分のUI子要素を全て生成する（自己完結型）
+/// <summary>
+/// 施設マップをリアルタイムで表示する自己完結型UIコンポーネント。
+///
+/// ─ プレハブ対応 ─────────────────────────────────────────
+/// Inspector の [theme] フィールドに MapTheme アセットをアサインすると
+/// 全ての色・サイズを一括変更できる（null 時はデフォルト色を使用）。
+/// MapPanel.prefab として保存しておけば他シーンで再利用可能。
+///
+/// ─ 生成フロー ────────────────────────────────────────────
+/// Awake → BuildMap() でUI子オブジェクトを全生成。
+/// Update → ドア/カメラ/モンスターの状態を毎フレーム更新。
+/// 各部屋オブジェクトには MapRoomNode コンポーネントがアタッチされ、
+/// 侵入者検知時のパルスアニメーションを自律的に処理する。
+/// </summary>
+[DisallowMultipleComponent]
 public class FacilityMapUI : MonoBehaviour
 {
-    // マップ内の各エリアの位置 (正規化 0-1, 左上が0,0)
-    private static readonly Dictionary<FacilityLocation, Vector2> RoomPositions = new()
+    // ─────────────────────────────────────────────────────
+    // Inspector
+    // ─────────────────────────────────────────────────────
+    [Tooltip("色・スタイル設定。NIGHTMARE/Map Theme で作成。null 時はデフォルト色を使用。")]
+    [SerializeField] public MapTheme theme;
+
+    [Tooltip("セクション別プレハブ管理。NIGHTMARE/Map Assembly で作成。\n" +
+             "uiRoomNodeTemplate が設定されていると各部屋をそのプレハブから生成する。")]
+    [SerializeField] public MapAssembly assembly;
+
+    // ─────────────────────────────────────────────────────
+    // 静的レイアウトデータ
+    // ─────────────────────────────────────────────────────
+
+    // 正規化座標 (X: 0=左 1=右, Y: 0=上 1=下)
+    private static readonly Dictionary<FacilityLocation, Vector2> RoomNorm = new()
     {
         { FacilityLocation.Outside_North, new Vector2(0.50f, 0.04f) },
-        { FacilityLocation.Outside_East,  new Vector2(0.85f, 0.13f) },
-        { FacilityLocation.Outside_West,  new Vector2(0.15f, 0.13f) },
-        { FacilityLocation.Outside_Top,   new Vector2(0.50f, 0.22f) },
-        { FacilityLocation.Lobby_Main,    new Vector2(0.50f, 0.38f) },
-        { FacilityLocation.Lobby_Stairs,  new Vector2(0.50f, 0.50f) },
-        { FacilityLocation.B1_Corridor,   new Vector2(0.50f, 0.64f) },
-        { FacilityLocation.B1_DoorFront,  new Vector2(0.50f, 0.76f) },
-        { FacilityLocation.ManagersRoom,  new Vector2(0.50f, 0.90f) },
+        { FacilityLocation.Outside_East,  new Vector2(0.85f, 0.15f) },
+        { FacilityLocation.Outside_West,  new Vector2(0.15f, 0.15f) },
+        { FacilityLocation.Outside_Top,   new Vector2(0.50f, 0.27f) },
+        { FacilityLocation.Lobby_Main,    new Vector2(0.50f, 0.41f) },
+        { FacilityLocation.Lobby_Stairs,  new Vector2(0.50f, 0.53f) },
+        { FacilityLocation.B1_Corridor,   new Vector2(0.50f, 0.66f) },
+        { FacilityLocation.B1_DoorFront,  new Vector2(0.50f, 0.78f) },
+        { FacilityLocation.ManagersRoom,  new Vector2(0.50f, 0.91f) },
     };
 
-    // カメラがカバーするエリア
-    private static readonly Dictionary<CameraID, FacilityLocation> CameraLocations = new()
+    // 各ルームのサイズ (幅, 高さ) px
+    private static readonly Dictionary<FacilityLocation, Vector2> RoomSize = new()
+    {
+        { FacilityLocation.Outside_North, new Vector2(76f, 26f) },
+        { FacilityLocation.Outside_East,  new Vector2(52f, 24f) },
+        { FacilityLocation.Outside_West,  new Vector2(52f, 24f) },
+        { FacilityLocation.Outside_Top,   new Vector2(76f, 26f) },
+        { FacilityLocation.Lobby_Main,    new Vector2(84f, 30f) },
+        { FacilityLocation.Lobby_Stairs,  new Vector2(84f, 26f) },
+        { FacilityLocation.B1_Corridor,   new Vector2(84f, 30f) },
+        { FacilityLocation.B1_DoorFront,  new Vector2(84f, 26f) },
+        { FacilityLocation.ManagersRoom,  new Vector2(102f, 36f) },
+    };
+
+    // カメラ → 担当ロケーション
+    private static readonly Dictionary<CameraID, FacilityLocation> CameraLoc = new()
     {
         { CameraID.OUT_N,   FacilityLocation.Outside_North },
         { CameraID.OUT_E,   FacilityLocation.Outside_East  },
@@ -34,8 +74,8 @@ public class FacilityMapUI : MonoBehaviour
         { CameraID.IN_B1_B, FacilityLocation.B1_DoorFront  },
     };
 
-    // ドアが位置する接続間（From → To の中間に表示）
-    private static readonly Dictionary<DoorID, (FacilityLocation from, FacilityLocation to)> DoorConnections = new()
+    // ドア → 遮断する接続 (from→to の中間に表示)
+    private static readonly Dictionary<DoorID, (FacilityLocation from, FacilityLocation to)> DoorGate = new()
     {
         { DoorID.Gate,           (FacilityLocation.Outside_North, FacilityLocation.Outside_Top)  },
         { DoorID.Entrance,       (FacilityLocation.Outside_Top,   FacilityLocation.Lobby_Main)   },
@@ -43,34 +83,95 @@ public class FacilityMapUI : MonoBehaviour
         { DoorID.B1Corridor,     (FacilityLocation.B1_DoorFront,  FacilityLocation.ManagersRoom) },
     };
 
-    // 色定義
-    private static readonly Color ColRoom    = new Color(0.12f, 0.16f, 0.22f, 1f);
-    private static readonly Color ColRoomYou = new Color(0.10f, 0.25f, 0.15f, 1f);
-    private static readonly Color ColBorder  = new Color(0.3f,  0.5f,  0.7f,  1f);
-    private static readonly Color ColDoorOpen   = new Color(0.2f, 0.7f, 0.2f, 1f);
-    private static readonly Color ColDoorClosed = new Color(0.8f, 0.2f, 0.1f, 1f);
-    private static readonly Color ColCamera  = new Color(0.2f, 0.8f, 1.0f, 1f);
-    private static readonly Color ColCamDead = new Color(0.4f, 0.4f, 0.4f, 1f);
-    private static readonly Color ColMonster = new Color(1.0f, 0.2f, 0.1f, 1f);
-    private static readonly Color ColMapBG   = new Color(0.04f, 0.06f, 0.10f, 0.96f);
-    private static readonly Color ColLine    = new Color(0.2f, 0.3f, 0.45f, 1f);
-    private static readonly Color ColFloor1F = new Color(0.08f, 0.12f, 0.20f, 0.6f);
-    private static readonly Color ColFloorB1 = new Color(0.06f, 0.10f, 0.16f, 0.6f);
+    // 接続 (モンスター移動方向 from → to)
+    private static readonly (FacilityLocation from, FacilityLocation to)[] Connections =
+    {
+        (FacilityLocation.Outside_North, FacilityLocation.Outside_Top),
+        (FacilityLocation.Outside_East,  FacilityLocation.Outside_Top),
+        (FacilityLocation.Outside_West,  FacilityLocation.Outside_Top),
+        (FacilityLocation.Outside_Top,   FacilityLocation.Lobby_Main),
+        (FacilityLocation.Lobby_Main,    FacilityLocation.Lobby_Stairs),
+        (FacilityLocation.Lobby_Stairs,  FacilityLocation.B1_Corridor),
+        (FacilityLocation.B1_Corridor,   FacilityLocation.B1_DoorFront),
+        (FacilityLocation.B1_DoorFront,  FacilityLocation.ManagersRoom),
+    };
 
-    private RectTransform mapRoot;
-    private readonly Dictionary<FacilityLocation, RectTransform> roomPanels = new();
-    private readonly Dictionary<DoorID, Image> doorIndicators = new();
-    private readonly Dictionary<CameraID, Image> cameraIcons = new();
-    private readonly Dictionary<FacilityLocation, Image> monsterMarkers = new();
-    private float mapW, mapH;
+    // フロアゾーン (日本語名, normYStart, normYEnd)
+    private static readonly (string jp, float yS, float yE)[] FloorZones =
+    {
+        ("地上", 0.00f, 0.34f),
+        ("1F",   0.34f, 0.59f),
+        ("B1",   0.59f, 1.00f),
+    };
+
+    // ─────────────────────────────────────────────────────
+    // レイアウト定数
+    // ─────────────────────────────────────────────────────
+    private const float LegendH = 106f;   // 下部凡例エリアの高さ
+    private const float TitleH  = 18f;    // 上部タイトルバーの高さ
+
+    // ─────────────────────────────────────────────────────
+    // ランタイムフィールド
+    // ─────────────────────────────────────────────────────
+    private float mapW, mapH, contentH;
     private float blinkTimer;
 
+    private readonly Dictionary<FacilityLocation, MapRoomNode> roomNodes   = new();
+    private readonly Dictionary<DoorID,           Image>       doorBars    = new();
+    private readonly Dictionary<CameraID,         Image>       camIcons    = new();
+    // ロケーション → モンスタータイプ順のドットリスト
+    private readonly Dictionary<FacilityLocation, Image[]>     monsterDots = new();
+
+    // ─────────────────────────────────────────────────────
+    // テーマカラー取得 (fallback 付き)
+    // ─────────────────────────────────────────────────────
+    private Color C_MapBG       => theme ? theme.mapBg         : new Color(0.04f, 0.06f, 0.10f, 0.97f);
+    private Color C_ZoneOD      => theme ? theme.zoneOutdoor   : new Color(0.06f, 0.10f, 0.18f, 0.55f);
+    private Color C_Zone1F      => theme ? theme.zone1F        : new Color(0.08f, 0.13f, 0.22f, 0.50f);
+    private Color C_ZoneB1      => theme ? theme.zoneB1        : new Color(0.04f, 0.07f, 0.13f, 0.62f);
+    private Color C_ZoneBorder  => theme ? theme.zoneBorder    : new Color(0.18f, 0.28f, 0.46f, 0.50f);
+    private Color C_Line        => theme ? theme.lineColor     : new Color(0.22f, 0.34f, 0.54f, 1f);
+    private Color C_Arrow       => theme ? theme.arrowColor    : new Color(0.32f, 0.52f, 0.74f, 1f);
+    private float C_LineW       => theme ? theme.lineWidth     : 2f;
+    private Color C_RoomBg      => theme ? theme.roomBg        : new Color(0.10f, 0.15f, 0.24f, 1f);
+    private Color C_RoomBgYou   => theme ? theme.roomBgYou     : new Color(0.06f, 0.20f, 0.11f, 1f);
+    private Color C_RoomBgSide  => theme ? theme.roomBgSide    : new Color(0.08f, 0.12f, 0.20f, 1f);
+    private Color C_RoomBorder  => theme ? theme.roomBorder    : new Color(0.28f, 0.50f, 0.76f, 1f);
+    private Color C_RoomBdYou   => theme ? theme.roomBorderYou : new Color(0.22f, 0.72f, 0.36f, 1f);
+    private Color C_RoomLabel   => theme ? theme.roomLabel     : new Color(0.82f, 0.93f, 1.00f, 1f);
+    private Color C_RoomDanger  => theme ? theme.roomDanger    : new Color(0.40f, 0.04f, 0.04f, 1f);
+    private Color C_DoorOpen    => theme ? theme.doorOpen      : new Color(0.14f, 0.82f, 0.22f, 1f);
+    private Color C_DoorClosed  => theme ? theme.doorClosed    : new Color(0.90f, 0.14f, 0.07f, 1f);
+    private Color C_CamActive   => theme ? theme.camActive     : new Color(0.18f, 0.90f, 1.00f, 1f);
+    private Color C_CamNormal   => theme ? theme.camNormal     : new Color(0.12f, 0.52f, 0.82f, 1f);
+    private Color C_CamDead     => theme ? theme.camDead       : new Color(0.32f, 0.32f, 0.35f, 1f);
+    private Color C_Title       => theme ? theme.textTitle     : new Color(0.44f, 0.76f, 1.00f, 1f);
+    private Color C_Sub         => theme ? theme.textSub       : new Color(0.38f, 0.50f, 0.70f, 0.85f);
+    private Color C_Hint        => theme ? theme.textHint      : new Color(0.28f, 0.36f, 0.50f, 0.80f);
+    private Color C_DoorLbl     => theme ? theme.textDoorLabel : new Color(0.85f, 0.82f, 0.44f, 0.90f);
+    private Color C_LegText     => theme ? theme.textLegend    : new Color(0.72f, 0.80f, 0.90f, 1.00f);
+
+    private Color MonsterCol(MonsterType t) =>
+        theme ? theme.GetMonsterColor(t) : t switch
+        {
+            MonsterType.Crawler => new Color(1.00f, 0.28f, 0.08f),
+            MonsterType.Rusher  => new Color(1.00f, 0.62f, 0.00f),
+            MonsterType.Jammer  => new Color(0.68f, 0.16f, 1.00f),
+            MonsterType.Lurker  => new Color(0.50f, 0.52f, 0.60f),
+            MonsterType.Mimic   => new Color(0.10f, 0.90f, 0.88f),
+            MonsterType.Knocker => new Color(1.00f, 0.98f, 0.16f),
+            _                   => Color.white
+        };
+
+    // ─────────────────────────────────────────────────────
+    // Unity Lifecycle
+    // ─────────────────────────────────────────────────────
     private void Awake()
     {
-        var rt = GetComponent<RectTransform>();
-        mapW = rt.rect.width  == 0 ? 280f : rt.rect.width;
-        mapH = rt.rect.height == 0 ? 600f : rt.rect.height;
-
+        var rt   = GetComponent<RectTransform>();
+        mapW     = rt.rect.width  > 1f ? rt.rect.width  : 292f;
+        mapH     = rt.rect.height > 1f ? rt.rect.height : 622f;
+        contentH = mapH - LegendH - TitleH;
         BuildMap();
     }
 
@@ -83,172 +184,327 @@ public class FacilityMapUI : MonoBehaviour
         UpdateMonsters();
     }
 
-    // ===== マップ構築 =====
+    // ─────────────────────────────────────────────────────
+    // ── マップ構築 ────────────────────────────────────────
+    // ─────────────────────────────────────────────────────
     private void BuildMap()
     {
-        // 背景
-        CreateImage("MapBG", transform, ColMapBG, Vector2.zero, new Vector2(mapW, mapH), Vector2.zero);
+        // 全体背景
+        Img("MapBG", transform, C_MapBG, V2(0, 0), V2(mapW, mapH), V2(0, 0));
 
-        // タイトル
-        CreateLabel("MapTitle", transform, "施設 見取り図", 13,
-            new Vector2(mapW * 0.5f, mapH - 12f), new Vector2(mapW, 20f), new Color(0.5f, 0.8f, 1f));
+        // ─ タイトルバー ─
+        Img("TitleBar", transform,
+            new Color(0.07f, 0.11f, 0.19f, 1f),
+            V2(0, mapH - TitleH), V2(mapW, TitleH), V2(0, 0));
+        Txt("MapTitle", transform, "施 設 見 取 り 図", 11,
+            V2(mapW * 0.5f, mapH - TitleH * 0.5f), V2(mapW, TitleH),
+            C_Title, TextAnchor.MiddleCenter);
 
-        // フロア帯（地上 / 1F / B1）
-        DrawFloorBand("地上エリア",  0.00f, 0.33f, new Color(0.08f, 0.14f, 0.22f, 0.5f));
-        DrawFloorBand("1F ロビー",   0.33f, 0.58f, ColFloor1F);
-        DrawFloorBand("B1 地下",     0.58f, 1.00f, ColFloorB1);
+        // ─ フロアゾーンバンド ─
+        BuildFloorZones();
 
-        // ルームをつなぐ接続線
-        DrawConnection(FacilityLocation.Outside_North, FacilityLocation.Outside_Top);
-        DrawConnection(FacilityLocation.Outside_East,  FacilityLocation.Outside_Top);
-        DrawConnection(FacilityLocation.Outside_West,  FacilityLocation.Outside_Top);
-        DrawConnection(FacilityLocation.Outside_Top,   FacilityLocation.Lobby_Main);
-        DrawConnection(FacilityLocation.Lobby_Main,    FacilityLocation.Lobby_Stairs);
-        DrawConnection(FacilityLocation.Lobby_Stairs,  FacilityLocation.B1_Corridor);
-        DrawConnection(FacilityLocation.B1_Corridor,   FacilityLocation.B1_DoorFront);
-        DrawConnection(FacilityLocation.B1_DoorFront,  FacilityLocation.ManagersRoom);
+        // ─ 接続線 (ルームの下に描画) ─
+        foreach (var (from, to) in Connections)
+            BuildConnection(from, to);
 
-        // ルームパネル
-        CreateRoom(FacilityLocation.Outside_North, "北ゲート",    52, 22);
-        CreateRoom(FacilityLocation.Outside_East,  "東側",        40, 18);
-        CreateRoom(FacilityLocation.Outside_West,  "西側",        40, 18);
-        CreateRoom(FacilityLocation.Outside_Top,   "入口前",      56, 22);
-        CreateRoom(FacilityLocation.Lobby_Main,    "ロビー",      68, 26);
-        CreateRoom(FacilityLocation.Lobby_Stairs,  "階段・EV",    68, 22);
-        CreateRoom(FacilityLocation.B1_Corridor,   "B1廊下",      68, 26);
-        CreateRoom(FacilityLocation.B1_DoorFront,  "管理人室前",  68, 22);
-        CreateRoom(FacilityLocation.ManagersRoom,  "▣ 管理人室", 80, 30, ColRoomYou);
+        // ─ ドアインジケーター ─
+        foreach (var (id, pair) in DoorGate)
+            BuildDoorIndicator(id, pair.from, pair.to);
 
-        // ドアインジケーター
-        CreateDoorIndicator(DoorID.Gate,           "外壁ゲート");
-        CreateDoorIndicator(DoorID.Entrance,       "入口ドア");
-        CreateDoorIndicator(DoorID.BasementStairs, "地下階段");
-        CreateDoorIndicator(DoorID.B1Corridor,     "B1廊下ドア");
+        // ─ ルームノード ─
+        BuildRoom(FacilityLocation.Outside_North, "北ゲート");
+        BuildRoom(FacilityLocation.Outside_East,  "東側");
+        BuildRoom(FacilityLocation.Outside_West,  "西側");
+        BuildRoom(FacilityLocation.Outside_Top,   "入口前");
+        BuildRoom(FacilityLocation.Lobby_Main,    "ロビー");
+        BuildRoom(FacilityLocation.Lobby_Stairs,  "階段・EV");
+        BuildRoom(FacilityLocation.B1_Corridor,   "B1廊下");
+        BuildRoom(FacilityLocation.B1_DoorFront,  "管理人室前");
+        BuildRoom(FacilityLocation.ManagersRoom,  "▣  管理人室", isYou: true);
 
-        // カメライコン
-        foreach (var kvp in CameraLocations)
-            CreateCameraIcon(kvp.Key, kvp.Value);
+        // ─ カメラアイコン ─
+        foreach (var (camId, loc) in CameraLoc)
+            BuildCameraIcon(camId, loc);
 
-        // モンスターマーカー（各ロケーションに1つ用意）
+        // ─ モンスタードット ─
+        BuildMonsterDots();
+
+        // ─ 凡例ストリップ ─
+        BuildLegend();
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildFloorZones()
+    {
+        Color[] cols = { C_ZoneOD, C_Zone1F, C_ZoneB1 };
+        for (int i = 0; i < FloorZones.Length; i++)
+        {
+            var (jp, yS, yE) = FloorZones[i];
+            float yBot = LegendH + (1f - yE) * contentH;
+            float yH   = (yE - yS) * contentH;
+
+            Img($"Zone_{i}", transform, cols[i], V2(0, yBot), V2(mapW, yH), V2(0, 0));
+
+            // 上境界線
+            if (i > 0)
+                Img($"ZoneLine_{i}", transform, C_ZoneBorder,
+                    V2(0, yBot + yH - 1f), V2(mapW, 1f), V2(0, 0));
+
+            // ゾーンラベル (右端に縦配置)
+            Txt($"ZoneLbl_{i}", transform, jp, 9,
+                V2(mapW - 10f, yBot + yH * 0.5f), V2(10f, yH),
+                C_Sub, TextAnchor.MiddleCenter);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildConnection(FacilityLocation from, FacilityLocation to)
+    {
+        Vector2 p1    = ToUI(from);
+        Vector2 p2    = ToUI(to);
+        Vector2 mid   = (p1 + p2) * 0.5f;
+        float   dist  = Vector2.Distance(p1, p2);
+        float   angle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
+
+        // ── ライン ──
+        var line = Img($"Line_{from}_{to}", transform, C_Line,
+            mid, V2(dist, C_LineW), V2(0.5f, 0.5f));
+        line.localEulerAngles = V3(0, 0, angle);
+
+        // ── 方向矢印 (60% 地点に ">" を回転配置) ──
+        Vector2 arrPos = Vector2.Lerp(p1, p2, 0.60f);
+        var arr = Txt($"Arr_{from}_{to}", transform, ">", 10,
+            arrPos, V2(14f, 14f), C_Arrow, TextAnchor.MiddleCenter);
+        arr.localEulerAngles = V3(0, 0, angle);
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildDoorIndicator(DoorID id, FacilityLocation from, FacilityLocation to)
+    {
+        Vector2 p1    = ToUI(from);
+        Vector2 p2    = ToUI(to);
+        Vector2 mid   = (p1 + p2) * 0.5f;
+        float   angle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
+
+        // ドア開閉バー (接続線と直交した太い横棒)
+        var bar = Img($"DoorBar_{id}", transform, C_DoorOpen,
+            mid, V2(20f, 5f), V2(0.5f, 0.5f));
+        bar.localEulerAngles = V3(0, 0, angle);
+        doorBars[id] = bar.GetComponent<Image>();
+
+        // ドアラベル (バーの右横/上横)
+        bool isVert = Mathf.Abs(Mathf.Sin(angle * Mathf.Deg2Rad)) > 0.5f;
+        Vector2 lblOff = isVert ? V2(22f, 0f) : V2(0f, 11f);
+        string lbl = id switch
+        {
+            DoorID.Gate           => "Gate",
+            DoorID.Entrance       => "入口",
+            DoorID.BasementStairs => "地下",
+            DoorID.B1Corridor     => "B1",
+            _                     => id.ToString()
+        };
+        Txt($"DoorLbl_{id}", transform, lbl, 8,
+            mid + lblOff, V2(32f, 14f), C_DoorLbl, TextAnchor.MiddleCenter);
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildRoom(FacilityLocation loc, string label, bool isYou = false)
+    {
+        Vector2 pos    = ToUI(loc);
+        Vector2 sz     = RoomSize[loc];
+        bool    isSide = loc == FacilityLocation.Outside_East
+                      || loc == FacilityLocation.Outside_West;
+
+        Color bgCol = isYou  ? C_RoomBgYou
+                    : isSide ? C_RoomBgSide
+                    : C_RoomBg;
+        Color bdCol = isYou ? C_RoomBdYou : C_RoomBorder;
+
+        // ── テンプレートプレハブからインスタンス化（設定されている場合）──
+        if (assembly?.uiRoomNodeTemplate != null)
+        {
+            var go  = Object.Instantiate(assembly.uiRoomNodeTemplate, transform);
+            go.name = $"Room_{loc}";
+            var rt  = go.GetComponent<RectTransform>();
+            if (rt)
+            {
+                rt.anchorMin = rt.anchorMax = Vector2.zero;
+                rt.pivot     = V2(0.5f, 0.5f);
+                rt.anchoredPosition = pos;
+                rt.sizeDelta        = sz;
+            }
+            var bgImg = go.GetComponent<Image>();
+            if (bgImg) bgImg.color = bgCol;
+            var ol = go.GetComponent<Outline>();
+            if (ol) { ol.effectColor = bdCol; ol.effectDistance = V2(1.5f, 1.5f); }
+            var lbl = go.GetComponentInChildren<Text>();
+            if (lbl) { lbl.text = label; lbl.fontSize = isYou ? 11 : isSide ? 8 : 10; }
+            var node = go.GetComponent<MapRoomNode>() ?? go.AddComponent<MapRoomNode>();
+            node.Init(loc, isYou, bgImg, ol, bgCol, C_RoomDanger, bdCol);
+            roomNodes[loc] = node;
+            return;
+        }
+
+        // ── フォールバック: コードで直接生成 ──────────────────────────
+        var panel = Img($"Room_{loc}", transform, bgCol, pos, sz, V2(0.5f, 0.5f));
+        var bgImage = panel.GetComponent<Image>();
+
+        var outline = panel.gameObject.AddComponent<Outline>();
+        outline.effectColor    = bdCol;
+        outline.effectDistance = V2(1.5f, 1.5f);
+
+        int fontSize = isYou ? 11 : isSide ? 8 : 10;
+        Txt($"RoomLbl_{loc}", panel, label, fontSize,
+            Vector2.zero, sz - V2(4f, 0f), C_RoomLabel, TextAnchor.MiddleCenter);
+
+        var roomNode = panel.gameObject.AddComponent<MapRoomNode>();
+        roomNode.Init(loc, isYou, bgImage, outline, bgCol, C_RoomDanger, bdCol);
+        roomNodes[loc] = roomNode;
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildCameraIcon(CameraID camId, FacilityLocation loc)
+    {
+        Vector2 center = ToUI(loc);
+        Vector2 sz     = RoomSize[loc];
+
+        // 部屋の左上コーナーに配置 (7×7 の小さな四角)
+        Vector2 iconPos = center + V2(-sz.x * 0.5f + 5f, sz.y * 0.5f - 8f);
+        var icon = Img($"Cam_{camId}", transform, C_CamNormal,
+            iconPos, V2(7f, 7f), V2(0.5f, 0.5f));
+        camIcons[camId] = icon.GetComponent<Image>();
+
+        // カメラIDのミニラベル (アイコン左側)
+        string shortId = camId.ToString().Replace("OUT_", "").Replace("IN_", "");
+        Txt($"CamTxt_{camId}", transform, shortId, 7,
+            iconPos + V2(-2f, 0f), V2(28f, 10f), C_CamNormal, TextAnchor.MiddleRight);
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildMonsterDots()
+    {
+        // 各ロケーションに6タイプ分のドットを右上コーナーに縦積み配置
         foreach (FacilityLocation loc in System.Enum.GetValues(typeof(FacilityLocation)))
         {
             if (loc == FacilityLocation.ManagersRoom) continue;
-            var marker = CreateImage($"Marker_{loc}", transform, ColMonster,
-                NormToMap(RoomPositions[loc]) + new Vector2(22f, 0f), new Vector2(10f, 10f), new Vector2(0.5f, 0.5f));
-            marker.GetComponent<Image>().sprite = null;
-            var img = marker.GetComponent<Image>();
-            monsterMarkers[loc] = img;
-            img.gameObject.SetActive(false);
+
+            Vector2 center = ToUI(loc);
+            Vector2 sz     = RoomSize[loc];
+
+            float dotX      = center.x + sz.x * 0.5f - 7f;
+            float dotYStart = center.y + sz.y * 0.5f - 7f;
+            float dotStep   = 6.5f;
+
+            var types = System.Enum.GetValues(typeof(MonsterType));
+            var dots  = new Image[types.Length];
+
+            foreach (MonsterType mt in types)
+            {
+                int   i    = (int)mt;
+                float dotY = dotYStart - i * dotStep;
+                if (dotY < center.y - sz.y * 0.5f + 4f) break;  // ルーム外なら省略
+
+                var dot  = Img($"MDot_{loc}_{mt}", transform, MonsterCol(mt),
+                    V2(dotX, dotY), V2(5f, 5f), V2(0.5f, 0.5f));
+                var img  = dot.GetComponent<Image>();
+                img.gameObject.SetActive(false);
+                dots[i] = img;
+            }
+            monsterDots[loc] = dots;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────
+    private void BuildLegend()
+    {
+        // 背景
+        Img("LegBG", transform,
+            new Color(0.05f, 0.08f, 0.14f, 0.97f),
+            V2(0, 0), V2(mapW, LegendH), V2(0, 0));
+
+        // 上境界線
+        Img("LegTopLine", transform, C_ZoneBorder,
+            V2(0, LegendH - 1f), V2(mapW, 1f), V2(0, 0));
+
+        // タイトル
+        Txt("LegTitle", transform, "凡  例", 8,
+            V2(mapW * 0.5f, LegendH - 7f), V2(mapW, 12f),
+            C_Sub, TextAnchor.MiddleCenter);
+
+        // 中央縦仕切り
+        Img("LegDivider", transform,
+            new Color(0.18f, 0.28f, 0.42f, 0.5f),
+            V2(mapW * 0.5f - 1f, 14f), V2(1f, LegendH - 22f), V2(0, 0));
+
+        // 行 Y 座標 (下から積み上げ)
+        float[] rows = { 72f, 59f, 46f, 33f, 20f };  // 5 rows
+
+        // ── 左カラム: ドア / カメラ ──────────────
+        LegEntry("DO", "ドア  開",  C_DoorOpen,   5, 6f, 14f, rows[0], 5, 8);
+        LegEntry("DC", "ドア  閉",  C_DoorClosed, 5, 6f, 14f, rows[1], 5, 8);
+        LegEntry("CA", "Cam  選択", C_CamActive,  7, 6f, 15f, rows[2], 7, 8);
+        LegEntry("CN", "Cam  通常", C_CamNormal,  7, 6f, 15f, rows[3], 7, 8);
+        LegEntry("CD", "Cam  故障", C_CamDead,    7, 6f, 15f, rows[4], 7, 8);
+
+        // ── 右カラム: モンスター (3行×2列) ────────
+        (MonsterType mt, string nm)[] mons =
+        {
+            (MonsterType.Crawler, "Crawler"),
+            (MonsterType.Rusher,  "Rusher"),
+            (MonsterType.Jammer,  "Jammer"),
+            (MonsterType.Lurker,  "Lurker"),
+            (MonsterType.Mimic,   "Mimic"),
+            (MonsterType.Knocker, "Knocker"),
+        };
+
+        // 3行2列: 左サブ列=0-2, 右サブ列=3-5
+        float rColA = mapW * 0.5f + 4f;   // サブ列A ドット X
+        float rColB = mapW * 0.5f + 72f;  // サブ列B ドット X
+        for (int i = 0; i < 6; i++)
+        {
+            float dx  = i < 3 ? rColA   : rColB;
+            float dtx = i < 3 ? dx + 9f : dx + 9f;
+            float y   = rows[i < 3 ? i : i - 3];
+            LegEntry($"M{i}", mons[i].nm, MonsterCol(mons[i].mt),
+                7, dx, dtx, y, 7, 8);
         }
 
-        // 凡例
-        DrawLegend();
+        // ヒント (最下行, 全幅センター)
+        Txt("MapHint", transform, "[M] マップ切替", 8,
+            V2(mapW * 0.5f, 7f), V2(mapW, 12f), C_Hint, TextAnchor.MiddleCenter);
     }
 
-    private void DrawFloorBand(string label, float normYStart, float normYEnd, Color col)
+    private void LegEntry(string key, string label, Color col,
+        float dotSize, float dotX, float txtX, float y, float dh, int fs)
     {
-        float yStart = mapH * (1f - normYEnd);
-        float height = mapH * (normYEnd - normYStart);
-        var band = CreateImage($"Band_{label}", transform, col,
-            new Vector2(0, yStart), new Vector2(mapW, height), Vector2.zero);
-        CreateLabel($"BandLabel_{label}", transform, label, 9,
-            new Vector2(6f, yStart + height - 10f), new Vector2(80f, 14f), new Color(0.5f, 0.7f, 1f, 0.7f), TextAnchor.UpperLeft);
+        Img($"LDot_{key}", transform, col,
+            V2(dotX, y), V2(dotSize, dh), V2(0f, 0.5f));
+        Txt($"LTxt_{key}", transform, label, fs,
+            V2(txtX, y), V2(60f, 12f), C_LegText, TextAnchor.MiddleLeft);
     }
 
-    private void DrawConnection(FacilityLocation from, FacilityLocation to)
-    {
-        Vector2 p1 = NormToMap(RoomPositions[from]);
-        Vector2 p2 = NormToMap(RoomPositions[to]);
-        Vector2 mid = (p1 + p2) * 0.5f;
-        float dist = Vector2.Distance(p1, p2);
-        float angle = Mathf.Atan2(p2.y - p1.y, p2.x - p1.x) * Mathf.Rad2Deg;
-
-        var line = CreateImage($"Line_{from}_{to}", transform, ColLine,
-            mid, new Vector2(dist, 2f), new Vector2(0.5f, 0.5f));
-        line.localEulerAngles = new Vector3(0, 0, angle);
-    }
-
-    private void CreateRoom(FacilityLocation loc, string label, float w, float h, Color? overrideCol = null)
-    {
-        Vector2 pos = NormToMap(RoomPositions[loc]);
-        Color col = overrideCol ?? ColRoom;
-
-        var panel = CreateImage($"Room_{loc}", transform, col, pos, new Vector2(w, h), new Vector2(0.5f, 0.5f));
-
-        // 枠線
-        var border = CreateImage($"Border_{loc}", panel, Color.clear, Vector2.zero, new Vector2(w, h), new Vector2(0.5f, 0.5f));
-        border.GetComponent<Image>().color = Color.clear;
-        var outline = border.gameObject.AddComponent<Outline>();
-        outline.effectColor = ColBorder;
-        outline.effectDistance = new Vector2(1.5f, 1.5f);
-
-        // ラベル
-        CreateLabel($"RoomLabel_{loc}", panel, label, 10,
-            Vector2.zero, new Vector2(w - 4f, h), new Color(0.85f, 0.95f, 1f), TextAnchor.MiddleCenter);
-
-        roomPanels[loc] = panel;
-    }
-
-    private void CreateDoorIndicator(DoorID id, string label)
-    {
-        var (from, to) = DoorConnections[id];
-        Vector2 p1 = NormToMap(RoomPositions[from]);
-        Vector2 p2 = NormToMap(RoomPositions[to]);
-        Vector2 mid = (p1 + p2) * 0.5f;
-
-        var door = CreateImage($"Door_{id}", transform, ColDoorOpen, mid, new Vector2(16f, 6f), new Vector2(0.5f, 0.5f));
-        CreateLabel($"DoorLabel_{id}", transform, label, 8,
-            mid + new Vector2(20f, 0f), new Vector2(50f, 14f), new Color(0.8f, 0.8f, 0.5f), TextAnchor.MiddleLeft);
-
-        doorIndicators[id] = door.GetComponent<Image>();
-    }
-
-    private void CreateCameraIcon(CameraID camId, FacilityLocation loc)
-    {
-        Vector2 pos = NormToMap(RoomPositions[loc]) + new Vector2(-22f, 8f);
-        var icon = CreateImage($"Cam_{camId}", transform, ColCamera, pos, new Vector2(8f, 8f), new Vector2(0.5f, 0.5f));
-        CreateLabel($"CamLabel_{camId}", transform, camId.ToString().Replace("_", "-"), 7,
-            pos + new Vector2(0f, -10f), new Vector2(50f, 12f), new Color(0.3f, 0.8f, 1f, 0.8f), TextAnchor.UpperCenter);
-        cameraIcons[camId] = icon.GetComponent<Image>();
-    }
-
-    private void DrawLegend()
-    {
-        float x = 6f;
-        float y = 55f;
-        CreateImage("Leg_Door_Open",   transform, ColDoorOpen,   new Vector2(x, y),      new Vector2(10f, 5f), Vector2.zero);
-        CreateLabel("Leg_Door_OpenT",  transform, "ドア開",  8, new Vector2(x + 14f, y), new Vector2(40f, 12f), Color.white, TextAnchor.MiddleLeft);
-        CreateImage("Leg_Door_Closed", transform, ColDoorClosed, new Vector2(x, y - 14f), new Vector2(10f, 5f), Vector2.zero);
-        CreateLabel("Leg_Door_ClosedT",transform, "ドア閉",  8, new Vector2(x + 14f, y - 14f), new Vector2(40f, 12f), Color.white, TextAnchor.MiddleLeft);
-        CreateImage("Leg_Cam",   transform, ColCamera,   new Vector2(x, y - 28f), new Vector2(8f, 8f), Vector2.zero);
-        CreateLabel("Leg_CamT",  transform, "カメラ", 8, new Vector2(x + 14f, y - 28f), new Vector2(40f, 12f), Color.white, TextAnchor.MiddleLeft);
-        CreateImage("Leg_Mon",   transform, ColMonster,  new Vector2(x, y - 42f), new Vector2(8f, 8f), Vector2.zero);
-        CreateLabel("Leg_MonT",  transform, "侵入者", 8, new Vector2(x + 14f, y - 42f), new Vector2(40f, 12f), Color.white, TextAnchor.MiddleLeft);
-
-        CreateLabel("MapHint", transform, "[M] マップ切替", 8,
-            new Vector2(mapW * 0.5f, 8f), new Vector2(mapW, 14f), new Color(0.5f, 0.5f, 0.5f), TextAnchor.MiddleCenter);
-    }
-
-    // ===== 更新 =====
+    // ─────────────────────────────────────────────────────
+    // ── ランタイム更新 ─────────────────────────────────────
+    // ─────────────────────────────────────────────────────
     private void UpdateDoors()
     {
         if (DoorManager.Instance == null) return;
-        foreach (var kvp in doorIndicators)
+        foreach (var (id, bar) in doorBars)
         {
-            bool closed = DoorManager.Instance.IsClosed(kvp.Key);
-            kvp.Value.color = closed ? ColDoorClosed : ColDoorOpen;
+            bool closed = DoorManager.Instance.IsClosed(id);
+            bar.color = closed ? C_DoorClosed : C_DoorOpen;
         }
     }
 
     private void UpdateCameras()
     {
         if (SecurityCameraSystem.Instance == null) return;
-        foreach (var kvp in cameraIcons)
+        foreach (var (camId, icon) in camIcons)
         {
-            bool dead = SecurityCameraSystem.Instance.IsCameraDead(kvp.Key);
-            bool active = SecurityCameraSystem.Instance.ActiveExternal == kvp.Key
-                       || SecurityCameraSystem.Instance.ActiveInternal == kvp.Key;
-            kvp.Value.color = dead ? ColCamDead : active ? Color.white : ColCamera;
+            bool dead   = SecurityCameraSystem.Instance.IsCameraDead(camId);
+            bool active = SecurityCameraSystem.Instance.ActiveExternal == camId
+                       || SecurityCameraSystem.Instance.ActiveInternal == camId;
+            icon.color = dead ? C_CamDead : active ? C_CamActive : C_CamNormal;
         }
     }
 
@@ -256,70 +512,93 @@ public class FacilityMapUI : MonoBehaviour
     {
         if (MonsterManager.Instance == null) return;
 
-        // 全マーカーを一旦非表示
-        foreach (var m in monsterMarkers.Values) m.gameObject.SetActive(false);
+        // 全ドット非表示 + 危険フラグリセット
+        foreach (var dots in monsterDots.Values)
+            foreach (var d in dots) { if (d) d.gameObject.SetActive(false); }
+        foreach (var node in roomNodes.Values)
+            node.SetDanger(false);
 
-        bool blink = Mathf.Sin(blinkTimer * 4f) > 0f;
+        bool blink = Mathf.Sin(blinkTimer * 5f) > 0f;
 
         foreach (var monster in MonsterManager.Instance.ActiveMonsters)
         {
             var loc = monster.CurrentLocation;
             if (loc == FacilityLocation.ManagersRoom) continue;
-            if (!monsterMarkers.TryGetValue(loc, out var marker)) continue;
 
-            marker.gameObject.SetActive(blink);
+            // 部屋の危険パルス
+            if (roomNodes.TryGetValue(loc, out var node))
+                node.SetDanger(true);
 
-            // モンスタータイプごとに色を変える
-            marker.color = monster.MonsterType switch
+            // モンスタードット表示
+            if (!monsterDots.TryGetValue(loc, out var dotArr)) continue;
+            int idx = (int)monster.MonsterType;
+            if (idx < 0 || idx >= dotArr.Length || dotArr[idx] == null) continue;
+
+            var dot = dotArr[idx];
+            if (monster.MonsterType == MonsterType.Lurker && !monster.IsVisible)
             {
-                MonsterType.Crawler => new Color(1.0f, 0.3f, 0.1f),
-                MonsterType.Rusher  => new Color(1.0f, 0.6f, 0.0f),
-                MonsterType.Jammer  => new Color(0.6f, 0.2f, 1.0f),
-                MonsterType.Lurker  => monster.IsVisible ? new Color(0.5f, 0.5f, 0.5f) : Color.clear,
-                MonsterType.Mimic   => new Color(0.2f, 0.8f, 0.8f),
-                MonsterType.Knocker => new Color(1.0f, 1.0f, 0.2f),
-                _ => ColMonster
-            };
+                // Lurker 不可視: 薄いグレーで常時表示
+                dot.gameObject.SetActive(true);
+                dot.color = new Color(0.50f, 0.52f, 0.60f, 0.30f);
+            }
+            else
+            {
+                dot.gameObject.SetActive(blink);
+                dot.color = MonsterCol(monster.MonsterType);
+            }
         }
     }
 
-    // ===== ユーティリティ =====
-    private Vector2 NormToMap(Vector2 norm)
-    {
-        // normは (0=左, 1=右), (0=上, 1=下)
-        // Unity UI座標は左下が(0,0)
-        return new Vector2(norm.x * mapW, (1f - norm.y) * mapH);
-    }
+    // ─────────────────────────────────────────────────────
+    // ── 座標変換 ───────────────────────────────────────────
+    // ─────────────────────────────────────────────────────
 
-    private RectTransform CreateImage(string name, Transform parent, Color col,
-        Vector2 anchoredPos, Vector2 size, Vector2 pivot)
+    /// <summary>
+    /// 正規化座標 (X:0-1=左右, Y:0-1=上下) → マップ内UI座標 (左下=原点)。
+    /// 凡例エリア(LegendH)とタイトルバー(TitleH)を除いたコンテンツ領域にマッピング。
+    /// </summary>
+    private Vector2 ToUI(Vector2 norm)
+        => new Vector2(norm.x * mapW, LegendH + (1f - norm.y) * contentH);
+
+    private Vector2 ToUI(FacilityLocation loc) => ToUI(RoomNorm[loc]);
+
+    // ─────────────────────────────────────────────────────
+    // ── UI生成ユーティリティ ───────────────────────────────
+    // ─────────────────────────────────────────────────────
+    private RectTransform Img(string name, Transform parent, Color col,
+        Vector2 pos, Vector2 size, Vector2 pivot)
     {
         var go = new GameObject(name, typeof(RectTransform), typeof(Image));
         go.transform.SetParent(parent, false);
         var rt = go.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = Vector2.zero;
-        rt.pivot = pivot;
-        rt.anchoredPosition = anchoredPos;
-        rt.sizeDelta = size;
+        rt.pivot          = pivot;
+        rt.anchoredPosition = pos;
+        rt.sizeDelta      = size;
         go.GetComponent<Image>().color = col;
         return rt;
     }
 
-    private void CreateLabel(string name, Transform parent, string text, int fontSize,
-        Vector2 pos, Vector2 size, Color col, TextAnchor anchor = TextAnchor.MiddleCenter)
+    private RectTransform Txt(string name, Transform parent, string text, int fontSize,
+        Vector2 pos, Vector2 size, Color col, TextAnchor align)
     {
         var go = new GameObject(name, typeof(RectTransform), typeof(Text));
         go.transform.SetParent(parent, false);
         var rt = go.GetComponent<RectTransform>();
         rt.anchorMin = rt.anchorMax = Vector2.zero;
-        rt.pivot = new Vector2(0f, 0f);
+        rt.pivot          = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = pos;
-        rt.sizeDelta = size;
+        rt.sizeDelta      = size;
         var t = go.GetComponent<Text>();
-        t.text = text;
-        t.fontSize = fontSize;
-        t.color = col;
-        t.alignment = anchor;
+        t.text      = text;
+        t.fontSize  = fontSize;
+        t.color     = col;
+        t.alignment = align;
         t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        return rt;
     }
+
+    // shorthand
+    private static Vector2 V2(float x, float y) => new Vector2(x, y);
+    private static Vector3 V3(float x, float y, float z) => new Vector3(x, y, z);
 }

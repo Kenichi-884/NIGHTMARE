@@ -27,6 +27,49 @@ public static class NightmareMapBuilder
     static readonly Dictionary<string, Texture2D> Texs = new();
     static Shader _shader;
 
+    const string AssemblyPath = "Assets/Data/MapAssembly.asset";
+    static MapAssembly _asm;
+
+    // ─────────────────────────────────────────────────────────────
+    //  MapAssembly ヘルパー
+    // ─────────────────────────────────────────────────────────────
+
+    /// <summary>MapAssembly.asset をロード（存在しない場合は null を返す）</summary>
+    static MapAssembly LoadAssembly()
+        => _asm = AssetDatabase.LoadAssetAtPath<MapAssembly>(AssemblyPath);
+
+    /// <summary>
+    /// assembly に prefab が設定されていればインスタンス化して root の子に追加する。
+    /// null の場合は false を返し、呼び出し側がプロシージャル生成を行う。
+    /// </summary>
+    static bool UseSection(GameObject root, string childName, GameObject prefab)
+    {
+        if (prefab == null) return false;
+        var go = PrefabUtility.InstantiatePrefab(prefab, root.transform) as GameObject
+              ?? Object.Instantiate(prefab, root.transform);
+        go.name = childName;
+        EditorUtility.SetDirty(go);
+        return true;
+    }
+
+    /// <summary>
+    /// ドア用の UseSection。
+    /// prefab が設定されている場合はインスタンス化し、DoorAnimator.doorID を上書きする。
+    /// </summary>
+    static bool UseDoor(GameObject root, DoorID id, string childName, GameObject prefab, Vector3 position)
+    {
+        if (prefab == null) return false;
+        var go = PrefabUtility.InstantiatePrefab(prefab, root.transform) as GameObject
+              ?? Object.Instantiate(prefab, root.transform);
+        go.name  = childName;
+        go.transform.position = position;
+        // DoorID を確実に上書き（プレハブの設定と一致させる）
+        var anim = go.GetComponentInChildren<DoorAnimator>();
+        if (anim != null) anim.doorID = id;
+        EditorUtility.SetDirty(go);
+        return true;
+    }
+
     // ═══════════════════════════════════════════════════════════════
     //  エントリポイント
     // ═══════════════════════════════════════════════════════════════
@@ -49,30 +92,105 @@ public static class NightmareMapBuilder
         _shader = null;
         Texs.Clear();
         Mats.Clear();
+        LoadAssembly();  // MapAssembly をロード（存在しない場合は null）
 
         GenTextures();
         InitMaterials();
 
         var root = new GameObject("[NIGHTMARE Map]");
 
-        BuildExterior(root);
-        Build1F(root);
-        BuildStaircase(root);
-        BuildB1(root);
+        // ── 構造セクション（prefab があればそれを使い、なければ cube 生成）──
+        if (!UseSection(root, "Exterior",   _asm?.areaExterior))   BuildExterior(root);
+        if (!UseSection(root, "1F",         _asm?.area1F))          Build1F(root);
+        if (!UseSection(root, "Staircase",  _asm?.areaStaircase))   BuildStaircase(root);
+        if (!UseSection(root, "B1",         _asm?.areaB1))          BuildB1(root);
+
+        // ── ドア（個別プレハブ対応）──
         BuildDoors(root);
+
+        // ── 常時プロシージャル生成（照明・ルート矢印は環境依存のため）──
         BuildLights(root);
-        BuildProps(root);
         BuildPathArrows(root);
-        BuildRoof(root);
-        BuildSignage(root);
-        UpdateSceneCamPositions();
-        BuildCCTVMounts(root);
+
+        // ── その他セクション ──
+        if (!UseSection(root, "Props",      _asm?.areaProps))       BuildProps(root);
+        if (!UseSection(root, "Roof",       _asm?.areaRoof))        BuildRoof(root);
+        if (!UseSection(root, "Signage",    _asm?.areaSignage))     BuildSignage(root);
+        if (!UseSection(root, "CCTVMounts", _asm?.areaCCTV))        { UpdateSceneCamPositions(); BuildCCTVMounts(root); }
+        else                                                          UpdateSceneCamPositions();
+
+        SetupAtmosphere(root);
 
         AssetDatabase.SaveAssets();
         MarkDirty(root);
         Selection.activeGameObject = root;
         SceneView.lastActiveSceneView?.FrameSelected();
-        Debug.Log("[NIGHTMARE] 仮3Dマップ生成完了！");
+
+        // プレハブとして保存 (Assets/Prefabs/Map/NightmareMap3D.prefab)
+        SaveMapPrefab(root);
+
+        Debug.Log("[NIGHTMARE] 仮3Dマップ生成完了！ (Prefab: Assets/Prefabs/Map/NightmareMap3D.prefab)");
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    //  アトモスフィア (アンビエント・フォグ・方向光)
+    // ═══════════════════════════════════════════════════════════════
+    static void SetupAtmosphere(GameObject root)
+    {
+        // アンビエントカラー (深夜の薄暗い青)
+        RenderSettings.ambientMode  = UnityEngine.Rendering.AmbientMode.Flat;
+        RenderSettings.ambientLight = new Color(0.03f, 0.04f, 0.07f);
+        RenderSettings.ambientIntensity = 0.4f;
+
+        // フォグ (外部エリアの遠近感・雰囲気)
+        RenderSettings.fog          = true;
+        RenderSettings.fogMode      = FogMode.Linear;
+        RenderSettings.fogColor     = new Color(0.03f, 0.04f, 0.06f);
+        RenderSettings.fogStartDistance = 20f;
+        RenderSettings.fogEndDistance   = 70f;
+
+        // スカイボックスは無効 (黒背景)
+        RenderSettings.skybox = null;
+        if (Camera.main != null)
+            Camera.main.backgroundColor = new Color(0.02f, 0.02f, 0.03f);
+
+        // ── 方向光 (薄い月明かり風) ──
+        var dlGO = new GameObject("DirectionalLight_Moon");
+        dlGO.transform.SetParent(root.transform);
+        dlGO.transform.eulerAngles = new Vector3(42f, -30f, 0f);
+        var dl = dlGO.AddComponent<Light>();
+        dl.type      = LightType.Directional;
+        dl.color     = new Color(0.45f, 0.55f, 0.75f);
+        dl.intensity = 0.22f;
+        dl.shadows   = LightShadows.Soft;
+
+        // ── 外部エリア用街灯ポイントライト ──
+        var extLights = G(root, "ExteriorLights");
+        // ゲート前
+        PL(extLights, "EL_Gate_L",  new Vector3(-12f, 4.5f, -19f), new Color(1f, 0.80f, 0.45f), 0.9f, 12f);
+        PL(extLights, "EL_Gate_R",  new Vector3( 12f, 4.5f, -19f), new Color(1f, 0.80f, 0.45f), 0.9f, 12f);
+        // East エリア
+        PL(extLights, "EL_East",    new Vector3( 24f, 4.0f, -10f), new Color(1f, 0.65f, 0.20f), 0.7f, 10f);
+        // West エリア
+        PL(extLights, "EL_West",    new Vector3(-28f, 7.0f, - 2f), new Color(1f, 0.90f, 0.65f), 0.8f, 14f);
+        // 玄関キャノピー下
+        PL(extLights, "EL_Canopy",  new Vector3(  0f, 2.5f, -11f), new Color(0.7f, 0.85f,1.0f), 0.6f,  8f);
+
+        // シーンを dirty にマーク (RenderSettings 変更を保存させる)
+        UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene());
+        Debug.Log("[NIGHTMARE] アトモスフィア設定完了 (アンビエント・フォグ・方向光)");
+    }
+
+    static void SaveMapPrefab(GameObject root)
+    {
+        const string dir  = "Assets/Prefabs/Map";
+        const string path = "Assets/Prefabs/Map/NightmareMap3D.prefab";
+        if (!AssetDatabase.IsValidFolder("Assets/Prefabs")) AssetDatabase.CreateFolder("Assets", "Prefabs");
+        if (!AssetDatabase.IsValidFolder(dir))              AssetDatabase.CreateFolder("Assets/Prefabs", "Map");
+        PrefabUtility.SaveAsPrefabAssetAndConnect(root, path, InteractionMode.AutomatedAction, out bool ok);
+        if (ok) Debug.Log($"[NIGHTMARE] 3Dマップ Prefab 保存: {path}");
+        else    Debug.LogWarning($"[NIGHTMARE] 3Dマップ Prefab 保存に失敗: {path}");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -219,40 +337,100 @@ public static class NightmareMapBuilder
         var ext = G(root, "Exterior");
 
         // ── フロア（表面 Y=0, 各XZエリアは重複なし） ──
-        Floor(ext, "F_North",   0,     -23f, 28f, 12f, "pavement");   // Outside_North
-        Floor(ext, "F_EastN",  24f,    -20f, 12f,  6f, "pavement");   // 北東コーナー
-        Floor(ext, "F_WestN", -24f,    -20f, 12f,  6f, "pavement");   // 北西コーナー
-        Floor(ext, "F_Top",     0f,    -12.5f,16f,  9f, "pavement");  // Outside_Top
-        Floor(ext, "F_East",   22f,     -5f, 12f, 16f, "pavement");   // Outside_East
-        Floor(ext, "F_West",  -22f,     -5f, 12f, 16f, "pavement");   // Outside_West
+        Floor(ext, "F_North",   0,    -23f,  28f, 12f, "pavement");   // Outside_North
+        Floor(ext, "F_EastN",  24f,   -20f,  12f,  6f, "pavement");   // 北東コーナー
+        Floor(ext, "F_WestN", -24f,   -20f,  12f,  6f, "pavement");   // 北西コーナー
+        Floor(ext, "F_Top",     0f,  -12.5f, 16f,  9f, "pavement");   // Outside_Top
+        Floor(ext, "F_East",   22f,    -5f,  12f, 16f, "pavement");   // Outside_East
+        Floor(ext, "F_West",  -22f,    -5f,  12f, 16f, "pavement");   // Outside_West
+        // 南側歩道
+        Floor(ext, "F_Side_E", 22f,    10f,  12f,  8f, "pavement");
+        Floor(ext, "F_Side_W",-22f,    10f,  12f,  8f, "pavement");
 
         // ── 駐車場ライン（Y=0 +0.04 → 表面より上で Z-fight なし） ──
         const float MY = 0.04f;
         var pk = G(ext, "ParkingLines");
         for (int i = -1; i <= 1; i++)
-        {
-            C($"PkV_{i}", pk, new Vector3(i * 4.5f, MY, -24f),  new Vector3(0.1f, 0.04f, 10f), "parking");
-        }
+            C($"PkV_{i}", pk, new Vector3(i * 4.5f, MY, -24f), new Vector3(0.1f, 0.04f, 10f), "parking");
         C("PkH_F", pk, new Vector3(0, MY, -19.5f), new Vector3(21f, 0.04f, 0.12f), "parking");
         C("PkH_B", pk, new Vector3(0, MY, -29.0f), new Vector3(21f, 0.04f, 0.12f), "parking");
         for (int i = 0; i < 5; i++)
             C($"CL_{i}", pk, new Vector3(0, MY, -13.5f + i * 1.6f), new Vector3(0.12f, 0.04f, 0.9f), "parking");
 
-        // ── フェンス ──
+        // ── 外周フェンス ──
         var fn = G(ext, "Fence");
-        C("Fn_N",  fn, new Vector3(  0,  1f, -29.4f), new Vector3(30, 2f, 0.25f), "wall");
-        C("Fn_E",  fn, new Vector3( 30f, 1f,    5f),  new Vector3(0.25f, 2f, 50f), "wall");
-        C("Fn_W",  fn, new Vector3(-30f, 1f,    5f),  new Vector3(0.25f, 2f, 50f), "wall");
-        C("GW_E",  fn, new Vector3( 10.5f, 1f, -17.2f), new Vector3(7, 2f, 0.25f), "wall");
-        C("GW_W",  fn, new Vector3(-10.5f, 1f, -17.2f), new Vector3(7, 2f, 0.25f), "wall");
+        C("Fn_N",  fn, new Vector3(  0,  1f, -29.4f), new Vector3(30f,  2f, 0.25f), "wall");
+        C("Fn_E",  fn, new Vector3( 30f, 1f,    5f),  new Vector3(0.25f,2f,  50f),  "wall");
+        C("Fn_W",  fn, new Vector3(-30f, 1f,    5f),  new Vector3(0.25f,2f,  50f),  "wall");
+        C("Fn_S",  fn, new Vector3(  0,  1f,   16f),  new Vector3(30f,  2f, 0.25f), "wall");
+        // ゲート両脇
+        C("GW_E",  fn, new Vector3( 10.5f, 1f, -17.2f), new Vector3(7f,   2f, 0.25f), "wall");
+        C("GW_W",  fn, new Vector3(-10.5f, 1f, -17.2f), new Vector3(7f,   2f, 0.25f), "wall");
+
+        // ── East エリア ─ 非常口・搬入側 ──────────────────────────
+        var ea = G(ext, "Outside_East");
+        // 東壁 (建物外壁の延長)
+        Wall(ea, "W_E_Bld",  16.15f, F1H*0.5f,  3f,  0.3f, F1H,  22f);  // 建物東外壁
+        // 非常扉フレーム
+        C("ExitFrame_E", ea, new Vector3(16.15f, 1.4f, -5f), new Vector3(0.3f, 2.8f, 1.6f), "door_frame");
+        C("ExitDoor_E",  ea, new Vector3(16.0f,  1.15f,-5f), new Vector3(0.15f,2.3f, 1.4f), "door_panel");
+        // 非常灯
+        C("ExitSign_E",  ea, new Vector3(16.0f, 3.0f,  -5f), new Vector3(0.3f, 0.18f,0.6f), "sign_exit");
+        // 搬入用スロープ (Y=0.08f - 地面より少し上)
+        C("Ramp_E",      ea, new Vector3(20f,   0.08f, -2f), new Vector3(6f,   0.16f, 4f),  "pavement");
+        // 金属フェンス（東エリア境界）
+        C("EFn_N", ea, new Vector3(22f, 1f,  -13.4f), new Vector3(12f,  2f, 0.2f), "wall");
+        C("EFn_E", ea, new Vector3(28f, 1f,    -5f),  new Vector3(0.2f, 2f, 22f), "wall");
+        C("EFn_S", ea, new Vector3(22f, 1f,    14f),  new Vector3(12f,  2f, 0.2f), "wall");
+        // 監視カメラ用ポール
+        C("Pole_E", ea, new Vector3(24f, 2f, -10f), new Vector3(0.12f, 4f, 0.12f), "wall");
+        C("PLamp_E",ea, new Vector3(24f, 4.1f,-10f), new Vector3(0.5f, 0.2f, 0.5f), "em_amber");
+        // 廃棄コンテナ
+        C("Con_E0", ea, new Vector3(26f, 0.7f, 5f),  new Vector3(2.4f, 1.4f, 1.2f), "conc_dark");
+        C("Con_E1", ea, new Vector3(26f, 0.7f, 7.8f),new Vector3(2.4f, 1.4f, 1.2f), "conc_dark");
+
+        // ── West エリア ─ 搬入口・荷捌き場 ──────────────────────────
+        var wa = G(ext, "Outside_West");
+        // 西壁 (建物外壁の延長)
+        Wall(wa, "W_W_Bld", -16.15f, F1H*0.5f,  3f, 0.3f, F1H, 22f);
+        // 搬入口シャッター
+        C("ShFrame_W", wa, new Vector3(-16.1f, 1.4f, -3f), new Vector3(0.3f, 2.8f, 3.0f), "door_frame");
+        C("Shutter_W", wa, new Vector3(-15.9f, 1.15f,-3f), new Vector3(0.15f,2.3f,2.8f), "conc_dark");
+        C("ShSign_W",  wa, new Vector3(-15.9f, 2.8f, -3f), new Vector3(0.15f,0.3f,2.8f), "em_caution");
+        // 荷捌きプラットフォーム
+        C("Dock",      wa, new Vector3(-20f,  0.42f, 0f),  new Vector3(8f, 0.84f, 6f),   "concrete");
+        C("DockEdge",  wa, new Vector3(-20f,  0.86f, 3.1f),new Vector3(8.2f,0.12f,0.2f), "wall");
+        // フォークリフト置き場 (簡略化)
+        C("FL_Base",   wa, new Vector3(-26f, 0.25f, 2f),   new Vector3(1.8f, 0.5f, 3f),  "conc_dark");
+        C("FL_Mast",   wa, new Vector3(-26f, 1.5f,  1.4f), new Vector3(0.2f, 3f,   0.2f),"wall");
+        C("FL_Fork_L", wa, new Vector3(-25.5f,0.35f,0.6f), new Vector3(0.1f, 0.1f, 1.8f),"metal");
+        C("FL_Fork_R", wa, new Vector3(-26.5f,0.35f,0.6f), new Vector3(0.1f, 0.1f, 1.8f),"metal");
+        // 西フェンス
+        C("WFn_N", wa, new Vector3(-22f, 1f, -13.4f), new Vector3(12f,  2f, 0.2f), "wall");
+        C("WFn_W", wa, new Vector3(-28f, 1f,   -5f),  new Vector3(0.2f, 2f, 22f),  "wall");
+        C("WFn_S", wa, new Vector3(-22f, 1f,   14f),  new Vector3(12f,  2f, 0.2f), "wall");
+        // 街灯
+        C("StrLt_W", wa, new Vector3(-28f, 3.5f, -2f), new Vector3(0.1f, 7f, 0.1f), "wall");
+        C("StrLtH",  wa, new Vector3(-27.5f,7.1f,-2f), new Vector3(0.8f, 0.1f,0.1f),"wall");
+        C("StrLtLp", wa, new Vector3(-27.5f,7.0f,-2f), new Vector3(0.3f, 0.2f,0.3f),"em_white");
 
         // ── 建物外壁ファサード ──
         var fa = G(ext, "Facade");
-        C("Fa_E",   fa, new Vector3( 7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f), "wall");
-        C("Fa_W",   fa, new Vector3(-7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f), "wall");
-        C("FaFr_E", fa, new Vector3( 4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
-        C("FaFr_W", fa, new Vector3(-4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
-        C("FaTop",  fa, new Vector3(0,      F1H+0.2f, -8.3f), new Vector3(15f,  0.4f, 0.5f), "concrete");
+        C("Fa_E",    fa, new Vector3( 7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f),   "wall");
+        C("Fa_W",    fa, new Vector3(-7.15f, F1H*0.5f, -8.3f), new Vector3(0.4f, F1H, 9f),   "wall");
+        C("FaFr_E",  fa, new Vector3( 4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
+        C("FaFr_W",  fa, new Vector3(-4.2f,  F1H*0.5f, -8.3f), new Vector3(4.4f, F1H, 0.4f), "concrete");
+        C("FaTop",   fa, new Vector3(0,      F1H+0.2f,  -8.3f), new Vector3(15f,  0.4f, 0.5f),"concrete");
+        // 玄関キャノピー（庇）
+        C("Canopy",  fa, new Vector3(0, F1H-0.1f, -10.5f), new Vector3(10f, 0.25f, 4.5f), "concrete");
+        C("CaN_E",   fa, new Vector3( 4.5f, F1H*0.5f,-9.5f), new Vector3(0.2f,F1H*0.5f,0.2f),"wall");
+        C("CaN_W",   fa, new Vector3(-4.5f, F1H*0.5f,-9.5f), new Vector3(0.2f,F1H*0.5f,0.2f),"wall");
+        // 建物プレート
+        C("Plate",   fa, new Vector3(0, 2.5f, -8.1f), new Vector3(5f, 0.6f, 0.08f), "desk");
+        C("PlateLt", fa, new Vector3(0, 2.55f,-8.05f), new Vector3(3.5f,0.3f,0.04f),"em_blue");
+        // 外部ゴミ置き場
+        C("Bin_L",   fa, new Vector3(-6f, 0.4f, -9.5f), new Vector3(0.5f, 0.8f, 0.5f), "conc_dark");
+        C("Bin_R",   fa, new Vector3(-5f, 0.4f, -9.5f), new Vector3(0.5f, 0.8f, 0.5f), "conc_dark");
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -327,10 +505,10 @@ public static class NightmareMapBuilder
         // ── 管理人室前廊下 (Z: 32〜42) ──
         B1Room(b, "B1_DoorFront", 37f, 10f, "b1_floor");
 
-        // ── 管理人室 (Z: 42〜56) ──
+        // ── 管理人室 (Z: 42〜56) ── ★ B1Y ベースで正しく配置
         var m = G(b, "ManagersRoom");
-        Floor(m, "Floor",  0,  49f, 10f, 14f, "mgr_floor");
-        Ceil(m,  "Ceil",   0,  49f, 10.4f, 14f);
+        B1Floor(m, "Floor",  0,  49f, 10f, 14f, "mgr_floor");
+        B1Ceil(m,  "Ceil",   0,  49f, 10.4f, 14f);
         Wall(m,  "W_E",    5.15f, B1Y+B1CH*0.5f, 49f, 0.3f, B1CH, 14f);
         Wall(m,  "W_W",   -5.15f, B1Y+B1CH*0.5f, 49f, 0.3f, B1CH, 14f);
         Wall(m,  "W_S",    0,     B1Y+B1CH*0.5f, 56.15f, 10f, B1CH, 0.3f);
@@ -358,14 +536,14 @@ public static class NightmareMapBuilder
         }
     }
 
-    // B1ルーム共通（床・天井・側壁）
+    // B1ルーム共通（床・天井・側壁） ── B1Yベースで正しく配置
     static void B1Room(GameObject parent, string name, float cz, float sz, string floorMat)
     {
         var r = G(parent, name);
-        Floor(r, "Floor", 0, cz, 8f, sz, floorMat);
-        Ceil(r, "Ceil",   0, cz, 8.4f, sz);
-        Wall(r, "W_E",  4.15f, B1Y+B1CH*0.5f, cz, 0.3f, B1CH, sz);
-        Wall(r, "W_W", -4.15f, B1Y+B1CH*0.5f, cz, 0.3f, B1CH, sz);
+        B1Floor(r, "Floor", 0, cz, 8f, sz, floorMat);
+        B1Ceil(r,  "Ceil",  0, cz, 8.4f, sz);
+        Wall(r, "W_E",  4.15f, B1Y + B1CH * 0.5f, cz, 0.3f, B1CH, sz);
+        Wall(r, "W_W", -4.15f, B1Y + B1CH * 0.5f, cz, 0.3f, B1CH, sz);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -373,29 +551,38 @@ public static class NightmareMapBuilder
     // ═══════════════════════════════════════════════════════════════
     static void BuildDoors(GameObject root)
     {
-        Door(root, DoorID.Gate,
-            name: "Door_Gate  [外壁ゲート -3%/分]",
-            cen: new Vector3(0, 0, -17.2f),
-            ow: 14f, oh: 3f, pt: 0.28f,
-            slide: new Vector3(15f, 0, 0), fh: 4f);
+        // prefab が設定されていれば UseDoor でインスタンス化、なければ Door() でキューブ生成
+        if (!UseDoor(root, DoorID.Gate, "Door_Gate  [外壁ゲート -3%/分]",
+                _asm?.doorGate, new Vector3(0, 0, -17.2f)))
+            Door(root, DoorID.Gate,
+                name: "Door_Gate  [外壁ゲート -3%/分]",
+                cen: new Vector3(0, 0, -17.2f),
+                ow: 14f, oh: 3f, pt: 0.28f,
+                slide: new Vector3(15f, 0, 0), fh: 4f);
 
-        Door(root, DoorID.Entrance,
-            name: "Door_Entrance  [地上入口 -2%/分]",
-            cen: new Vector3(0, 0, -8.2f),
-            ow: 8f, oh: 3f, pt: 0.22f,
-            slide: new Vector3(0, 3.4f, 0), fh: 3.7f);
+        if (!UseDoor(root, DoorID.Entrance, "Door_Entrance  [地上入口 -2%/分]",
+                _asm?.doorEntrance, new Vector3(0, 0, -8.2f)))
+            Door(root, DoorID.Entrance,
+                name: "Door_Entrance  [地上入口 -2%/分]",
+                cen: new Vector3(0, 0, -8.2f),
+                ow: 8f, oh: 3f, pt: 0.22f,
+                slide: new Vector3(0, 3.4f, 0), fh: 3.7f);
 
-        Door(root, DoorID.BasementStairs,
-            name: "Door_BasementStairs  [地下階段 -4%/分]",
-            cen: new Vector3(0, B1Y, 22.2f),
-            ow: 7.5f, oh: B1CH, pt: 0.25f,
-            slide: new Vector3(0, B1CH+0.4f, 0), fh: B1CH);
+        if (!UseDoor(root, DoorID.BasementStairs, "Door_BasementStairs  [地下階段 -4%/分]",
+                _asm?.doorBasementStairs, new Vector3(0, B1Y, 22.2f)))
+            Door(root, DoorID.BasementStairs,
+                name: "Door_BasementStairs  [地下階段 -4%/分]",
+                cen: new Vector3(0, B1Y, 22.2f),
+                ow: 7.5f, oh: B1CH, pt: 0.25f,
+                slide: new Vector3(0, B1CH+0.4f, 0), fh: B1CH);
 
-        Door(root, DoorID.B1Corridor,
-            name: "Door_B1Corridor  [B1廊下 -5%/分]",
-            cen: new Vector3(0, B1Y, 32.2f),
-            ow: 7.5f, oh: B1CH, pt: 0.25f,
-            slide: new Vector3(8f, 0, 0), fh: B1CH);
+        if (!UseDoor(root, DoorID.B1Corridor, "Door_B1Corridor  [B1廊下 -5%/分]",
+                _asm?.doorB1Corridor, new Vector3(0, B1Y, 32.2f)))
+            Door(root, DoorID.B1Corridor,
+                name: "Door_B1Corridor  [B1廊下 -5%/分]",
+                cen: new Vector3(0, B1Y, 32.2f),
+                ow: 7.5f, oh: B1CH, pt: 0.25f,
+                slide: new Vector3(8f, 0, 0), fh: B1CH);
     }
 
     static void Door(GameObject root, DoorID id, string name,
