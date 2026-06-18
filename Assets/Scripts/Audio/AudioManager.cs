@@ -213,6 +213,34 @@ public class AudioManager : MonoBehaviour
     }
 
     // ─── 再生 API ────────────────────────────────────────────────
+
+    /// <summary>
+    /// 指定ロケーションから 3D 空間音響で SFX を再生する。
+    /// SpatialAudioController が存在しない場合は通常の 2D 再生にフォールバック。
+    /// </summary>
+    public void PlaySpatial(string key, FacilityLocation loc)
+    {
+        AudioClip clip = null;
+        float     vol  = sfxVolume;
+
+        if (manifest != null)
+        {
+            var e = manifest.GetSfx(key);
+            if (e?.clip != null) { clip = e.clip; vol = e.volume * sfxVolume; }
+        }
+        if (clip == null && sfxDict.TryGetValue(key, out var legacy) && legacy.clip != null)
+        {
+            clip = legacy.clip; vol = legacy.volume * sfxVolume;
+        }
+
+        if (clip == null) return;
+
+        if (SpatialAudioController.Instance != null)
+            SpatialAudioController.Instance.PlayAt(clip, loc, vol);
+        else
+            sfxSource.PlayOneShot(clip, vol);
+    }
+
     public void Play(string key)
     {
         AudioClip clip  = null;
