@@ -120,31 +120,31 @@ Material:
     - _DepthOffsetEnable: 0
     - _Distortion: 0.2
     - _DoubleSidedEnable: 0
-    - _DoubleSidedGIMode: 0
+    - _DoubleSidedGIMode: 0.2
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 0
     - _EnableBlendModePreserveSpecularLighting: 1
-    - _EnableFogOnTransparent: 1
+    - _EnableFogOnTransparent: 0
     - _Enable_Grunge: 0
-    - _Grunge_Mask_Invert: 0
+    - _Grunge_Mask_Invert: 1
     - _Grunge_Mask_Size: 512
-    - _Grunge_Size: 512
+    - _Grunge_Size: 0
     - _Metallic: 1
-    - _NormalMapStrength: 1
+    - _NormalMapStrength: 512
     - _NormalStrength: 0.9
     - _OpaqueCullMode: 2
     - _QueueControl: 1
     - _QueueOffset: 0
-    - _RayTracing: 0
+    - _RayTracing: 1
     - _ReceiveShadows: 1
-    - _ReceivesSSR: 1
+    - _ReceivesSSR: 0
     - _ReceivesSSRTransparent: 0
-    - _RefractionModel: 0
+    - _RefractionModel: 1
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
     - _Roughness: 5
     - _Second_Normal_Map_Dirt_Balance: 1
-    - _Second_Normal_Map_Dirt_Strength: 1
+    - _Second_Normal_Map_Dirt_Strength: 5
     - _Second_Normal_Map_UV_Scale: 1
     - _SrcBlend: 1
     - _StencilRef: 0
@@ -160,18 +160,18 @@ Material:
     - _SupportDecals: 1
     - _Surface: 0
     - _SurfaceType: 0
-    - _TransparentBackfaceEnable: 0
+    - _TransparentBackfaceEnable: 1
     - _TransparentCullMode: 2
     - _TransparentDepthPostpassEnable: 0
     - _TransparentDepthPrepassEnable: 0
-    - _TransparentSortPriority: 0
+    - _TransparentSortPriority: 2
     - _TransparentWritingMotionVec: 0
     - _TransparentZWrite: 0
     - _UV_Scale: 1
     - _UseShadowThreshold: 0
     - _Use_3_Color_Tint: 0
     - _Use_AO_Dirt: 0
-    - _Use_Base_Color_Alpha_Mask: 0
+    - _Use_Base_Color_Alpha_Mask: 1
     - _Use_Bottom_Dirt: 0
     - _Use_Cubemap: 0
     - _Use_Dirt: 0
@@ -182,7 +182,7 @@ Material:
     - _ZTest: 4
     - _ZTestDepthEqualForOpaque: 3
     - _ZTestGBuffer: 4
-    - _ZTestTransparent: 4
+    - _ZTestTransparent: 1
     - _ZWrite: 1
     - _ZWriteControl: 0
     m_Colors:

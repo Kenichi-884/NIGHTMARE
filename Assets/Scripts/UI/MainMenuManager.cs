@@ -37,6 +37,7 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Game Screen")]
     [SerializeField] private GameObject gameScreen;
+    [SerializeField] private GameObject mainCanvas;
 
     [Header("Intro Fade")]
     [SerializeField] private Image fadeOverlay;
@@ -186,9 +187,20 @@ public class MainMenuManager : MonoBehaviour
         _titleDirector?.StopEffects();
         AudioManager.Instance?.StopLoop();
         yield return Fade(0f, 1f, 0.45f);
+        Debug.Log("[MMM] フェードアウト完了");
         HideAllPanels();
+        mainMenuPanel?.SetActive(false);
+        Debug.Log($"[MMM] mainCanvas={mainCanvas}, gameScreen={gameScreen}");
+        mainCanvas?.SetActive(false);
         gameScreen?.SetActive(true);
+        Debug.Log($"[MMM] gameScreen.activeSelf={gameScreen?.activeSelf}");
         yield return Fade(1f, 0f, 0.45f);
+        Debug.Log("[MMM] フェードイン完了");
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("[MainMenuManager] GameManager.Instance が null です。シーンに GameManager を配置してください。");
+            yield break;
+        }
         GameManager.Instance.StartNight(day);
     }
 
@@ -206,11 +218,11 @@ public class MainMenuManager : MonoBehaviour
 
     private void ShowMainMenu()
     {
-        gameScreen?.SetActive(false);
-        mainMenuPanel?.SetActive(true);
-        stageSelectPanel?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        lorePanel?.SetActive(false);
+        // gameScreen?.SetActive(false);
+        // mainMenuPanel?.SetActive(true);
+        // stageSelectPanel?.SetActive(false);
+        // settingsPanel?.SetActive(false);
+        // lorePanel?.SetActive(false);
     }
 
     private void SlideToMainMenu()
@@ -250,14 +262,14 @@ public class MainMenuManager : MonoBehaviour
                 }
                 rt.anchoredPosition = origin;
             }
-            from.SetActive(false);
+            // from.SetActive(false);
         }
 
         // to をスライドイン (左から右へ)
         if (to != null)
         {
             HideAllPanels();
-            to.SetActive(true);
+            // to.SetActive(true);
             var rt = to.GetComponent<RectTransform>();
             if (rt != null)
             {
@@ -280,11 +292,11 @@ public class MainMenuManager : MonoBehaviour
 
     private void HideAllPanels()
     {
-        gameScreen?.SetActive(false);
-        mainMenuPanel?.SetActive(false);
-        stageSelectPanel?.SetActive(false);
-        settingsPanel?.SetActive(false);
-        lorePanel?.SetActive(false);
+        // gameScreen?.SetActive(false);
+        // mainMenuPanel?.SetActive(false);
+        // stageSelectPanel?.SetActive(false);
+        // settingsPanel?.SetActive(false);
+        // lorePanel?.SetActive(false);
     }
 
     // ===== フェード =====
@@ -326,21 +338,16 @@ public class MainMenuManager : MonoBehaviour
         btnLoreBack      = FindChild<Button>("BtnLoreBack");
         fadeOverlay      = FindChild<Image>("MenuFadeOverlay");
         titleText        = FindChild<Text>("TitleText");
+        if (mainCanvas == null)
+            mainCanvas   = FindChildGO("MainCanvas");
     }
 
-    private T FindChild<T>(string name) where T : Component => FindIn<T>(transform, name);
-
-    private GameObject FindChildGO(string name)
-        => FindIn<Transform>(transform, name)?.gameObject;
-
-    private T FindIn<T>(Transform root, string name) where T : Component
+    private T FindChild<T>(string name) where T : Component
     {
-        foreach (Transform c in root)
-        {
-            if (c.name == name) { var r = c.GetComponent<T>(); if (r) return r; }
-            var f = FindIn<T>(c, name);
-            if (f) return f;
-        }
+        foreach (var c in FindObjectsOfType<T>(true))
+            if (c.gameObject.name == name) return c;
         return null;
     }
+
+    private GameObject FindChildGO(string name) => FindChild<Transform>(name)?.gameObject;
 }

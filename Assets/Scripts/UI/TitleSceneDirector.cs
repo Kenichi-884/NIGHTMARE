@@ -71,7 +71,7 @@ public class TitleSceneDirector : MonoBehaviour
 
         _running = true;
         StartCoroutine(HorrorLoop());
-        StartCoroutine(TitleBreathing());
+        // StartCoroutine(TitleBreathing());
         StartCoroutine(LightFlicker());
         if (titleSubText != null) StartCoroutine(SubTextTypewriter());
     }
@@ -316,7 +316,7 @@ public class TitleSceneDirector : MonoBehaviour
                             origCol.b * Random.Range(0.2f, 1f))
                 : origCol;
             // 位置シェイク（呼吸アニメ基準からのオフセット）
-            rt.anchoredPosition = _titleOrigPos + Random.insideUnitCircle * 9f;
+            // rt.anchoredPosition = _titleOrigPos + Random.insideUnitCircle * 9f;
             yield return new WaitForSeconds(0.033f);
         }
         titleText.color = origCol;
