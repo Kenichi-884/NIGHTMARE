@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 8b95f4396c876cd42ba1f78ca6b251be
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/RuntimeCompatibility/StringSyntaxAttribute.cs
+  uploadId: 927444

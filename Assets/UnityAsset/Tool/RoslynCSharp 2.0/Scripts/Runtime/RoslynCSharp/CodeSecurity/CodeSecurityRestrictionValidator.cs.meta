@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: ba9e9cf01b279d842878062def9e9e1d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Runtime/RoslynCSharp/CodeSecurity/CodeSecurityRestrictionValidator.cs
+  uploadId: 927444

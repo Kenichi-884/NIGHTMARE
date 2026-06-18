@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: ff1d21752a21555469ae47a076d14f17
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Editor/Drawer/AssemblyReferenceAssetDrawer.cs
+  uploadId: 927444

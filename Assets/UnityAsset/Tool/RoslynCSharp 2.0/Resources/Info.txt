@@ -1,0 +1,14 @@
+Ths folder contains Roslyn C# user and template settings assets
+
+To quickly edit user settings, you can use the menu: Tools -> Roslyn C# 2.0 -> Settings to view and edit the user settings in the inspector window.
+
+- 	User settings (named RoslynCSharpUserSettings) 
+		This asset will be generated automatically the first time the package is installed.
+		It contains all settings that the user is able to modify and change the behaviour of the asset. 
+		The Roslyn C# API's will use these settings in many cases unless you manually provide settings as an optional parameter (Override via code).
+		It should NOT be renamed, or moved, but CAN be deleted if you want to reset to defaults, and it will be regenerated the next time Unity reloads scripts.
+	
+-	Template settings (named Editor/RoslynCSharpDefaultSettings)
+		This asset is included with the asset and contains the default settings required to run all demos and most otehr code you might need.
+		It should NOT be modified directly because all modifications will be lost when updating the asset
+		It should NOT be renamed, moved or deleted as it will mean demos cannot run correctly if the user generated settings then also get deleted.

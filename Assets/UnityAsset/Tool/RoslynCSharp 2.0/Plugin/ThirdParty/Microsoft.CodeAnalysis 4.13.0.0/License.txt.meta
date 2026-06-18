@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4113ccbff24f4034bbeeb49d3bf0f3b6
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Plugin/ThirdParty/Microsoft.CodeAnalysis 4.13.0.0/License.txt
+  uploadId: 927444

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 328b936c0668b6b4c99d7d13473fe32c
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 305050
+  packageName: Visual Console | Nestable horizontal debug logs
+  packageVersion: 1.2
+  assetPath: Assets/Chris Game Dev/Visual console/VisualConsole.asmdef
+  uploadId: 811158

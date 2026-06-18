@@ -258,7 +258,11 @@ public class AudioManager : MonoBehaviour
             vol  = legacy.volume * sfxVolume;
         }
 
-        if (clip != null) sfxSource.PlayOneShot(clip, vol);
+        if (clip == null) return;
+        if (AudioPoolManager.Instance != null)
+            AudioPoolManager.Instance.Play2D(clip, vol);
+        else
+            sfxSource.PlayOneShot(clip, vol);
     }
 
     // ループ SE (loopSource 専用 AudioSource を使うため PlayOneShot と競合しない)

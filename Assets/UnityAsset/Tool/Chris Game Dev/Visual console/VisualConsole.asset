@@ -1,0 +1,430 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fedca203c2a64ea4a94fb2c085abfb53, type: 3}
+  m_Name: VisualConsole
+  m_EditorClassIdentifier: 
+  colorList:
+  - name: aliceblue
+    MyColor: {r: 0.9411765, g: 0.972549, b: 1, a: 1}
+  - name: antiquewhite
+    MyColor: {r: 0.98039216, g: 0.92156863, b: 0.84313726, a: 1}
+  - name: aqua
+    MyColor: {r: 0, g: 1, b: 1, a: 1}
+  - name: aquamarine
+    MyColor: {r: 0.49803922, g: 1, b: 0.83137256, a: 1}
+  - name: azure
+    MyColor: {r: 0.9411765, g: 1, b: 1, a: 1}
+  - name: beige
+    MyColor: {r: 0.9607843, g: 0.9607843, b: 0.8627451, a: 1}
+  - name: bisque
+    MyColor: {r: 1, g: 0.89411765, b: 0.76862746, a: 1}
+  - name: black
+    MyColor: {r: 0, g: 0, b: 0, a: 1}
+  - name: blanchedalmond
+    MyColor: {r: 1, g: 0.92156863, b: 0.8039216, a: 1}
+  - name: blue
+    MyColor: {r: 0, g: 0, b: 1, a: 1}
+  - name: blueviolet
+    MyColor: {r: 0.5411765, g: 0.16862746, b: 0.8862745, a: 1}
+  - name: brown
+    MyColor: {r: 0.64705884, g: 0.16470589, b: 0.16470589, a: 1}
+  - name: burlywood
+    MyColor: {r: 0.87058824, g: 0.72156864, b: 0.5294118, a: 1}
+  - name: cadetblue
+    MyColor: {r: 0.37254903, g: 0.61960787, b: 0.627451, a: 1}
+  - name: chartreuse
+    MyColor: {r: 0.49803922, g: 1, b: 0, a: 1}
+  - name: chocolate
+    MyColor: {r: 0.8235294, g: 0.4117647, b: 0.11764706, a: 1}
+  - name: coral
+    MyColor: {r: 1, g: 0.49803922, b: 0.3137255, a: 1}
+  - name: cornflowerblue
+    MyColor: {r: 0.39215687, g: 0.58431375, b: 0.92941177, a: 1}
+  - name: cornsilk
+    MyColor: {r: 1, g: 0.972549, b: 0.8627451, a: 1}
+  - name: crimson
+    MyColor: {r: 0.8627451, g: 0.078431375, b: 0.23529412, a: 1}
+  - name: cyan
+    MyColor: {r: 0, g: 1, b: 1, a: 1}
+  - name: darkblue
+    MyColor: {r: 0, g: 0, b: 0.54509807, a: 1}
+  - name: darkcyan
+    MyColor: {r: 0, g: 0.54509807, b: 0.54509807, a: 1}
+  - name: darkgoldenrod
+    MyColor: {r: 0.72156864, g: 0.5254902, b: 0.043137256, a: 1}
+  - name: darkgray
+    MyColor: {r: 0.6627451, g: 0.6627451, b: 0.6627451, a: 1}
+  - name: darkgreen
+    MyColor: {r: 0, g: 0.39215687, b: 0, a: 1}
+  - name: darkgrey
+    MyColor: {r: 0.6627451, g: 0.6627451, b: 0.6627451, a: 1}
+  - name: darkkhaki
+    MyColor: {r: 0.7411765, g: 0.7176471, b: 0.41960785, a: 1}
+  - name: darkmagenta
+    MyColor: {r: 0.54509807, g: 0, b: 0.54509807, a: 1}
+  - name: darkolivegreen
+    MyColor: {r: 0.33333334, g: 0.41960785, b: 0.18431373, a: 1}
+  - name: darkorange
+    MyColor: {r: 1, g: 0.54901963, b: 0, a: 1}
+  - name: darkorchid
+    MyColor: {r: 0.6, g: 0.19607843, b: 0.8, a: 1}
+  - name: darkred
+    MyColor: {r: 0.54509807, g: 0, b: 0, a: 1}
+  - name: darksalmon
+    MyColor: {r: 0.9137255, g: 0.5882353, b: 0.47843137, a: 1}
+  - name: darkseagreen
+    MyColor: {r: 0.56078434, g: 0.7372549, b: 0.56078434, a: 1}
+  - name: darkslateblue
+    MyColor: {r: 0.28235295, g: 0.23921569, b: 0.54509807, a: 1}
+  - name: darkslategray
+    MyColor: {r: 0.18431373, g: 0.30980393, b: 0.30980393, a: 1}
+  - name: darkslategrey
+    MyColor: {r: 0.18431373, g: 0.30980393, b: 0.30980393, a: 1}
+  - name: darkturquoise
+    MyColor: {r: 0, g: 0.80784315, b: 0.81960785, a: 1}
+  - name: darkviolet
+    MyColor: {r: 0.5803922, g: 0, b: 0.827451, a: 1}
+  - name: deeppink
+    MyColor: {r: 1, g: 0.078431375, b: 0.5764706, a: 1}
+  - name: deepskyblue
+    MyColor: {r: 0, g: 0.7490196, b: 1, a: 1}
+  - name: dimgray
+    MyColor: {r: 0.4117647, g: 0.4117647, b: 0.4117647, a: 1}
+  - name: dimgrey
+    MyColor: {r: 0.4117647, g: 0.4117647, b: 0.4117647, a: 1}
+  - name: dodgerblue
+    MyColor: {r: 0.11764706, g: 0.5647059, b: 1, a: 1}
+  - name: firebrick
+    MyColor: {r: 0.69803923, g: 0.13333334, b: 0.13333334, a: 1}
+  - name: floralwhite
+    MyColor: {r: 1, g: 0.98039216, b: 0.9411765, a: 1}
+  - name: forestgreen
+    MyColor: {r: 0.13333334, g: 0.54509807, b: 0.13333334, a: 1}
+  - name: gainsboro
+    MyColor: {r: 0.8627451, g: 0.8627451, b: 0.8627451, a: 1}
+  - name: ghostwhite
+    MyColor: {r: 0.972549, g: 0.972549, b: 1, a: 1}
+  - name: gold
+    MyColor: {r: 1, g: 0.84313726, b: 0, a: 1}
+  - name: goldenrod
+    MyColor: {r: 0.85490197, g: 0.64705884, b: 0.1254902, a: 1}
+  - name: green
+    MyColor: {r: 0, g: 0.5019608, b: 0, a: 1}
+  - name: greenyellow
+    MyColor: {r: 0.6784314, g: 1, b: 0.18431373, a: 1}
+  - name: grey
+    MyColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
+  - name: honeydew
+    MyColor: {r: 0.9411765, g: 1, b: 0.9411765, a: 1}
+  - name: hotpink
+    MyColor: {r: 1, g: 0.4117647, b: 0.7058824, a: 1}
+  - name: indianred
+    MyColor: {r: 0.8039216, g: 0.36078432, b: 0.36078432, a: 1}
+  - name: indigo
+    MyColor: {r: 0.29411766, g: 0, b: 0.50980395, a: 1}
+  - name: ivory
+    MyColor: {r: 1, g: 1, b: 0.9411765, a: 1}
+  - name: khaki
+    MyColor: {r: 0.9411765, g: 0.9019608, b: 0.54901963, a: 1}
+  - name: lavender
+    MyColor: {r: 0.9019608, g: 0.9019608, b: 0.98039216, a: 1}
+  - name: lavenderblush
+    MyColor: {r: 1, g: 0.9411765, b: 0.9607843, a: 1}
+  - name: lawngreen
+    MyColor: {r: 0.4862745, g: 0.9882353, b: 0, a: 1}
+  - name: lemonchiffon
+    MyColor: {r: 1, g: 0.98039216, b: 0.8039216, a: 1}
+  - name: lightblue
+    MyColor: {r: 0.6784314, g: 0.84705883, b: 0.9019608, a: 1}
+  - name: lightcoral
+    MyColor: {r: 0.9411765, g: 0.5019608, b: 0.5019608, a: 1}
+  - name: lightcyan
+    MyColor: {r: 0.8784314, g: 1, b: 1, a: 1}
+  - name: lightgoldenrodyellow
+    MyColor: {r: 0.98039216, g: 0.98039216, b: 0.8235294, a: 1}
+  - name: lightgray
+    MyColor: {r: 0.827451, g: 0.827451, b: 0.827451, a: 1}
+  - name: lightgreen
+    MyColor: {r: 0.5647059, g: 0.93333334, b: 0.5647059, a: 1}
+  - name: lightgrey
+    MyColor: {r: 0.827451, g: 0.827451, b: 0.827451, a: 1}
+  - name: lightpink
+    MyColor: {r: 1, g: 0.7137255, b: 0.75686276, a: 1}
+  - name: lightsalmon
+    MyColor: {r: 1, g: 0.627451, b: 0.47843137, a: 1}
+  - name: lightseagreen
+    MyColor: {r: 0.1254902, g: 0.69803923, b: 0.6666667, a: 1}
+  - name: lightskyblue
+    MyColor: {r: 0.5294118, g: 0.80784315, b: 0.98039216, a: 1}
+  - name: lightslategray
+    MyColor: {r: 0.46666667, g: 0.53333336, b: 0.6, a: 1}
+  - name: lightslategrey
+    MyColor: {r: 0.46666667, g: 0.53333336, b: 0.6, a: 1}
+  - name: lightsteelblue
+    MyColor: {r: 0.6901961, g: 0.76862746, b: 0.87058824, a: 1}
+  - name: lightyellow
+    MyColor: {r: 1, g: 1, b: 0.8784314, a: 1}
+  - name: lime
+    MyColor: {r: 0, g: 1, b: 0, a: 1}
+  - name: limegreen
+    MyColor: {r: 0.19607843, g: 0.8039216, b: 0.19607843, a: 1}
+  - name: linen
+    MyColor: {r: 0.98039216, g: 0.9411765, b: 0.9019608, a: 1}
+  - name: magenta
+    MyColor: {r: 1, g: 0, b: 1, a: 1}
+  - name: maroon
+    MyColor: {r: 0.5019608, g: 0, b: 0, a: 1}
+  - name: mediumaquamarine
+    MyColor: {r: 0.4, g: 0.8039216, b: 0.6666667, a: 1}
+  - name: mediumblue
+    MyColor: {r: 0, g: 0, b: 0.8039216, a: 1}
+  - name: mediumorchid
+    MyColor: {r: 0.7294118, g: 0.33333334, b: 0.827451, a: 1}
+  - name: mediumpurple
+    MyColor: {r: 0.5764706, g: 0.4392157, b: 0.85882354, a: 1}
+  - name: mediumseagreen
+    MyColor: {r: 0.23529412, g: 0.7019608, b: 0.44313726, a: 1}
+  - name: mediumslateblue
+    MyColor: {r: 0.48235294, g: 0.40784314, b: 0.93333334, a: 1}
+  - name: mediumspringgreen
+    MyColor: {r: 0, g: 0.98039216, b: 0.6039216, a: 1}
+  - name: mediumturquoise
+    MyColor: {r: 0.28235295, g: 0.81960785, b: 0.8, a: 1}
+  - name: mediumvioletred
+    MyColor: {r: 0.78039217, g: 0.08235294, b: 0.52156866, a: 1}
+  - name: midnightblue
+    MyColor: {r: 0.09803922, g: 0.09803922, b: 0.4392157, a: 1}
+  - name: mintcream
+    MyColor: {r: 0.9607843, g: 1, b: 0.98039216, a: 1}
+  - name: mistyrose
+    MyColor: {r: 1, g: 0.89411765, b: 0.88235295, a: 1}
+  - name: moccasin
+    MyColor: {r: 1, g: 0.89411765, b: 0.70980394, a: 1}
+  - name: navajowhite
+    MyColor: {r: 1, g: 0.87058824, b: 0.6784314, a: 1}
+  - name: navy
+    MyColor: {r: 0, g: 0, b: 0.5019608, a: 1}
+  - name: oldlace
+    MyColor: {r: 0.99215686, g: 0.9607843, b: 0.9019608, a: 1}
+  - name: olive
+    MyColor: {r: 0.5019608, g: 0.5019608, b: 0, a: 1}
+  - name: olivedrab
+    MyColor: {r: 0.41960785, g: 0.5568628, b: 0.13725491, a: 1}
+  - name: orange
+    MyColor: {r: 1, g: 0.64705884, b: 0, a: 1}
+  - name: orangered
+    MyColor: {r: 1, g: 0.27058825, b: 0, a: 1}
+  - name: orchid
+    MyColor: {r: 0.85490197, g: 0.4392157, b: 0.8392157, a: 1}
+  - name: palegoldenrod
+    MyColor: {r: 0.93333334, g: 0.9098039, b: 0.6666667, a: 1}
+  - name: palegreen
+    MyColor: {r: 0.59607846, g: 0.9843137, b: 0.59607846, a: 1}
+  - name: paleturquoise
+    MyColor: {r: 0.6862745, g: 0.93333334, b: 0.93333334, a: 1}
+  - name: palevioletred
+    MyColor: {r: 0.85882354, g: 0.4392157, b: 0.5764706, a: 1}
+  - name: papayawhip
+    MyColor: {r: 1, g: 0.9372549, b: 0.8352941, a: 1}
+  - name: peachpuff
+    MyColor: {r: 1, g: 0.85490197, b: 0.7254902, a: 1}
+  - name: peru
+    MyColor: {r: 0.8039216, g: 0.52156866, b: 0.24705882, a: 1}
+  - name: pink
+    MyColor: {r: 1, g: 0.7529412, b: 0.79607844, a: 1}
+  - name: plum
+    MyColor: {r: 0.8666667, g: 0.627451, b: 0.8666667, a: 1}
+  - name: powderblue
+    MyColor: {r: 0.6901961, g: 0.8784314, b: 0.9019608, a: 1}
+  - name: purple
+    MyColor: {r: 0.5019608, g: 0, b: 0.5019608, a: 1}
+  - name: rebeccapurple
+    MyColor: {r: 0.4, g: 0.2, b: 0.6, a: 1}
+  - name: red
+    MyColor: {r: 1, g: 0, b: 0, a: 1}
+  - name: rosybrown
+    MyColor: {r: 0.7372549, g: 0.56078434, b: 0.56078434, a: 1}
+  - name: royalblue
+    MyColor: {r: 0.25490198, g: 0.4117647, b: 0.88235295, a: 1}
+  - name: saddlebrown
+    MyColor: {r: 0.54509807, g: 0.27058825, b: 0.07450981, a: 1}
+  - name: salmon
+    MyColor: {r: 0.98039216, g: 0.5019608, b: 0.44705883, a: 1}
+  - name: sandybrown
+    MyColor: {r: 0.95686275, g: 0.6431373, b: 0.3764706, a: 1}
+  - name: seagreen
+    MyColor: {r: 0.18039216, g: 0.54509807, b: 0.34117648, a: 1}
+  - name: seashell
+    MyColor: {r: 1, g: 0.9607843, b: 0.93333334, a: 1}
+  - name: sienna
+    MyColor: {r: 0.627451, g: 0.32156864, b: 0.1764706, a: 1}
+  - name: silver
+    MyColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  - name: skyblue
+    MyColor: {r: 0.5294118, g: 0.80784315, b: 0.92156863, a: 1}
+  - name: slateblue
+    MyColor: {r: 0.41568628, g: 0.3529412, b: 0.8039216, a: 1}
+  - name: slategray
+    MyColor: {r: 0.4392157, g: 0.5019608, b: 0.5647059, a: 1}
+  - name: slategrey
+    MyColor: {r: 0.4392157, g: 0.5019608, b: 0.5647059, a: 1}
+  - name: snow
+    MyColor: {r: 1, g: 0.98039216, b: 0.98039216, a: 1}
+  - name: springgreen
+    MyColor: {r: 0, g: 1, b: 0.49803922, a: 1}
+  - name: steelblue
+    MyColor: {r: 0.27450982, g: 0.50980395, b: 0.7058824, a: 1}
+  - name: tan
+    MyColor: {r: 0.8235294, g: 0.7058824, b: 0.54901963, a: 1}
+  - name: teal
+    MyColor: {r: 0, g: 0.5019608, b: 0.5019608, a: 1}
+  - name: thistle
+    MyColor: {r: 0.84705883, g: 0.7490196, b: 0.84705883, a: 1}
+  - name: tomato
+    MyColor: {r: 1, g: 0.3882353, b: 0.2784314, a: 1}
+  - name: transparent
+    MyColor: {r: 1, g: 1, b: 1, a: 1}
+  - name: turquoise
+    MyColor: {r: 0.2509804, g: 0.8784314, b: 0.8156863, a: 1}
+  - name: violet
+    MyColor: {r: 0.93333334, g: 0.50980395, b: 0.93333334, a: 1}
+  - name: wheat
+    MyColor: {r: 0.9607843, g: 0.87058824, b: 0.7019608, a: 1}
+  - name: white
+    MyColor: {r: 1, g: 1, b: 1, a: 1}
+  - name: whitesmoke
+    MyColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+  - name: yellow
+    MyColor: {r: 1, g: 1, b: 0, a: 1}
+  - name: yellowgreen
+    MyColor: {r: 0.6039216, g: 0.8039216, b: 0.19607843, a: 1}
+  presetList:
+  - name: a
+    textColor: '#7fffd4'
+    backgroundColor: '#3498DB'
+    borderRadius: 5
+    textSize: 12
+    fontStyle: 0
+  - name: b
+    textColor: '#8b0000'
+    backgroundColor: '#E74C3C'
+    borderRadius: 10
+    textSize: 14
+    fontStyle: 1
+  - name: c
+    textColor: '#006400'
+    backgroundColor: '#2ECC71'
+    borderRadius: 15
+    textSize: 16
+    fontStyle: 3
+  - name: d
+    textColor: '#8b4513'
+    backgroundColor: '#F39C12'
+    borderRadius: 20
+    textSize: 18
+    fontStyle: 1
+  - name: e
+    textColor: '#8b008b'
+    backgroundColor: '#9B59B6'
+    borderRadius: 5
+    textSize: 12
+    fontStyle: 1
+  - name: f
+    textColor: '#0000ff'
+    backgroundColor: '#1ABC9C'
+    borderRadius: 10
+    textSize: 14
+    fontStyle: 3
+  - name: g
+    textColor: '#FFFFFF'
+    backgroundColor: '#E67E22'
+    borderRadius: 15
+    textSize: 16
+    fontStyle: 1
+  - name: h
+    textColor: '#6495ed'
+    backgroundColor: '#34495E'
+    borderRadius: 20
+    textSize: 18
+    fontStyle: 1
+  - name: i
+    textColor: '#696969'
+    backgroundColor: '#95A5A6'
+    borderRadius: 5
+    textSize: 12
+    fontStyle: 3
+  - name: j
+    textColor: '#000000'
+    backgroundColor: '#D35400'
+    borderRadius: 10
+    textSize: 14
+    fontStyle: 0
+  - name: k
+    textColor: '#ffd700'
+    backgroundColor: '#27AE60'
+    borderRadius: 15
+    textSize: 16
+    fontStyle: 1
+  - name: l
+    textColor: '#ffa500'
+    backgroundColor: '#C0392B'
+    borderRadius: 20
+    textSize: 18
+    fontStyle: 2
+  - name: m
+    textColor: '#FFFFFF'
+    backgroundColor: '#16A085'
+    borderRadius: 5
+    textSize: 12
+    fontStyle: 1
+  - name: n
+    textColor: '#000000'
+    backgroundColor: '#8E44AD'
+    borderRadius: 10
+    textSize: 14
+    fontStyle: 3
+  - name: o
+    textColor: '#FFFFFF'
+    backgroundColor: '#2980B9'
+    borderRadius: 15
+    textSize: 16
+    fontStyle: 1
+  - name: p
+    textColor: '#000000'
+    backgroundColor: '#F1C40F'
+    borderRadius: 20
+    textSize: 18
+    fontStyle: 1
+  - name: q
+    textColor: '#FFFFFF'
+    backgroundColor: '#7F8C8D'
+    borderRadius: 5
+    textSize: 12
+    fontStyle: 3
+  - name: r
+    textColor: '#000000'
+    backgroundColor: '#2C3E50'
+    borderRadius: 10
+    textSize: 14
+    fontStyle: 1
+  - name: s
+    textColor: '#FFFFFF'
+    backgroundColor: '#1F618D'
+    borderRadius: 15
+    textSize: 16
+    fontStyle: 0
+  - name: t
+    textColor: '#000000'
+    backgroundColor: '#A93226'
+    borderRadius: 20
+    textSize: 18
+    fontStyle: 1

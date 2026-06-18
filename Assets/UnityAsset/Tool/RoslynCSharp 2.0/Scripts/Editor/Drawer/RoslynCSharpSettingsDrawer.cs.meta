@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 5de8191ce6bb72a4986dc489f1ec8834
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Editor/Drawer/RoslynCSharpSettingsDrawer.cs
+  uploadId: 927444

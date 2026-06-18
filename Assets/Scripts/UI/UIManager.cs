@@ -107,10 +107,10 @@ public class UIManager : MonoBehaviour
         if (phenomenaWarningText) phenomenaWarningText.gameObject.SetActive(false);
         if (ghostSignalOverlay)  ghostSignalOverlay.gameObject.SetActive(false);
 
-        retryButton?.onClick.AddListener(() => GameManager.Instance.RetryCurrentDay());
-        backToMenuButton?.onClick.AddListener(ReturnToMenu);
-        titleButton?.onClick.AddListener(ReturnToMenu);
-        btnToggleMap?.onClick.AddListener(ToggleMap);
+        Bind(retryButton,      () => GameManager.Instance.RetryCurrentDay());
+        Bind(backToMenuButton, ReturnToMenu);
+        Bind(titleButton,      ReturnToMenu);
+        Bind(btnToggleMap,     ToggleMap);
     }
 
     private void Update()
@@ -235,17 +235,25 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // ===== ユーティリティ =====
+
+    // ボタンにアクションを登録し、button_click SE を自動付与する
+    private void Bind(Button btn, System.Action action)
+    {
+        if (btn == null) return;
+        btn.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); action(); });
+    }
+
     // ===== ドア =====
     private void BindDoorButtons()
     {
-        btnGate?.onClick.AddListener(() => DoorManager.Instance.Toggle(DoorID.Gate));
-        btnEntrance?.onClick.AddListener(() => DoorManager.Instance.Toggle(DoorID.Entrance));
-        btnBasement?.onClick.AddListener(() => DoorManager.Instance.Toggle(DoorID.BasementStairs));
-        btnB1?.onClick.AddListener(() => DoorManager.Instance.Toggle(DoorID.B1Corridor));
-        btnEmergency?.onClick.AddListener(() => DoorManager.Instance.EmergencyLockdown());
-        btnEliminate?.onClick.AddListener(() => JammerAI.TryEliminateVisible());
-        btnResetCam?.onClick.AddListener(() =>
-            SecurityCameraSystem.Instance.TryResetCamera(SecurityCameraSystem.Instance.ActiveCamera));
+        Bind(btnGate,      () => DoorManager.Instance.Toggle(DoorID.Gate));
+        Bind(btnEntrance,  () => DoorManager.Instance.Toggle(DoorID.Entrance));
+        Bind(btnBasement,  () => DoorManager.Instance.Toggle(DoorID.BasementStairs));
+        Bind(btnB1,        () => DoorManager.Instance.Toggle(DoorID.B1Corridor));
+        Bind(btnEmergency, () => DoorManager.Instance.EmergencyLockdown());
+        Bind(btnEliminate, () => JammerAI.TryEliminateVisible());
+        Bind(btnResetCam,  () => SecurityCameraSystem.Instance.TryResetCamera(SecurityCameraSystem.Instance.ActiveCamera));
     }
 
     private void OnDoorChangedAnim(DoorID id, bool closed)
@@ -282,15 +290,15 @@ public class UIManager : MonoBehaviour
     // ===== カメラ =====
     private void BindCameraButtons()
     {
-        btnCamOutN?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_N));
-        btnCamOutE?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_E));
-        btnCamOutW?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_W));
-        btnCamOutTop?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_TOP));
+        Bind(btnCamOutN,   () => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_N));
+        Bind(btnCamOutE,   () => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_E));
+        Bind(btnCamOutW,   () => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_W));
+        Bind(btnCamOutTop, () => SecurityCameraSystem.Instance.SwitchExternal(CameraID.OUT_TOP));
 
-        btnCamIn1FA?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_1F_A));
-        btnCamIn1FB?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_1F_B));
-        btnCamInB1A?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_B1_A));
-        btnCamInB1B?.onClick.AddListener(() => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_B1_B));
+        Bind(btnCamIn1FA, () => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_1F_A));
+        Bind(btnCamIn1FB, () => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_1F_B));
+        Bind(btnCamInB1A, () => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_B1_A));
+        Bind(btnCamInB1B, () => SecurityCameraSystem.Instance.SwitchInternal(CameraID.IN_B1_B));
     }
 
     // ===== フェーズ変化 =====
@@ -416,7 +424,7 @@ public class UIManager : MonoBehaviour
                 $"<size=18>Day {day + 1}の夜が迫っている...</size>";
         }
         nextNightButton?.onClick.RemoveAllListeners();
-        nextNightButton?.onClick.AddListener(() => GameManager.Instance.ProceedToNextDay());
+        Bind(nextNightButton, () => GameManager.Instance.ProceedToNextDay());
     }
 
     private void OnTrueEnding() => ShowPanel(clearPanel);

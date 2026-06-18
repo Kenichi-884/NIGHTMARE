@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 5aaf640756927fb43bd2783fb8efcf33
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Editor/SerializedPropertyUtil.cs
+  uploadId: 927444

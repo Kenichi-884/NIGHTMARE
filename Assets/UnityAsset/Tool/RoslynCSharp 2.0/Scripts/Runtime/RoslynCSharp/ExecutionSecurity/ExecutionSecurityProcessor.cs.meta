@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 11a6cda3ca6b1c04eb9d45b4390a942d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Runtime/RoslynCSharp/ExecutionSecurity/ExecutionSecurityProcessor.cs
+  uploadId: 927444

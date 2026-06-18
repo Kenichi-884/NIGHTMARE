@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d2b427a50022c8c4bb877b97a5779a4a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/CodeEditor/Themes/TerminalTheme.asset
+  uploadId: 927444

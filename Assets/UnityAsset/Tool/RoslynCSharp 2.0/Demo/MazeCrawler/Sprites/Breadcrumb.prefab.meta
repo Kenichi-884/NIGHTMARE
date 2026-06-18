@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e60f24b0ae3b7434ebaa65a8ac48d2ff
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/MazeCrawler/Sprites/Breadcrumb.prefab
+  uploadId: 927444

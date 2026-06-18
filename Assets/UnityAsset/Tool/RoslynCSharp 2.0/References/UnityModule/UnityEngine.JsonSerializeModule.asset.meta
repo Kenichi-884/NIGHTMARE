@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 176f5bc143a90474ba7ba4caffc6a971
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/UnityModule/UnityEngine.JsonSerializeModule.asset
+  uploadId: 927444

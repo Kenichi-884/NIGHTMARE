@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 6ec62e7c43163614180f6b81ae88022d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Runtime/RoslynCSharp/AssemblyReferenceSource.cs
+  uploadId: 927444

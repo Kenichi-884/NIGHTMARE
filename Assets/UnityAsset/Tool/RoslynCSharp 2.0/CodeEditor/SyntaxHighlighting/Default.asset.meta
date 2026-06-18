@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 833b6b7f2ec158243a09dda549d9db1d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/CodeEditor/SyntaxHighlighting/Default.asset
+  uploadId: 927444

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 2c881756ac191444db66a0913b6e7c94
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Runtime/RoslynCSharp/Implementation/DefaultMainTypeSelector.cs
+  uploadId: 927444

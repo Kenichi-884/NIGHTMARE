@@ -1,0 +1,10 @@
+using UnityEngine;
+
+public class Playground : MonoBehaviour
+{
+	void Start()
+	{
+		// This example just shows that log messages will be displayed in the console
+		Debug.Log("Hello World");
+	}
+}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 76844f4cfd629ac4b84d3db62ef912e2
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Plugin/Trivial.CodeSecurity/Release/Trivial.CodeSecurity.xml
+  uploadId: 927444

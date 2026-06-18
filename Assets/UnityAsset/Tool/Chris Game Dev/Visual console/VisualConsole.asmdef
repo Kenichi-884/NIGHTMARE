@@ -1,0 +1,14 @@
+{
+    "name": "VisualConsole",
+    "rootNamespace": "chrisGameDev.VisualConsole",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

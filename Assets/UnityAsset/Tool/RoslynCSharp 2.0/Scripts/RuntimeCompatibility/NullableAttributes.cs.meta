@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: fd1722f11dace664f890a5c3fba97ed7
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/RuntimeCompatibility/NullableAttributes.cs
+  uploadId: 927444

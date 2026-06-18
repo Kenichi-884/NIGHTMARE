@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8ab7176790a27a644b32b9fc9810b1cf
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/Playground/Scripts/RoslynCSharp.PlaygroundDemo.asmdef
+  uploadId: 927444

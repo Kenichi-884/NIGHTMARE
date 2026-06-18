@@ -1,0 +1,158 @@
+.LogRow {
+    align-items: flex-start;
+    align-self: flex-start;
+    justify-content: flex-start;
+    flex-direction: row;
+    flex-shrink: 0;
+    align-content: auto;
+    height: auto;
+    flex-grow: 0;
+    position: relative;
+    overflow: visible;
+    width: 100%;
+}
+
+.SpacerLog {
+    opacity: 0;
+    background-color: rgb(157, 0, 8);
+    flex-shrink: 0;
+    align-items: flex-start;
+    align-content: auto;
+    align-self: center;
+    flex-direction: row;
+    width: 45px;
+    height: 20px;
+    min-height: 10px;
+    max-height: 100px;
+    flex-grow: 0;
+}
+
+.HeightChanger {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 100%;
+    top: 0;
+    height: 3px;
+    background-color: rgba(0, 0, 0, 0.78);
+    opacity: 0.57;
+}
+
+.LogIconed {
+    flex-basis: auto;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: auto;
+    width: auto;
+    align-self: center;
+    height: 40px;
+    font-size: 12px;
+    -unity-font-style: normal;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+    background-color: rgb(116, 19, 9);
+    max-width: none;
+    max-height: 100px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: 10px;
+    opacity: 1;
+    min-width: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+    background-size: 30px 30px;
+    margin-right: 2px;
+    padding-left: 25px;
+    position: relative;
+    margin-left: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-right: 8px;
+    background-position-x: left 5px;
+    border-left-color: rgba(30, 3, 0, 0.54);
+    border-right-color: rgba(30, 3, 0, 0.54);
+    border-top-color: rgba(30, 3, 0, 0.54);
+    border-bottom-color: rgba(30, 3, 0, 0.54);
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    -unity-text-outline-color: rgb(0, 0, 0);
+}
+
+.LogButton {
+    flex-basis: auto;
+    flex-direction: row;
+    align-items: flex-start;
+    align-content: auto;
+    width: auto;
+    align-self: center;
+    height: auto;
+    font-size: 12px;
+    -unity-font-style: normal;
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+    background-color: rgb(53, 133, 197);
+    max-width: none;
+    max-height: 100px;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-height: 10px;
+    opacity: 1;
+    min-width: auto;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-size: 30px 30px;
+    margin-right: 2px;
+    padding-left: 8px;
+    position: relative;
+    margin-left: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-right: 8px;
+    color: rgb(235, 235, 235);
+    background-position-x: left 0;
+    -unity-background-scale-mode: stretch-to-fill;
+    -unity-slice-scale: 1px;
+    background-position-y: top 0;
+}
+
+.FoldIcon {
+    flex-grow: 0;
+    background-size: 20px 20px;
+    background-image: none;
+    background-position-x: left 0;
+    background-position-y: top 0;
+    right: auto;
+    top: -6px;
+    flex-shrink: 0;
+    align-items: flex-start;
+    align-self: flex-start;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: -10px;
+}
+
+.LogSelected {
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-left-color: rgb(239, 239, 239);
+    border-bottom-color: rgb(239, 239, 239);
+    border-top-color: rgb(239, 239, 239);
+    border-right-color: rgb(239, 239, 239);
+}

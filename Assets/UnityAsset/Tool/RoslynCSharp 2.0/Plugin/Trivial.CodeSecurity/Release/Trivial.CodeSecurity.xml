@@ -1,0 +1,299 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Trivial.CodeSecurity</name>
+    </assembly>
+    <members>
+        <member name="P:Trivial.CodeSecurity.Reference.ParameterReference.IsDefinition">
+            <summary>
+            Is this parameter defined in the assembly that is being evaluated.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.ParameterReference.MethodReference">
+            <summary>
+            The method where this parameter is defined.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.ParameterReference.Position">
+            <summary>
+            The index position of this parameter starting from 0.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.ParameterReference.Name">
+            <summary>
+            The name of this parameter.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.ParameterReference.ParameterType">
+            <summary>
+            The parameter type.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.InstructionReference.DeclaringMethod">
+            <summary>
+            The method where the instruction is declared.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.InstructionReference.Offset">
+            <summary>
+            The offset from the method start of this instruction.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.InstructionReference.OpCode">
+            <summary>
+            The op code for the instruction.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.InstructionReference.Operand">
+            <summary>
+            The optional member operand for this instruction.
+            </summary>
+        </member>
+        <member name="T:Trivial.CodeSecurity.Reference.FieldReference">
+            <summary>
+            Represents a reference to a <see cref="T:System.Reflection.FieldInfo"/>.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.FieldReference.IsDefinition">
+            <summary>
+            Is the reference defined in the current evaluated assembly or a referenced assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.FieldReference.FieldType">
+            <summary>
+            The type of value stored in this field.
+            </summary>
+        </member>
+        <member name="M:Trivial.CodeSecurity.Reference.GenericInstanceMethodReference.GetGenericArguments">
+            <summary>
+            Get the generic type arguments for this generic method instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MethodReference.ReturnType">
+            <summary>
+            The return type of this method.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MethodReference.Parameters">
+            <summary>
+            The parameter references for this type.
+            </summary>
+        </member>
+        <member name="T:Trivial.CodeSecurity.Reference.NamespaceReference">
+            <summary>
+            Represents a reference to a namespace or global namespace.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.NamespaceReference.Name">
+            <summary>
+            Get the full name of the namespace.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.NamespaceReference.SeparatedNames">
+            <summary>
+            Get the separated names of the namespace (Separated by '.' character).
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.NamespaceReference.IsGlobalNamespace">
+            <summary>
+            Return a value indicating whether the namespace is the default global namespace.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MemberReference.IsDefinition">
+            <summary>
+            Is this symbol defined in the assembly that is being evaluated.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MemberReference.IsGenericDefinition">
+            <summary>
+            Does this member contain any generic parameters.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MemberReference.Name">
+            <summary>
+            The metadata name of the member.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MemberReference.DeclaringAssembly">
+            <summary>
+            Get the assembly where this member is defined.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.MemberReference.DeclaringType">
+            <summary>
+            Get the type where this member is defined.
+            Can be null for root types.
+            </summary>
+        </member>
+        <member name="T:Trivial.CodeSecurity.Reference.AssemblyReference">
+            <summary>
+            Represents a <see cref="T:System.Reflection.AssemblyName"/>.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.IsDefinition">
+            <summary>
+            Is this the assembly being currently evaluated or a referenced assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.Name">
+            <summary>
+            The name of the assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.Version">
+            <summary>
+            The version of the assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.CultureName">
+            <summary>
+            The culture name of the assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.PublicKey">
+            <summary>
+            The public key of the assembly if available.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.AssemblyReference.PublicKeyToken">
+            <summary>
+            The public key token of the assembly if available.
+            </summary>
+        </member>
+        <member name="M:Trivial.CodeSecurity.Reference.AssemblyReference.GetAssemblyName">
+            <summary>
+            Get this reference as a <see cref="T:System.Reflection.AssemblyName"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Trivial.CodeSecurity.Reference.PropertyReference">
+            <summary>
+            Represents a reference to a <see cref="T:System.Reflection.PropertyInfo"/>.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.PropertyReference.PropertyType">
+            <summary>
+            The type of value stored in this property.
+            </summary>
+        </member>
+        <member name="M:Trivial.CodeSecurity.Reference.GenericInstanceTypeReference.GetGenericArguments">
+            <summary>
+            Get the generic type arguments for this generic type instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.ISymbolReference.IsDefinition">
+            <summary>
+            Is this symbol defined in the assembly that is being evaluated.
+            </summary>
+        </member>
+        <member name="M:Trivial.CodeSecurity.Reference.ISymbolReference.GetReferenceString(Trivial.CodeSecurity.Reference.ISymbolReference)">
+            <summary>
+            Get the string representing where the symbol is used.
+            </summary>
+            <param name="illegalReferenceSymbol">An optional reference symbol that should be highlighted as illegal in the reference string</param>
+            <returns></returns>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.GenericParameterReference.IsDefinition">
+            <summary>
+            Is this generic parameter defined in the assembly that is being evaluated.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.GenericParameterReference.DeclaringMember">
+            <summary>
+            The member where the generic parameter is declared. Can be a type or method reference.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.GenericParameterReference.ParameterType">
+            <summary>
+            The generic parameter type.
+            Will be marked as a generic parameter.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.GenericParameterReference.Scope">
+            <summary>
+            The scope where the generic parameter is applied.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.GenericParameterReference.Position">
+            <summary>
+            The index position of this parameter starting from 0.
+            </summary>
+        </member>
+        <member name="T:Trivial.CodeSecurity.Reference.EventReference">
+            <summary>
+            Represents a reference to a <see cref="T:System.Reflection.EventInfo"/>.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.EventReference.IsDefinition">
+            <summary>
+            Is the reference defined in the current evaluated assembly or a referenced assembly.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Reference.EventReference.EventType">
+            <summary>
+            The type of value stored in this event.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Definition.GenericConstraintDefinition.IsDefinition">
+            <summary>
+            Is this generic parameter defined in the assembly that is being evaluated.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Definition.GenericConstraintDefinition.DeclaringParameter">
+            <summary>
+            The member where the generic parameter is declared. Can be a type or method reference.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Definition.GenericConstraintDefinition.ConstraintType">
+            <summary>
+            The generic constraining type.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Definition.GenericConstraintDefinition.Scope">
+            <summary>
+            The scope where the generic parameter is applied.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.Definition.GenericConstraintDefinition.Position">
+            <summary>
+            The index position of this constraint starting from 0.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.ICodeSecurityValidator.AllowPInvoke">
+            <summary>
+            Are platform invoke methods allowed.
+            </summary>
+        </member>
+        <member name="P:Trivial.CodeSecurity.ICodeSecurityValidator.AllowUnsafeCode">
+            <summary>
+            Is unsafe code allowed.
+            </summary>
+        </member>
+        <member name="M:Trivial.CodeSecurity.ICodeSecurityValidator.IsAssemblyReferenceAllowed(Trivial.CodeSecurity.Reference.AssemblyReference)">
+            <summary>
+            Is the specified assembly reference allowed.
+            </summary>
+            <param name="assemblyReference">A reference to an assembly</param>
+            <returns>True if the assembly reference is allowed or false if not (Fail verification)</returns>
+        </member>
+        <member name="M:Trivial.CodeSecurity.ICodeSecurityValidator.IsNamespaceReferenceAllowed(Trivial.CodeSecurity.Reference.TypeReference)">
+            <summary>
+            Is the specified namespace reference allowed.
+            Note that the named type reference is passed for context but only the namespace should be checked.
+            </summary>
+            <param name="namedTypeReference">A reference to a named type</param>
+            <returns>True if the namespace is allowed or false if not (Fail verification)</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Trivial.CodeSecurity.ICodeSecurityValidator.IsTypeReferenceAllowed(Trivial.CodeSecurity.Reference.TypeReference)" -->
+        <member name="M:Trivial.CodeSecurity.ICodeSecurityValidator.IsMemberReferenceAllowed(Trivial.CodeSecurity.Reference.MemberReference)">
+            <summary>
+            Is the specified member reference allowed.
+            Note that the provided member reference can be cast to <see cref="T:Trivial.CodeSecurity.Reference.FieldReference"/> or <see cref="T:Trivial.CodeSecurity.Reference.MethodReference"/>.
+            </summary>
+            <param name="memberReference">The member reference to check</param>
+            <returns>True if the member is allowed or false if not (Fail verification)</returns>
+        </member>
+    </members>
+</doc>

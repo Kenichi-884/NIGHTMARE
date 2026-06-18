@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 459322b8f8f0bf94a9b7774b078aa9d3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/CodeEditor/Themes/LightTheme.asset
+  uploadId: 927444

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: f1ddba88fb01e4d48ac17fbfaf8f49a1
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Editor/Inspector/RoslynCSharpSettingsInspector.cs
+  uploadId: 927444

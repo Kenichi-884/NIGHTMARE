@@ -1,0 +1,25 @@
+{
+    "name": "RoslynCSharp.MazeDemo",
+    "rootNamespace": "",
+    "references": [
+        "GUID:742181db24a1e374db9561961d44638b",
+        "GUID:16ffbb462cb49ca419793a3cbf3a3c10",
+        "GUID:f656afbb727c4e8418169dff952bc121",
+        "GUID:75b58d7930f6c0f40aee3135b22e732d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.scottyboy805.dotnow",
+            "expression": "",
+            "define": "DOTNOW"
+        }
+    ],
+    "noEngineReferences": false
+}

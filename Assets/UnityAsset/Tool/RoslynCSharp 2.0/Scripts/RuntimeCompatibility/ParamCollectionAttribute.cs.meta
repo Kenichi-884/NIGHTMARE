@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: a7ec924b0fadb584ab41b26372ba996b
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/RuntimeCompatibility/ParamCollectionAttribute.cs
+  uploadId: 927444

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: eba40a09b5860d540b33c4bbb3171c0b
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/Playground/Templates/NewScript.txt
+  uploadId: 927444

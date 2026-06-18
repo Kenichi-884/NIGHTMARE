@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: 6927ca8660f21d1418ad74afcd288805
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Plugin/ThirdParty/System.Reflection.Metadata
+    8.0.0.0/System.Reflection.Metadata.dll
+  uploadId: 927444

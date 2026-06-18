@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 46681becb4df1194dac4fd90df5d636e
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/MazeCrawler/Scripts/EscapeTheMazeDemo.cs
+  uploadId: 927444

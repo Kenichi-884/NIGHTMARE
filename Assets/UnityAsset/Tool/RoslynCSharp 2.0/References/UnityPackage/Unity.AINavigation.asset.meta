@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1d1511a5d70cf9f4991195fe70812cf3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/UnityPackage/Unity.AINavigation.asset
+  uploadId: 927444

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 74f17b5b3fc33864886383c7c29db5b8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/Runtime/System.asset
+  uploadId: 927444

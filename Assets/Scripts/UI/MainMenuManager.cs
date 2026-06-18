@@ -108,20 +108,22 @@ public class MainMenuManager : MonoBehaviour
         titleText.color = orig;
     }
 
+    // ボタンにアクションを登録し、button_click SE を自動付与する
+    private void Bind(Button btn, System.Action action)
+    {
+        if (btn == null) return;
+        btn.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); action(); });
+    }
+
     private void SetupButtons()
     {
-        btnStart?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); ShowStageSelect(); });
-        btnSettings?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToPanel(settingsPanel); });
-        btnLore?.onClick.AddListener(() =>
-        {
-            AudioManager.Instance?.Play("button_click");
-            if (loreText) loreText.text = LORE_TEXT;
-            SlideToPanel(lorePanel);
-        });
+        Bind(btnStart,          ShowStageSelect);
+        Bind(btnSettings,       () => SlideToPanel(settingsPanel));
+        Bind(btnLore,           () => { if (loreText) loreText.text = LORE_TEXT; SlideToPanel(lorePanel); });
         btnQuit?.onClick.AddListener(() => Application.Quit());
-        btnSettingsBack?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
-        btnLoreBack?.onClick.AddListener(()     => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
-        btnStageSelectBack?.onClick.AddListener(() => { AudioManager.Instance?.Play("button_click"); SlideToMainMenu(); });
+        Bind(btnSettingsBack,   SlideToMainMenu);
+        Bind(btnLoreBack,       SlideToMainMenu);
+        Bind(btnStageSelectBack, SlideToMainMenu);
 
         bgmSlider?.onValueChanged.AddListener(v => AudioManager.Instance?.SetBGMVolume(v));
         sfxSlider?.onValueChanged.AddListener(v => AudioManager.Instance?.SetSFXVolume(v));
@@ -142,7 +144,7 @@ public class MainMenuManager : MonoBehaviour
             if (btn != null)
             {
                 int captured = day;
-                btn.onClick.AddListener(() => OnSelectDay(captured));
+                Bind(btn, () => OnSelectDay(captured));
             }
         }
     }

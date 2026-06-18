@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 074130f23425af64ba0fe6e2f19cfcbc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/UnityEditor/UnityEditor.CoreModule.asset
+  uploadId: 927444

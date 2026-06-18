@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4b9fa8d0c20ff6747a6536c51ca2a64d
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 305050
+  packageName: Visual Console | Nestable horizontal debug logs
+  packageVersion: 1.2
+  assetPath: Assets/Chris Game Dev/Visual console/Demo/DemoScene.unity
+  uploadId: 811158

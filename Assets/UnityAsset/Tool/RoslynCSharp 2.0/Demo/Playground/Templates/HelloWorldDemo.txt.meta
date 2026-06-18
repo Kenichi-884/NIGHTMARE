@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2d5c961a93aea414ca7407530fdfd770
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/Playground/Templates/HelloWorldDemo.txt
+  uploadId: 927444

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9c7f2656e53bb78408cf676b15de3a64
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Demo/MazeCrawler/CodeTemplates/MazeCrawlerSolution.txt
+  uploadId: 927444

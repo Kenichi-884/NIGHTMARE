@@ -1,0 +1,14 @@
+using UnityEngine;
+
+public class Playground : MonoBehaviour
+{
+	void Start()
+	{
+		// Todo - Add startup code
+	}
+	
+	void Update()
+	{
+		// Todo - Add update code
+	}
+}

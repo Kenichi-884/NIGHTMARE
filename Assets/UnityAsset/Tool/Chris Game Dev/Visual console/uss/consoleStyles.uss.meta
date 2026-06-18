@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5ce7b427995a5e84ba77a60d67b63ff7
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 12385, guid: 0000000000000000e000000000000000, type: 0}
+  disableValidation: 0
+AssetOrigin:
+  serializedVersion: 1
+  productId: 305050
+  packageName: Visual Console | Nestable horizontal debug logs
+  packageVersion: 1.2
+  assetPath: Assets/Chris Game Dev/Visual console/uss/consoleStyles.uss
+  uploadId: 811158

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: e0bb310986193ce4fa8d7ba226ccfc55
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Plugin/ThirdParty/Microsoft.CodeAnalysis 4.13.0.0/Microsoft.CodeAnalysis.dll
+  uploadId: 927444

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d4dbeeebb0394714da78940b1848f134
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/CodeEditor/Themes/DarkTheme.asset
+  uploadId: 927444

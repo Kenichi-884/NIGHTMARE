@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 2807e8f81f7bd074c8d1fb09fe513193
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/CodeEditor/Scripts/CSharpCodeEditorTheme.cs
+  uploadId: 927444

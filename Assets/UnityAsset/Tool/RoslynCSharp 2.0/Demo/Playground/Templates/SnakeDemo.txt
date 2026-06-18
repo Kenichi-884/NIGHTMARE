@@ -1,0 +1,182 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+/// <summary>
+/// Simple top-down 2D Snake game using Unity primitives (XY plane).
+/// Self-contained — uses only cubes and URP materials.
+/// Attach to an empty GameObject in a blank scene.
+/// </summary>
+public class SnakeGame : MonoBehaviour
+{
+    [Header("Grid Settings")]
+    public int gridWidth = 20;
+    public int gridHeight = 12;
+    public float moveInterval = 0.2f;
+
+    private List<Transform> snake = new List<Transform>();
+    private Vector2Int direction = Vector2Int.right;
+    private Vector2Int nextDirection = Vector2Int.right;
+    private float timer;
+    private Transform food;
+    private bool gameOver = false;
+
+    private Material snakeMat;
+    private Material foodMat;
+    private Material borderMat;
+    private Material backgroundMat;
+
+    private int xMin, xMax, yMin, yMax;
+
+    void Start()
+    {
+        // --- Compute grid bounds so (0,0) is center ---
+        xMin = -gridWidth / 2;
+        xMax = gridWidth / 2;
+        yMin = -gridHeight / 2;
+        yMax = gridHeight / 2;
+
+        // --- Create URP materials ---
+        snakeMat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = Color.green };
+        foodMat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = Color.red };
+        borderMat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = Color.black };
+        backgroundMat = new Material(Shader.Find("Universal Render Pipeline/Lit")) { color = new Color(0.85f, 0.85f, 0.85f) };
+
+        CreateBackground();
+        CreateBorders();
+
+        // --- Snake start ---
+        Vector3 startPos = new Vector3(0, 0, 0);
+        for (int i = 0; i < 3; i++)
+            CreateSnakeSegment(startPos - new Vector3(i, 0, 0));
+
+        SpawnFood();
+    }
+
+    void Update()
+    {
+        HandleInput();
+
+        timer += Time.deltaTime;
+        if (timer >= moveInterval)
+        {
+            timer = 0;
+            Move();
+        }
+    }
+
+    void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.W) && direction != Vector2Int.down) nextDirection = Vector2Int.up;
+        else if (Input.GetKeyDown(KeyCode.S) && direction != Vector2Int.up) nextDirection = Vector2Int.down;
+        else if (Input.GetKeyDown(KeyCode.A) && direction != Vector2Int.right) nextDirection = Vector2Int.left;
+        else if (Input.GetKeyDown(KeyCode.D) && direction != Vector2Int.left) nextDirection = Vector2Int.right;
+    }
+
+    void Move()
+    {
+        direction = nextDirection;
+
+        Vector3 headPos = snake[0].position;
+        Vector2Int newHeadPos = new Vector2Int(Mathf.RoundToInt(headPos.x + direction.x), Mathf.RoundToInt(headPos.y + direction.y));
+
+        // --- Collisions with borders ---
+        if (newHeadPos.x <= xMin || newHeadPos.x >= xMax || newHeadPos.y <= yMin || newHeadPos.y >= yMax)
+        {
+            GameOver();
+            return;
+        }
+
+        // --- Collisions with self ---
+        foreach (var seg in snake)
+        {
+            if (Mathf.RoundToInt(seg.position.x) == newHeadPos.x && Mathf.RoundToInt(seg.position.y) == newHeadPos.y)
+            {
+                GameOver();
+                return;
+            }
+        }
+
+        // --- Move body ---
+        for (int i = snake.Count - 1; i > 0; i--)
+            snake[i].position = snake[i - 1].position;
+
+        // --- Move head ---
+        snake[0].position = new Vector3(newHeadPos.x, newHeadPos.y, 0);
+
+        // --- Check food ---
+        if (Mathf.RoundToInt(food.position.x) == newHeadPos.x && Mathf.RoundToInt(food.position.y) == newHeadPos.y)
+        {
+            Grow();
+            SpawnFood();
+        }
+    }
+
+    void CreateSnakeSegment(Vector3 pos)
+    {
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube).transform;
+        cube.position = pos;
+        cube.localScale = Vector3.one * 0.9f;
+        cube.GetComponent<Renderer>().material = snakeMat;
+        snake.Add(cube);
+    }
+
+    void Grow()
+    {
+        Vector3 tailPos = snake[snake.Count - 1].position;
+        CreateSnakeSegment(tailPos);
+    }
+
+    void SpawnFood()
+    {
+        if (food != null)
+            Destroy(food.gameObject);
+
+        Vector2Int pos;
+        do
+        {
+            pos = new Vector2Int(Random.Range(xMin + 1, xMax), Random.Range(yMin + 1, yMax));
+        } while (snake.Exists(s => Mathf.RoundToInt(s.position.x) == pos.x && Mathf.RoundToInt(s.position.y) == pos.y));
+
+        food = GameObject.CreatePrimitive(PrimitiveType.Sphere).transform;
+        food.position = new Vector3(pos.x, pos.y, 0);
+        food.localScale = Vector3.one * 0.8f;
+        food.GetComponent<Renderer>().material = foodMat;
+    }
+
+    void CreateBackground()
+    {
+        var bg = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        bg.transform.position = new Vector3(0, 0, 1);
+        bg.transform.localScale = new Vector3(gridWidth, gridHeight, 0.1f);
+        bg.GetComponent<Renderer>().material = backgroundMat;
+    }
+
+    void CreateBorders()
+    {
+        // Top and bottom
+        for (int x = xMin; x <= xMax; x++)
+        {
+            CreateBorderCube(new Vector3(x, yMin, 0));
+            CreateBorderCube(new Vector3(x, yMax, 0));
+        }
+        // Left and right
+        for (int y = yMin + 1; y < yMax; y++)
+        {
+            CreateBorderCube(new Vector3(xMin, y, 0));
+            CreateBorderCube(new Vector3(xMax, y, 0));
+        }
+    }
+
+    void CreateBorderCube(Vector3 pos)
+    {
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        cube.transform.position = pos;
+        cube.GetComponent<Renderer>().material = borderMat;
+    }
+
+    void GameOver()
+    {
+        gameOver = true;
+        Debug.Log("Game Over!");
+    }
+}

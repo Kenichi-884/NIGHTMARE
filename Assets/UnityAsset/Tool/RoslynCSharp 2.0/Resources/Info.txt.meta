@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 521d7737a1455dd42b7a9f7b862df7f0
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Resources/Info.txt
+  uploadId: 927444

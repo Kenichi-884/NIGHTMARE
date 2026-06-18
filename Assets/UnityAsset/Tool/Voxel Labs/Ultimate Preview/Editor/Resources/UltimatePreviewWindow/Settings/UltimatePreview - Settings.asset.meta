@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7b9576c980907994ba9f221b44766dd0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 322974
+  packageName: "Ultimate Preview Window \u2013 Pro Edition"
+  packageVersion: 1.4.0
+  assetPath: Assets/Voxel Labs/Ultimate Preview/Editor/Resources/UltimatePreviewWindow/Settings/UltimatePreview
+    - Settings.asset
+  uploadId: 906350

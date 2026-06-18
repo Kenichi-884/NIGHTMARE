@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ca140a259c6c8864a8eb11cac512b19e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/UnityPackage/Unity.Mathematics.asset
+  uploadId: 927444

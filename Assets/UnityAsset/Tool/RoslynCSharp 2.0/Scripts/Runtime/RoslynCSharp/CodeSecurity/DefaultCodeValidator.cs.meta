@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: e0ffe01197aeab34c8200d1a735a4b45
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Runtime/RoslynCSharp/CodeSecurity/DefaultCodeValidator.cs
+  uploadId: 927444

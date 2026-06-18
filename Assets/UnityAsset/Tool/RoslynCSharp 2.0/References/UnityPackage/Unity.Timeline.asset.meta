@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1022a5b72b4d4db4785dc9df9f0414d9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/References/UnityPackage/Unity.Timeline.asset
+  uploadId: 927444

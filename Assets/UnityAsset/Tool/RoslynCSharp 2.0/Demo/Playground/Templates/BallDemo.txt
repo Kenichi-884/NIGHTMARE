@@ -1,0 +1,46 @@
+using UnityEngine;
+
+public class BallDemo : MonoBehaviour
+{
+	public Vector2 ballBounds = new Vector2(8, 4);
+	public float ballSpeed = 20;
+	
+	private GameObject ball;
+	private Vector2 direction = default;
+	void Start()
+	{
+		// Create a ball
+		ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		
+		// Change material to something interesting
+		Material material = ball.GetComponent<Renderer>().material;
+		
+		material.shader = Shader.Find("Universal Render Pipeline/Lit");
+		material.color = Color.red;
+		
+		// Create random direction
+		direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+	}
+	
+	void Update()
+	{
+		// Move ball
+		ball.transform.position += (Vector3)direction * Time.deltaTime * ballSpeed;
+		
+		// Constrain ball left
+		if(ball.transform.position.x < -ballBounds.x)
+			direction = Vector2.Reflect(direction, Vector2.right);
+		
+		// Constrain ball right
+		if(ball.transform.position.x > ballBounds.x)
+			direction = Vector2.Reflect(direction, Vector2.left);
+		
+		// Constrain ball top
+		if(ball.transform.position.y > ballBounds.y)
+			direction = Vector2.Reflect(direction, Vector2.down);
+		
+		// Constrain ball bottom
+		if(ball.transform.position.y < -ballBounds.y)
+			direction = Vector2.Reflect(direction, Vector2.up);
+	}
+}

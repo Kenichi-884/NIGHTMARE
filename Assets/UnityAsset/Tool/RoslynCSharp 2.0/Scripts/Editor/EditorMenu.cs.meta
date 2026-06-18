@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: 91771b57a9a65414fa8cf6e1478f981d
+AssetOrigin:
+  serializedVersion: 1
+  productId: 316580
+  packageName: Roslyn C# - Runtime Compiler 2.0
+  packageVersion: 2.3.1
+  assetPath: Assets/RoslynCSharp 2.0/Scripts/Editor/EditorMenu.cs
+  uploadId: 927444
