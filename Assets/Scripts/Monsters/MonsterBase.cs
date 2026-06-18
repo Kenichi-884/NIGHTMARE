@@ -32,9 +32,14 @@ public abstract class MonsterBase : MonoBehaviour
         // 天気による速度補正（雨=0.85倍、嵐=0.70倍）
         float weatherMult = WeatherManager.Instance != null ? WeatherManager.Instance.MoveIntervalMultiplier : 1f;
         moveInterval = baseMoveInterval * speedMultiplier * weatherMult;
-        pathIndex = 0;
-        moveTimer = 0f;
         movePath = BuildPath();
+
+        // パスの先頭がスポーン地点と同じなら1つ飛ばす（最初のステップが no-op になるバグを修正）
+        pathIndex = (movePath.Count > 0 && movePath[0] == spawnLocation) ? 1 : 0;
+
+        // 複数体が同時スポーンしても位置が重ならないようにタイマーをずらす
+        moveTimer = Random.Range(0f, moveInterval);
+
         isActive = true;
     }
 

@@ -104,15 +104,14 @@ public class AudioManifest : ScriptableObject
         foreach (var e in bgm)
         {
             if (e.clip == null) continue;
+            // phases が空のエントリはタイトル・ゲームオーバー等のオンデマンド用 → スキップ
+            if (e.phases == null || e.phases.Length == 0) continue;
             if (e.day7Only && day != 7) continue;
             if (e.fromDay > 0 && day < e.fromDay) continue;
 
-            if (e.phases != null && e.phases.Length > 0)
-            {
-                bool match = false;
-                foreach (var p in e.phases) if (p == phase) { match = true; break; }
-                if (!match) continue;
-            }
+            bool match = false;
+            foreach (var p in e.phases) if (p == phase) { match = true; break; }
+            if (!match) continue;
 
             // スコア計算（高いほど優先）
             int score = 0;
