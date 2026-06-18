@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 85e19438ead0fe042a7a79f71e19ce9e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/Environment/Materials/Rock_2.mat
+  uploadId: 923630

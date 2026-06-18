@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 86762f9c64b13416089b7b9374238e2a
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Runtime/Resources/EdgeFusion/Shaders/EdgeFusionDebugPass.hlsl
+  uploadId: 923630

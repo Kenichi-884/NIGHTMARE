@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d8ad356ccb8df4912b52e181bdc3c06c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/Volume Settings/Global Volume Profile.asset
+  uploadId: 923630

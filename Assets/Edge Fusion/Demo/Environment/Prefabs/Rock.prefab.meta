@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 45dec20780b3a604cb4622b980bf6e4b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/Environment/Prefabs/Rock.prefab
+  uploadId: 923630

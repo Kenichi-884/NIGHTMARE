@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 823cc7d3f7f1d438d9ad8413a6147ef0
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Runtime/EdgeFusion.asmdef
+  uploadId: 923630

@@ -1,0 +1,9 @@
+fileFormatVersion: 2
+guid: d0c7814232fd54118a35e0aa3b4689de
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Runtime/Scripts/ShaderParams.cs
+  uploadId: 923630

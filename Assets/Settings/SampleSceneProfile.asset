@@ -75,6 +75,134 @@ MonoBehaviour:
   rounded:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &-590545796545054721
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e725baf07381d40e9972f75d7670e54f, type: 3}
+  m_Name: EdgeFusion
+  m_EditorClassIdentifier: 
+  active: 1
+  blendLayers:
+    m_OverrideState: 1
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4294967295
+  renderingLayerFilter:
+    m_OverrideState: 1
+    m_Value:
+      serializedVersion: 0
+      m_Bits: 4294967295
+  blendWithOthers:
+    m_OverrideState: 0
+    m_Value: 1
+  doubleSidedLayers:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 0
+  doubleSidedRenderingLayerFilter:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 0
+      m_Bits: 4294967295
+  specialGroupLayers:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 0
+  specialGroupRenderingLayerFilter:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 0
+      m_Bits: 4294967295
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.363
+  radius:
+    m_OverrideState: 1
+    m_Value: 0.0001
+  distanceCompensation:
+    m_OverrideState: 0
+    m_Value: 0
+  enableIntraObjectFusion:
+    m_OverrideState: 0
+    m_Value: 0
+  intraObjectFusionPerObject:
+    m_OverrideState: 0
+    m_Value: 0
+  concavityTest:
+    m_OverrideState: 0
+    m_Value: 0
+  normalThreshold:
+    m_OverrideState: 0
+    m_Value: 0.6
+  sampleCount:
+    m_OverrideState: 0
+    m_Value: 24
+  jitter:
+    m_OverrideState: 0
+    m_Value: 0
+  maxBlendDistance:
+    m_OverrideState: 0
+    m_Value: 50
+  binarySearchSteps:
+    m_OverrideState: 0
+    m_Value: 7
+  earlyExitHits:
+    m_OverrideState: 0
+    m_Value: 5
+  antiFlicker:
+    m_OverrideState: 0
+    m_Value: 0
+  debugMode:
+    m_OverrideState: 0
+    m_Value: 0
+  depthDebugMultiplier:
+    m_OverrideState: 0
+    m_Value: 1
+  msaaEdgeFixPower:
+    m_OverrideState: 0
+    m_Value: 0
+  compareMode:
+    m_OverrideState: 0
+    m_Value: 0
+  compareSameSide:
+    m_OverrideState: 0
+    m_Value: 0
+  comparePanning:
+    m_OverrideState: 0
+    m_Value: 0.25
+  compareLineAngle:
+    m_OverrideState: 0
+    m_Value: 1.4
+  compareLineWidth:
+    m_OverrideState: 0
+    m_Value: 0.002
+  compareLineColor:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  maxScreenRadius:
+    m_OverrideState: 0
+    m_Value: 0.1
+  shadowProtection:
+    m_OverrideState: 0
+    m_Value: 0.0002
+  noiseIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+  noiseScale:
+    m_OverrideState: 0
+    m_Value: 5
+  noiseContrast:
+    m_OverrideState: 0
+    m_Value: 0.75
+  idExclusionPairs: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,6 +221,8 @@ MonoBehaviour:
   - {fileID: 7391319092446245454}
   - {fileID: -3357603926938260329}
   - {fileID: 1777961588719814764}
+  - {fileID: 2980145475923448135}
+  - {fileID: -590545796545054721}
 --- !u!114 &849379129802519247
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -959,6 +1089,302 @@ MonoBehaviour:
   blurShowMask:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &2980145475923448135
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cad00e0c748434bbb89ed2d571f9309d, type: 3}
+  m_Name: ShinyScreenSpaceRaytracedReflections
+  m_EditorClassIdentifier: 
+  active: 1
+  reflectionStyle:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsMultiplier:
+    m_OverrideState: 0
+    m_Value: 0
+  showInSceneView:
+    m_OverrideState: 0
+    m_Value: 1
+  reflectionsWorkflow:
+    m_OverrideState: 0
+    m_Value: 0
+  sampleCount:
+    m_OverrideState: 1
+    m_Value: 24
+  maxRayLength:
+    m_OverrideState: 1
+    m_Value: 12
+  thickness:
+    m_OverrideState: 1
+    m_Value: 0.5
+  binarySearchIterations:
+    m_OverrideState: 1
+    m_Value: 5
+  refineThickness:
+    m_OverrideState: 1
+    m_Value: 0
+  thicknessFine:
+    m_OverrideState: 1
+    m_Value: 0.05
+  jitter:
+    m_OverrideState: 0
+    m_Value: 0.3
+  animatedJitter:
+    m_OverrideState: 0
+    m_Value: 0
+  computeBackFaces:
+    m_OverrideState: 1
+    m_Value: 0
+  thicknessMinimum:
+    m_OverrideState: 0
+    m_Value: 0.16
+  computeBackFacesLayerMask:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4294967295
+  downsampling:
+    m_OverrideState: 1
+    m_Value: 2
+  depthBias:
+    m_OverrideState: 0
+    m_Value: 0.03
+  temporalFilter:
+    m_OverrideState: 1
+    m_Value: 0
+  temporalFilterResponseSpeed:
+    m_OverrideState: 0
+    m_Value: 1
+  smoothnessThreshold:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsMinIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsMaxIntensity:
+    m_OverrideState: 0
+    m_Value: 1
+  hdrClamp:
+    m_OverrideState: 0
+    m_Value: 3
+  reflectionsIntensityCurve:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  reflectionsSmoothnessCurve:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0.166666
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 0.25
+        inSlope: 0.833333
+        outSlope: 1.166666
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1.833333
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  fresnel:
+    m_OverrideState: 0
+    m_Value: 0.75
+  decay:
+    m_OverrideState: 0
+    m_Value: 2
+  metallicBoost:
+    m_OverrideState: 0
+    m_Value: 0
+  metallicBoostThreshold:
+    m_OverrideState: 0
+    m_Value: 0
+  specularControl:
+    m_OverrideState: 0
+    m_Value: 1
+  specularSoftenPower:
+    m_OverrideState: 0
+    m_Value: 15
+  skyboxReflectionMode:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxIntensity:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxResolution:
+    m_OverrideState: 0
+    m_Value: 6
+  skyboxUpdateMode:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxUpdateInterval:
+    m_OverrideState: 0
+    m_Value: 3
+  skyboxContributionPass:
+    m_OverrideState: 0
+    m_Value: 1
+  skyboxCustomCubemap:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
+    dimension: 1
+  skyboxHDR:
+    m_OverrideState: 0
+    m_Value: 0
+  skyboxCullingMask:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 0
+  nearCameraAttenuationStart:
+    m_OverrideState: 0
+    m_Value: 0
+  nearCameraAttenuationRange:
+    m_OverrideState: 0
+    m_Value: 1
+  farCameraAttenuationStart:
+    m_OverrideState: 0
+    m_Value: 900
+  farCameraAttenuationRange:
+    m_OverrideState: 0
+    m_Value: 100
+  useCustomBounds:
+    m_OverrideState: 0
+    m_Value: 0
+  boundsMin:
+    m_OverrideState: 0
+    m_Value: {x: -10000, y: -10000, z: -10000}
+  boundsMax:
+    m_OverrideState: 0
+    m_Value: {x: 10000, y: 10000, z: 10000}
+  vignetteSize:
+    m_OverrideState: 0
+    m_Value: 1.1
+  vignettePower:
+    m_OverrideState: 0
+    m_Value: 1.5
+  vignetteMode:
+    m_OverrideState: 0
+    m_Value: 0
+  fuzzyness:
+    m_OverrideState: 0
+    m_Value: 0
+  contactHardening:
+    m_OverrideState: 0
+    m_Value: 0
+  minimumBlur:
+    m_OverrideState: 0
+    m_Value: 0.25
+  blurDownsampling:
+    m_OverrideState: 0
+    m_Value: 1
+  blurStrength:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1}
+  edgeAwareBlur:
+    m_OverrideState: 0
+    m_Value: 0
+  debugView:
+    m_OverrideState: 0
+    m_Value: 0
+  debugDepthMultiplier:
+    m_OverrideState: 0
+    m_Value: 0.1
+  depthPrecision:
+    m_OverrideState: 1
+    m_Value: 0
+  separationPos:
+    m_OverrideState: 0
+    m_Value: 0.5
+  lowPrecision:
+    m_OverrideState: 0
+    m_Value: 0
+  stopNaN:
+    m_OverrideState: 0
+    m_Value: 0
+  stencilCheck:
+    m_OverrideState: 0
+    m_Value: 0
+  stencilValue:
+    m_OverrideState: 0
+    m_Value: 1
+  stencilCompareFunction:
+    m_OverrideState: 0
+    m_Value: 6
+  useReflectionsScripts:
+    m_OverrideState: 0
+    m_Value: 0
+  reflectionsScriptsLayerMask:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 4294967295
+  skipDeferredPass:
+    m_OverrideState: 0
+    m_Value: 0
+  opaqueReflectionsBlending:
+    m_OverrideState: 0
+    m_Value: 0
+  transparencySupport:
+    m_OverrideState: 0
+    m_Value: 0
+  transparentLayerMask:
+    m_OverrideState: 0
+    m_Value:
+      serializedVersion: 2
+      m_Bits: 0
+  transparentDepthPrepass:
+    m_OverrideState: 0
+    m_Value: 0
+  transparentSmoothness:
+    m_OverrideState: 0
+    m_Value: 1
 --- !u!114 &7391319092446245454
 MonoBehaviour:
   m_ObjectHideFlags: 3

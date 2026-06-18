@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8c13acadcb26e25429479adca94588af
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8574412962073106934
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/Environment/Terrain/TerrainDirt.terrainlayer
+  uploadId: 923630

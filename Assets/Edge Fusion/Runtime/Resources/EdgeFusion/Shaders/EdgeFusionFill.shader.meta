@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: cc7b1df0db0c4c77ad6a99a9f875f4c9
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Runtime/Resources/EdgeFusion/Shaders/EdgeFusionFill.shader
+  uploadId: 923630

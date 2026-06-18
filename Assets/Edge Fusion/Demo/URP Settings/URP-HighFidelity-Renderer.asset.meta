@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9bf1fd45a6584471a9874e4564cabb4b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/URP Settings/URP-HighFidelity-Renderer.asset
+  uploadId: 923630

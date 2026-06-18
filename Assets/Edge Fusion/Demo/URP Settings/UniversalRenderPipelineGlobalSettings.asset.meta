@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cd000c364968a43aeb431d79d37f8175
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 334484
+  packageName: 'Edge Fusion: Smooth Surface Contacts'
+  packageVersion: 3.3.1
+  assetPath: Assets/Edge Fusion/Demo/URP Settings/UniversalRenderPipelineGlobalSettings.asset
+  uploadId: 923630
