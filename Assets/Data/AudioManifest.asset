@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bgm:
   - id: title_bgm
-    phases: 02000000
+    phases: 
     fromDay: 0
     day7Only: 0
     clip: {fileID: 8300000, guid: 610bb352bd6f039499ade79e00c99a21, type: 3}
@@ -23,7 +23,7 @@ MonoBehaviour:
     phases: 00000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 651a044eefa12214cb1a94f22c077fd7, type: 3}
     volume: 0.6
   - id: omen
     phases: 01000000
@@ -67,5 +67,62 @@ MonoBehaviour:
     day7Only: 0
     clip: {fileID: 0}
     volume: 0.9
-  sfx: []
+  sfx:
+  - key: heartbeat
+    clip: {fileID: 8300000, guid: 444d6608d0cd305429839ee2d73d621a, type: 3}
+    volume: 1
+  - key: jumpscare_stinger
+    clip: {fileID: 8300000, guid: c3a827c6b89827544bf8c20464e4b834, type: 3}
+    volume: 1
+  - key: camera_destroyed
+    clip: {fileID: 8300000, guid: a61e4fb9f8a154345b1af02c2a5a49d3, type: 3}
+    volume: 1
+  - key: camera_static
+    clip: {fileID: 8300000, guid: 3453e07edbe21174d92004e9151c12fa, type: 3}
+    volume: 0.85
+  - key: knock_regular
+    clip: {fileID: 8300000, guid: 9934494c28bdd964cb58314e30752238, type: 3}
+    volume: 0.9
+  - key: knock_irregular
+    clip: {fileID: 8300000, guid: 5868a6890b3dd7b45a971375cb64a86b, type: 3}
+    volume: 0.9
+  - key: lurker_appear
+    clip: {fileID: 8300000, guid: 907177ff7266b5d4dbd576899e235326, type: 3}
+    volume: 0.8
+  - key: rusher_stomp
+    clip: {fileID: 8300000, guid: 88c4c6ef54b0263479921e61b42e985b, type: 3}
+    volume: 1
+  - key: power_out
+    clip: {fileID: 8300000, guid: fcd8e49a7d4c94940a8139346c92bdce, type: 3}
+    volume: 0.9
+  - key: power_restore
+    clip: {fileID: 8300000, guid: c7fb27544c752b241984dc40d3030a0f, type: 3}
+    volume: 0.85
+  - key: power_flicker
+    clip: {fileID: 8300000, guid: eb731f4bc7ca013449bbf248c397cb56, type: 3}
+    volume: 0.8
+  - key: fake_footstep
+    clip: {fileID: 8300000, guid: 979b0a927a4f37546afdf47a820f3e18, type: 3}
+    volume: 0.7
+  - key: time_warp
+    clip: {fileID: 8300000, guid: e22a0c4bfd0ea934ca7ea487cbb75369, type: 3}
+    volume: 0.75
+  - key: ghost_signal
+    clip: {fileID: 8300000, guid: ae937d1653d7a7b4b9a35a58558d8161, type: 3}
+    volume: 0.7
+  - key: blackout
+    clip: {fileID: 8300000, guid: bf6ec907ea677c548bf17e8aa9d1543a, type: 3}
+    volume: 1
+  - key: menu_ambience
+    clip: {fileID: 8300000, guid: dda2f8f302c86184bab03925594e5c2f, type: 3}
+    volume: 0.5
+  - key: door_open
+    clip: {fileID: 8300000, guid: 32923d15f952661469ca77b1819883a6, type: 3}
+    volume: 0.9
+  - key: door_close
+    clip: {fileID: 8300000, guid: 04b616c519730c445b071c182193ec7f, type: 3}
+    volume: 0.9
+  - key: button_click
+    clip: {fileID: 8300000, guid: d268a782037867447b6d2dc6d14e4287, type: 3}
+    volume: 0.8
   crossfadeDuration: 1.5

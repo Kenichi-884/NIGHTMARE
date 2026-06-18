@@ -3822,10 +3822,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mixer: {fileID: 24100000, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
-  snapCalm: {fileID: 0}
-  snapTense: {fileID: 0}
-  snapCritical: {fileID: 0}
-  snapPowerOut: {fileID: 0}
+  snapCalm: {fileID: 24500006, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
+  snapTense: {fileID: 24500007, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
+  snapCritical: {fileID: 24500008, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
+  snapPowerOut: {fileID: 24500009, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
   durCalm: 3
   durTense: 1.5
   durCritical: 0.8
@@ -3842,12 +3842,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 002b7cc9df39bac42bcffa89a17ceea8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clipHum: {fileID: 0}
-  clipHvac: {fileID: 0}
-  clipDrip: {fileID: 0}
-  clipCreak: {fileID: 0}
-  clipWind: {fileID: 0}
-  clipStorm: {fileID: 0}
+  clipHum: {fileID: 8300000, guid: e5ee79214108fa64a8d5489d49cbced8, type: 3}
+  clipHvac: {fileID: 8300000, guid: 3311866a69e46514e97c82ffa5974684, type: 3}
+  clipDrip: {fileID: 8300000, guid: 2e7b9f141ff102146820c48cbb24b909, type: 3}
+  clipCreak: {fileID: 8300000, guid: 3000a1ef52f867b4a9998a2a67d67a81, type: 3}
+  clipWind: {fileID: 8300000, guid: c41c3af5491c9c141b4402dccd51969f, type: 3}
+  clipStorm: {fileID: 8300000, guid: 620c010d043ea494cba9d28c10cc212f, type: 3}
   humVolume: 0.18
   hvacVolume: 0.14
   windVolume: 0.28
@@ -3866,10 +3866,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sfxGroup: {fileID: 243485103152924164, guid: c4382341a39a10b46a6bc574f22f5974, type: 2}
-  sfxFootstepDefault: {fileID: 0}
-  sfxRusherStomp: {fileID: 0}
-  sfxLurkerScrape: {fileID: 0}
-  sfxKnockerKnock: {fileID: 0}
+  sfxFootstepDefault: {fileID: 8300000, guid: 979b0a927a4f37546afdf47a820f3e18, type: 3}
+  sfxRusherStomp: {fileID: 8300000, guid: 88c4c6ef54b0263479921e61b42e985b, type: 3}
+  sfxLurkerScrape: {fileID: 8300000, guid: 907177ff7266b5d4dbd576899e235326, type: 3}
+  sfxKnockerKnock: {fileID: 8300000, guid: 9934494c28bdd964cb58314e30752238, type: 3}
 --- !u!114 &403292047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8078,9 +8078,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manifest: {fileID: 11400000, guid: 76f9d0bc7b0797943a7c47f91e4d632e, type: 2}
-  bgmSource: {fileID: 884275627}
-  sfxSource: {fileID: 884275627}
-  loopSource: {fileID: 884275627}
+  bgmSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  loopSource: {fileID: 0}
   bgmTitle: {fileID: 8300000, guid: 610bb352bd6f039499ade79e00c99a21, type: 3}
   bgmSilence: {fileID: 8300000, guid: 651a044eefa12214cb1a94f22c077fd7, type: 3}
   bgmOmen: {fileID: 0}
