@@ -117,10 +117,10 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: dda2f8f302c86184bab03925594e5c2f, type: 3}
     volume: 0.5
   - key: door_open
-    clip: {fileID: 8300000, guid: 7beb1aeec4196c7458774378405ddf94, type: 3}
+    clip: {fileID: 8300000, guid: 04b616c519730c445b071c182193ec7f, type: 3}
     volume: 0.9
   - key: door_close
-    clip: {fileID: 8300000, guid: 28b2dfd0980a3974a8abe17f76707054, type: 3}
+    clip: {fileID: 8300000, guid: 32923d15f952661469ca77b1819883a6, type: 3}
     volume: 0.9
   - key: button_click
     clip: {fileID: 8300000, guid: b399b083c59f6d240bcad9b7dc52b7d3, type: 3}
