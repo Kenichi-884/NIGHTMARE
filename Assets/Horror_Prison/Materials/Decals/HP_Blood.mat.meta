@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: af98fff40636fc946be920d8c58176e5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Materials/Decals/HP_Blood.mat
+  uploadId: 677334

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b254e575393d01849b4cb4099c95f446
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Materials/Building/HP_Ceiling.mat
+  uploadId: 677334

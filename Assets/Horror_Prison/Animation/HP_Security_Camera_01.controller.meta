@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0ddd548914be1ba429c888adb25eea0f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Animation/HP_Security_Camera_01.controller
+  uploadId: 677334

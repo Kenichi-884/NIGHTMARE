@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 79a46830fe5450b489f16afafd140289
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Materials/Building/HP_Painted_Wall_01.mat
+  uploadId: 677334

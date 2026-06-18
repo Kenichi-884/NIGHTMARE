@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 05f39176ff92657408cb1960db5394f9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Materials/HP_Surgical_Lamp.mat
+  uploadId: 677334
