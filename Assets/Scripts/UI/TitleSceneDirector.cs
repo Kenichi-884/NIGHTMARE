@@ -518,7 +518,22 @@ public class TitleSceneDirector : MonoBehaviour
         go.transform.SetParent(_roomRoot.transform);
         go.transform.localPosition = ROOM_OFFSET + pos;
         go.transform.localScale    = scale;
-        go.GetComponent<Renderer>().material = mat;
+
+        // マテリアルのインスタンスを作りテクスチャタイリングをスケールに合わせて補正
+        var r   = go.GetComponent<Renderer>();
+        var m   = new Material(mat);
+        // 最も薄い軸を法線方向とみなし、残り 2 軸でタイリングを決める
+        Vector2 tiling;
+        if (scale.x <= scale.y && scale.x <= scale.z)
+            tiling = new Vector2(scale.z, scale.y);
+        else if (scale.y <= scale.x && scale.y <= scale.z)
+            tiling = new Vector2(scale.x, scale.z);
+        else
+            tiling = new Vector2(scale.x, scale.y);
+        m.SetTextureScale("_BaseMap",  tiling);
+        m.SetTextureScale("_MainTex",  tiling); // Standard シェーダー互換
+        r.material = m;
+
         Object.Destroy(go.GetComponent<Collider>());
     }
 
