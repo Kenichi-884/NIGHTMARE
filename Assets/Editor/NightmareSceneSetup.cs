@@ -18,12 +18,21 @@ public static class NightmareSceneSetup
             "シーン全体をセットアップします。\n既存の [NIGHTMARE Root] は削除されます。",
             "実行", "キャンセル")) return;
 
+        // AudioManager を Root から切り離して設定を保持する
+        GameObject savedAudioGO = null;
+        var existingAudio = Object.FindObjectOfType<AudioManager>();
+        if (existingAudio != null)
+        {
+            savedAudioGO = existingAudio.gameObject;
+            savedAudioGO.transform.SetParent(null); // Root 削除から保護
+        }
+
         var old = GameObject.Find("[NIGHTMARE Root]");
         if (old) Object.DestroyImmediate(old);
 
         var root = new GameObject("[NIGHTMARE Root]");
 
-        CreateManagers(root);
+        CreateManagers(root, savedAudioGO);
         var canvas = CreateCanvas(root);
         CreateEventSystem();
         SetupCamera();
@@ -36,6 +45,7 @@ public static class NightmareSceneSetup
         canvas.GetComponent<SecurityCameraSystem>()?.AutoFindMonitors();
         canvas.GetComponent<MainMenuManager>()?.AutoFindChildren();
         canvas.GetComponent<JumpScareManager>()?.AutoFindChildren();
+        canvas.GetComponent<TitleSceneDirector>()?.AutoFindChildren();
 
         // ProximityAlertSystem に DangerVignette を接続
         WireProximityAlert(root);
@@ -45,7 +55,7 @@ public static class NightmareSceneSetup
     }
 
     // ===== マネージャー =====
-    static void CreateManagers(GameObject root)
+    static void CreateManagers(GameObject root, GameObject existingAudioGO = null)
     {
         var m = Child(root, "Managers");
         m.AddComponent<GameManager>();
@@ -57,10 +67,23 @@ public static class NightmareSceneSetup
         var progress = Child(root, "StageProgress");
         progress.AddComponent<StageProgressManager>();
 
-        var audio = Child(root, "AudioManager");
-        audio.AddComponent<AudioManager>();
-        var bgm = audio.AddComponent<AudioSource>(); bgm.loop = true; bgm.playOnAwake = false;
-        audio.AddComponent<AudioSource>().playOnAwake = false;
+        // AudioManager: 既存があれば設定を保持したまま再利用、なければ新規作成
+        if (existingAudioGO != null)
+        {
+            existingAudioGO.name = "AudioManager";
+            existingAudioGO.transform.SetParent(root.transform);
+            // AudioSource が不足していれば補完
+            var sources = existingAudioGO.GetComponents<AudioSource>();
+            if (sources.Length < 1) existingAudioGO.AddComponent<AudioSource>().loop = true;
+            if (sources.Length < 2) existingAudioGO.AddComponent<AudioSource>().playOnAwake = false;
+        }
+        else
+        {
+            var audio = Child(root, "AudioManager");
+            audio.AddComponent<AudioManager>();
+            var bgm = audio.AddComponent<AudioSource>(); bgm.loop = true; bgm.playOnAwake = false;
+            audio.AddComponent<AudioSource>().playOnAwake = false;
+        }
 
         var sys = Child(root, "GameSystems");
         sys.AddComponent<DoorManager>();
@@ -126,6 +149,7 @@ public static class NightmareSceneSetup
         cGO.AddComponent<MainMenuManager>();
         cGO.AddComponent<JumpScareManager>();
         cGO.AddComponent<ScreenShakeEffect>();
+        cGO.AddComponent<TitleSceneDirector>();
 
         // 背景
         Img("Background", cGO, C(0.04f, 0.05f, 0.08f), stretch: true);
@@ -345,8 +369,23 @@ public static class NightmareSceneSetup
 
         Lbl("MenuVersion", main, "v0.1.0  PROTOTYPE", 10, 8, 8, 200, 16, C(0.3f, 0.3f, 0.35f), TextAnchor.MiddleLeft);
 
+        // ── ホラー演出用オーバーレイ (TitleSceneDirector が制御) ──
+        // 赤ヴィネット
+        var vignette = Img("TitleVignette", main, C(0.55f, 0.02f, 0.02f, 0f), stretch: true);
+        vignette.GetComponent<Image>().raycastTarget = false;
+
+        // 静電気ノイズ
+        var noise = Img("TitleNoise", main, C(0.55f, 0.55f, 0.55f, 0f), stretch: true);
+        noise.GetComponent<Image>().raycastTarget = false;
+
+        // ドア際の影（右端の縦長シルエット）
+        var shadow = Img("TitleShadow", main, C(0f, 0f, 0f, 0f));
+        Rect(shadow, W - 90, 0, 70, H);
+        shadow.GetComponent<Image>().raycastTarget = false;
+        shadow.SetActive(false);
+
         // ── 設定パネル ──
-        var settings = Panel("SettingsPanel", mm, C(0.04f, 0.06f, 0.10f, 1f));
+        var settings = Panel("SettingsPanel", mm, C(0.04f, 0.06f, 0.10f, 0.88f));
         Rect(settings, 0, 0, W, H);
         settings.SetActive(false);
 
@@ -362,7 +401,7 @@ public static class NightmareSceneSetup
         Btn("BtnSettingsBack", settings, "← 戻る", W * 0.5f - 80, H * 0.5f - 200, 160, 44, C(0.20f, 0.28f, 0.42f));
 
         // ── 記録（ロア）パネル ──
-        var lore = Panel("LorePanel", mm, C(0.02f, 0.03f, 0.05f, 1f));
+        var lore = Panel("LorePanel", mm, C(0.02f, 0.03f, 0.05f, 0.88f));
         Rect(lore, 0, 0, W, H);
         lore.SetActive(false);
 
@@ -378,7 +417,7 @@ public static class NightmareSceneSetup
         Btn("BtnLoreBack", lore, "← 戻る", W * 0.5f - 80, 70, 160, 44, C(0.20f, 0.28f, 0.42f));
 
         // ── ステージ選択パネル ──
-        var ss = Panel("StageSelectPanel", mm, C(0.02f, 0.03f, 0.07f, 1f));
+        var ss = Panel("StageSelectPanel", mm, C(0.02f, 0.03f, 0.07f, 0.88f));
         Rect(ss, 0, 0, W, H);
         ss.SetActive(false);
 

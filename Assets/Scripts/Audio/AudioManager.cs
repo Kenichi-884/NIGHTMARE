@@ -28,6 +28,7 @@ public class AudioManager : MonoBehaviour
 
     // ─── レガシー BGM フィールド (manifest が null の場合に使用) ──
     [Header("BGM per Phase (manifest がない場合に使用)")]
+    [SerializeField] private AudioClip bgmTitle;
     [SerializeField] private AudioClip bgmSilence;
     [SerializeField] private AudioClip bgmOmen;
     [SerializeField] private AudioClip bgmContact;
@@ -197,6 +198,18 @@ public class AudioManager : MonoBehaviour
             yield return null;
         }
         bgmSource.volume = bgmVolume;
+    }
+
+    public void PlayTitleBGM()
+    {
+        AudioClip clip = null;
+        if (manifest != null)
+        {
+            foreach (var e in manifest.bgm)
+                if (e.id == "title" && e.clip != null) { clip = e.clip; break; }
+        }
+        if (clip == null) clip = bgmTitle;
+        if (clip != null) CrossfadeBGM(clip, crossfadeDuration);
     }
 
     // ─── 再生 API ────────────────────────────────────────────────

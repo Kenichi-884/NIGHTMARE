@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: AudioManifest
   m_EditorClassIdentifier: 
   bgm:
+  - id: title_bgm
+    phases: 02000000
+    fromDay: 0
+    day7Only: 0
+    clip: {fileID: 8300000, guid: 610bb352bd6f039499ade79e00c99a21, type: 3}
+    volume: 0.9
   - id: silence
     phases: 00000000
     fromDay: 0

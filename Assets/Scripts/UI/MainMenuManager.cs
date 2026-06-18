@@ -44,6 +44,8 @@ public class MainMenuManager : MonoBehaviour
     [Header("Title")]
     [SerializeField] private Text titleText;  // メインメニューのタイトル文字列
 
+    private TitleSceneDirector _titleDirector;
+
     // パネルスライドアニメーション幅 (px)
     private const float SLIDE_DIST    = 80f;
     private const float SLIDE_DUR     = 0.18f;
@@ -67,6 +69,7 @@ public class MainMenuManager : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (mainMenuPanel == null) AutoFindChildren();
+        _titleDirector = GetComponent<TitleSceneDirector>();
     }
 
     private void Start()
@@ -78,7 +81,7 @@ public class MainMenuManager : MonoBehaviour
         // 起動演出
         StartCoroutine(IntroSequence());
 
-        AudioManager.Instance?.PlayLoop("title_bgm");
+        AudioManager.Instance?.PlayTitleBGM();
         AudioManager.Instance?.Play("menu_ambience");
     }
 
@@ -178,6 +181,7 @@ public class MainMenuManager : MonoBehaviour
 
     private IEnumerator StartGameRoutine(int day)
     {
+        _titleDirector?.StopEffects();
         AudioManager.Instance?.StopLoop();
         yield return Fade(0f, 1f, 0.45f);
         HideAllPanels();
