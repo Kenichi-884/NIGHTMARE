@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3b2e3b970d08a134f9e4ac8e86b9f72c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Props/HP_Guard_Stun_Gun.prefab
+  uploadId: 677334

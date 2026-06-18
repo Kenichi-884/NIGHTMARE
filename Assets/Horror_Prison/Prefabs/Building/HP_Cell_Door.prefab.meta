@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 998ea4ddc067f2849afb62b4e96a8da8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Building/HP_Cell_Door.prefab
+  uploadId: 677334

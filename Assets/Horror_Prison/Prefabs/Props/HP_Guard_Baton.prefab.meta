@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d41abf361e3fa9f4a8c4d2be56b294a7
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Props/HP_Guard_Baton.prefab
+  uploadId: 677334

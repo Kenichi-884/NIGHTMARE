@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6bd924551afab8244b80c1d2f70e7d19
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Environment/Ventilation/HP_Ventilation_Fan_Radial.prefab
+  uploadId: 677334

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2e324021d45c01646ac195486282b513
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Building/HP_Wall_1x4m.prefab
+  uploadId: 677334

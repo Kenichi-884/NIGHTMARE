@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d81f309be96e8654ab77b6217e10261b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Environment/Ventilation/HP_Ventilation_2m_01.prefab
+  uploadId: 677334

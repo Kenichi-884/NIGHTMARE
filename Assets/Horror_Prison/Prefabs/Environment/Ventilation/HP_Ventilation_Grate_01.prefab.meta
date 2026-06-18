@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 02dee910fea99974f8d9660d96930b38
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Environment/Ventilation/HP_Ventilation_Grate_01.prefab
+  uploadId: 677334

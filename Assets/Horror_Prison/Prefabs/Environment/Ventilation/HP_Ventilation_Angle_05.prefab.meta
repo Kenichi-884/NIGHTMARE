@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ef61d265dc879f449bced99d5f34a61a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Prefabs/Environment/Ventilation/HP_Ventilation_Angle_05.prefab
+  uploadId: 677334

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3280c02019c9c05479d0661c07b84fcc
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 278180
+  packageName: Horror Prison
+  packageVersion: 1.1
+  assetPath: Assets/Horror_Prison/Other/AE_SimpleCameraController.cs
+  uploadId: 677334
