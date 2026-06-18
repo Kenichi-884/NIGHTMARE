@@ -14,5 +14,5 @@ AssetOrigin:
   productId: 251320
   packageName: vHierarchy 2
   packageVersion: 2.0.18
-  assetPath: Assets/vHierarchy/VHierarchyLightingWindow.cs
+  assetPath: Assets/UnityAsset/Tool/vHierarchy/VHierarchyLightingWindow.cs
   uploadId: 701929
