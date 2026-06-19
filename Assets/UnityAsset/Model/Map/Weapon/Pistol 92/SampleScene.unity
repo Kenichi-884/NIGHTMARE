@@ -37096,19 +37096,19 @@ MonoBehaviour:
   - _gameObject: {fileID: 4022411187265875596}
     _prefab: Assets/UnityAsset/Model/Map/TV/Pekdata/PekdataCRTMonitor/Prefabs/CRTMonitor.prefab
   - _gameObject: {fileID: 1664481862}
-    _prefab: Assets/Horror_Prison/Prefabs/Props/HP_Lamp_04.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Props/HP_Lamp_04.prefab
   - _gameObject: {fileID: 2000373819}
-    _prefab: Assets/Horror_Prison/Prefabs/Props/HP_Lamp_05.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Props/HP_Lamp_05.prefab
   - _gameObject: {fileID: 1735871536}
-    _prefab: Assets/Horror_Prison/Prefabs/Props/HP_Table_Lamp.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Props/HP_Table_Lamp.prefab
   - _gameObject: {fileID: 844022567}
-    _prefab: Assets/Horror_Prison/Prefabs/Props/HP_Takeout_Box_01.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Props/HP_Takeout_Box_01.prefab
   - _gameObject: {fileID: 978408939}
     _prefab: Assets/UnityAsset/Model/Map/Chair/3d Objects/Office Chair Pack 1.0/Chair2/Chair2.fbx
   - _gameObject: {fileID: 1764937184}
-    _prefab: Assets/Horror_Prison/Prefabs/Furniture/HP_Prison_Locker_02.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Furniture/HP_Prison_Locker_02.prefab
   - _gameObject: {fileID: 430266218}
-    _prefab: Assets/Horror_Prison/Prefabs/Furniture/HP_Prison_Locker_02.prefab
+    _prefab: Assets/UnityAsset/Model/Map/Environment/Horror_Prison/Prefabs/Furniture/HP_Prison_Locker_02.prefab
   - _gameObject: {fileID: 1197206715}
     _prefab: Assets/UnityAsset/UI/Dark - Complete Horror UI/Prefabs/UI Elements/Main
       Button.prefab
