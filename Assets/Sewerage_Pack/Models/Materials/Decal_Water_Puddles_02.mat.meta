@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 232409f1f40d3284fa8ba727755235e0
+timeCreated: 1526984047
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Decal_Water_Puddles_02.mat
+  uploadId: 546897

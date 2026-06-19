@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 31bd596b17ff49740b565f59aec694b9
+timeCreated: 1528025543
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Decal_Concrete_Cracked_01.mat
+  uploadId: 546897

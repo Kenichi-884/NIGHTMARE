@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4983fe5e93329f34faea34c9819f188c
+timeCreated: 1517648969
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Tunnel_Support_Ring.mat
+  uploadId: 546897

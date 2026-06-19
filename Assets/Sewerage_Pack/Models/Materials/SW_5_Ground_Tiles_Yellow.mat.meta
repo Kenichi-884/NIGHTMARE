@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: fd866e0036d366644a0fbdef5aab8fda
+timeCreated: 1533102553
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_5_Ground_Tiles_Yellow.mat
+  uploadId: 546897

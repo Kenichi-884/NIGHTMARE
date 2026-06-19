@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 70e9fe6dad2d2114081f68c5aebee092
+timeCreated: 1527577861
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_4_Tunnels_Ground_Dirt_Grid.mat
+  uploadId: 546897

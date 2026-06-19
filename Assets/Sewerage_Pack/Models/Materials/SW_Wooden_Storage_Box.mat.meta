@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 9e06df333273d6342846caad4b8efad8
+timeCreated: 1525332568
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Wooden_Storage_Box.mat
+  uploadId: 546897

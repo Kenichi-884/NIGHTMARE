@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: df27961ed529ab84abc6e04d00f9fe16
+timeCreated: 1520073864
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Drain_Room_Ceiling.mat
+  uploadId: 546897

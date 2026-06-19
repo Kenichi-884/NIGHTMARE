@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: dc20d6fc619d9af43bfa13d769075e8b
+timeCreated: 1525777504
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_4_Tunnel_Cap_02_Pipe.mat
+  uploadId: 546897

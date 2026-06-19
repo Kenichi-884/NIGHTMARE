@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8e999ce8f55238147a25ceef769333bb
+timeCreated: 1516094985
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Bricks_02.mat
+  uploadId: 546897

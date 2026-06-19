@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8889231a35b3e5145a34254caf15ccb2
+timeCreated: 1534424976
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Pipes_Ceiling.mat
+  uploadId: 546897

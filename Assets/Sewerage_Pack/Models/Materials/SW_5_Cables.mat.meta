@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 984dcf526090ca04c94678a6d2948c71
+timeCreated: 1532269999
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_5_Cables.mat
+  uploadId: 546897

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 5bc88b78387ab66478fbba943cc0d8b1
+timeCreated: 1520865377
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_2_Entrance.mat
+  uploadId: 546897

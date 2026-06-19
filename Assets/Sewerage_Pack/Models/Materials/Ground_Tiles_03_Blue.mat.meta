@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8b33a33d83a3d2c4b973e8f331e69d18
+timeCreated: 1516094985
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Ground_Tiles_03_Blue.mat
+  uploadId: 546897

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: b55895759a227f4458e25eb459c6597c
+timeCreated: 1517648970
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Drain_Room_Metal_Parts.mat
+  uploadId: 546897

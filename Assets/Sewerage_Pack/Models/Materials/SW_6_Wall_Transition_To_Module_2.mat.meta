@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 49d7cf17b640f084cbf01debad224b47
+timeCreated: 1536214653
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Wall_Transition_To_Module_2.mat
+  uploadId: 546897

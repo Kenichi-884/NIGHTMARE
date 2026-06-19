@@ -1,0 +1,385 @@
+fileFormatVersion: 2
+guid: 22827d3da78a42c4095a0561c71b2aa1
+timeCreated: 1528703578
+licenseType: Store
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Decal_Paper_01
+    100002: Decal_Paper_02
+    100004: Decal_Paper_03
+    100006: Decal_Paper_04
+    100008: Decal_Paper_05
+    100010: Decal_Paper_06
+    100012: Decal_Paper_07
+    100014: Decal_Paper_08
+    100016: Decal_Paper_09
+    100018: //RootNode
+    100020: Decal_Concrete_Cracked_01
+    100022: Decal_Concrete_Cracked_02
+    100024: Decal_Concrete_Cracked_03
+    100026: Decal_Concrete_Cracked_04
+    100028: Decal_Concrete_Cracked_05
+    100030: Decal_Concrete_Cracked_06
+    100032: Decal_Concrete_Cracked_Small_Plane_01
+    100034: Decal_Concrete_Cracked_Small_Plane_02
+    100036: Decal_Concrete_Cracked_Small_Plane_03
+    100038: Decal_Concrete_Cracked_Small_Plane_04
+    100040: Decal_Concrete_Cracked_Small_Plane_05
+    100042: Decal_Concrete_Cracked_Small_Plane_06
+    100044: Decal_Concrete_Cracked_Small_Plane_07
+    100046: Decal_Concrete_Cracked_Small_Plane_08
+    100048: Decal_Concrete_Cracked_Small_Plane_09
+    100050: Decal_Concrete_Cracked_Small_Plane_10
+    100052: Decal_Concrete_Cracked_Small_Plane_11
+    100054: Decal_Concrete_Cracked_Small_Plane_12
+    100056: Decal_Concrete_Cracked_Small_Plane_13
+    100058: Decal_Concrete_Cracked_Small_Plane_14
+    100060: Decal_Concrete_Cracked_Small_Plane_15
+    100062: Decal_Concrete_Cracked_Small_Plane_16
+    100064: Decal_Water_Puddles_01
+    100066: Decal_Water_Puddles_02
+    100068: Decal_Water_Puddles_03
+    100070: Decal_Water_Puddles_04
+    100072: Decal_Water_Puddles_05
+    100074: Decal_Grunge_01
+    100076: Decal_Grunge_02
+    100078: Decal_Grunge_03
+    100080: Decal_Grunge_04
+    400000: Decal_Paper_01
+    400002: Decal_Paper_02
+    400004: Decal_Paper_03
+    400006: Decal_Paper_04
+    400008: Decal_Paper_05
+    400010: Decal_Paper_06
+    400012: Decal_Paper_07
+    400014: Decal_Paper_08
+    400016: Decal_Paper_09
+    400018: //RootNode
+    400020: Decal_Concrete_Cracked_01
+    400022: Decal_Concrete_Cracked_02
+    400024: Decal_Concrete_Cracked_03
+    400026: Decal_Concrete_Cracked_04
+    400028: Decal_Concrete_Cracked_05
+    400030: Decal_Concrete_Cracked_06
+    400032: Decal_Concrete_Cracked_Small_Plane_01
+    400034: Decal_Concrete_Cracked_Small_Plane_02
+    400036: Decal_Concrete_Cracked_Small_Plane_03
+    400038: Decal_Concrete_Cracked_Small_Plane_04
+    400040: Decal_Concrete_Cracked_Small_Plane_05
+    400042: Decal_Concrete_Cracked_Small_Plane_06
+    400044: Decal_Concrete_Cracked_Small_Plane_07
+    400046: Decal_Concrete_Cracked_Small_Plane_08
+    400048: Decal_Concrete_Cracked_Small_Plane_09
+    400050: Decal_Concrete_Cracked_Small_Plane_10
+    400052: Decal_Concrete_Cracked_Small_Plane_11
+    400054: Decal_Concrete_Cracked_Small_Plane_12
+    400056: Decal_Concrete_Cracked_Small_Plane_13
+    400058: Decal_Concrete_Cracked_Small_Plane_14
+    400060: Decal_Concrete_Cracked_Small_Plane_15
+    400062: Decal_Concrete_Cracked_Small_Plane_16
+    400064: Decal_Water_Puddles_01
+    400066: Decal_Water_Puddles_02
+    400068: Decal_Water_Puddles_03
+    400070: Decal_Water_Puddles_04
+    400072: Decal_Water_Puddles_05
+    400074: Decal_Grunge_01
+    400076: Decal_Grunge_02
+    400078: Decal_Grunge_03
+    400080: Decal_Grunge_04
+    2100000: No Name
+    2300000: Decal_Paper_01
+    2300002: Decal_Paper_02
+    2300004: Decal_Paper_03
+    2300006: Decal_Paper_04
+    2300008: Decal_Paper_05
+    2300010: Decal_Paper_06
+    2300012: Decal_Paper_07
+    2300014: Decal_Paper_08
+    2300016: Decal_Paper_09
+    2300018: Decal_Concrete_Cracked_01
+    2300020: Decal_Concrete_Cracked_02
+    2300022: Decal_Concrete_Cracked_03
+    2300024: Decal_Concrete_Cracked_04
+    2300026: Decal_Concrete_Cracked_05
+    2300028: Decal_Concrete_Cracked_06
+    2300030: Decal_Concrete_Cracked_Small_Plane_01
+    2300032: Decal_Concrete_Cracked_Small_Plane_02
+    2300034: Decal_Concrete_Cracked_Small_Plane_03
+    2300036: Decal_Concrete_Cracked_Small_Plane_04
+    2300038: Decal_Concrete_Cracked_Small_Plane_05
+    2300040: Decal_Concrete_Cracked_Small_Plane_06
+    2300042: Decal_Concrete_Cracked_Small_Plane_07
+    2300044: Decal_Concrete_Cracked_Small_Plane_08
+    2300046: Decal_Concrete_Cracked_Small_Plane_09
+    2300048: Decal_Concrete_Cracked_Small_Plane_10
+    2300050: Decal_Concrete_Cracked_Small_Plane_11
+    2300052: Decal_Concrete_Cracked_Small_Plane_12
+    2300054: Decal_Concrete_Cracked_Small_Plane_13
+    2300056: Decal_Concrete_Cracked_Small_Plane_14
+    2300058: Decal_Concrete_Cracked_Small_Plane_15
+    2300060: Decal_Concrete_Cracked_Small_Plane_16
+    2300062: Decal_Water_Puddles_01
+    2300064: Decal_Water_Puddles_02
+    2300066: Decal_Water_Puddles_03
+    2300068: Decal_Water_Puddles_04
+    2300070: Decal_Water_Puddles_05
+    2300072: Decal_Grunge_01
+    2300074: Decal_Grunge_02
+    2300076: Decal_Grunge_03
+    2300078: Decal_Grunge_04
+    3300000: Decal_Paper_01
+    3300002: Decal_Paper_02
+    3300004: Decal_Paper_03
+    3300006: Decal_Paper_04
+    3300008: Decal_Paper_05
+    3300010: Decal_Paper_06
+    3300012: Decal_Paper_07
+    3300014: Decal_Paper_08
+    3300016: Decal_Paper_09
+    3300018: Decal_Concrete_Cracked_01
+    3300020: Decal_Concrete_Cracked_02
+    3300022: Decal_Concrete_Cracked_03
+    3300024: Decal_Concrete_Cracked_04
+    3300026: Decal_Concrete_Cracked_05
+    3300028: Decal_Concrete_Cracked_06
+    3300030: Decal_Concrete_Cracked_Small_Plane_01
+    3300032: Decal_Concrete_Cracked_Small_Plane_02
+    3300034: Decal_Concrete_Cracked_Small_Plane_03
+    3300036: Decal_Concrete_Cracked_Small_Plane_04
+    3300038: Decal_Concrete_Cracked_Small_Plane_05
+    3300040: Decal_Concrete_Cracked_Small_Plane_06
+    3300042: Decal_Concrete_Cracked_Small_Plane_07
+    3300044: Decal_Concrete_Cracked_Small_Plane_08
+    3300046: Decal_Concrete_Cracked_Small_Plane_09
+    3300048: Decal_Concrete_Cracked_Small_Plane_10
+    3300050: Decal_Concrete_Cracked_Small_Plane_11
+    3300052: Decal_Concrete_Cracked_Small_Plane_12
+    3300054: Decal_Concrete_Cracked_Small_Plane_13
+    3300056: Decal_Concrete_Cracked_Small_Plane_14
+    3300058: Decal_Concrete_Cracked_Small_Plane_15
+    3300060: Decal_Concrete_Cracked_Small_Plane_16
+    3300062: Decal_Water_Puddles_01
+    3300064: Decal_Water_Puddles_02
+    3300066: Decal_Water_Puddles_03
+    3300068: Decal_Water_Puddles_04
+    3300070: Decal_Water_Puddles_05
+    3300072: Decal_Grunge_01
+    3300074: Decal_Grunge_02
+    3300076: Decal_Grunge_03
+    3300078: Decal_Grunge_04
+    4300000: Decal_Paper_08
+    4300002: Decal_Paper_01
+    4300004: Decal_Paper_07
+    4300006: Decal_Paper_06
+    4300008: Decal_Paper_09
+    4300010: Decal_Paper_05
+    4300012: Decal_Paper_04
+    4300014: Decal_Paper_03
+    4300016: Decal_Paper_02
+    4300018: Decal_Concrete_Cracked_Small_Plane_01
+    4300020: Decal_Concrete_Cracked_Small_Plane_02
+    4300022: Decal_Concrete_Cracked_Small_Plane_03
+    4300024: Decal_Concrete_Cracked_Small_Plane_04
+    4300026: Decal_Concrete_Cracked_Small_Plane_05
+    4300028: Decal_Concrete_Cracked_Small_Plane_06
+    4300030: Decal_Concrete_Cracked_Small_Plane_07
+    4300032: Decal_Concrete_Cracked_Small_Plane_08
+    4300034: Decal_Concrete_Cracked_Small_Plane_09
+    4300036: Decal_Concrete_Cracked_Small_Plane_10
+    4300038: Decal_Concrete_Cracked_Small_Plane_11
+    4300040: Decal_Concrete_Cracked_Small_Plane_12
+    4300042: Decal_Concrete_Cracked_Small_Plane_13
+    4300044: Decal_Concrete_Cracked_Small_Plane_14
+    4300046: Decal_Concrete_Cracked_Small_Plane_15
+    4300048: Decal_Concrete_Cracked_Small_Plane_16
+    4300050: Decal_Concrete_Cracked_01
+    4300052: Decal_Concrete_Cracked_02
+    4300054: Decal_Concrete_Cracked_03
+    4300056: Decal_Concrete_Cracked_04
+    4300058: Decal_Concrete_Cracked_05
+    4300060: Decal_Concrete_Cracked_06
+    4300062: Decal_Water_Puddles_05
+    4300064: Decal_Water_Puddles_04
+    4300066: Decal_Water_Puddles_03
+    4300068: Decal_Water_Puddles_02
+    4300070: Decal_Water_Puddles_01
+    4300072: Decal_Grunge_04
+    4300074: Decal_Grunge_03
+    4300076: Decal_Grunge_02
+    4300078: Decal_Grunge_01
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_01
+    second: {fileID: 2100000, guid: 31bd596b17ff49740b565f59aec694b9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_02
+    second: {fileID: 2100000, guid: 446a660c68807c349b61317497cf4679, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_03
+    second: {fileID: 2100000, guid: 112708b1a98f28f4f9b1e26d92bd5263, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_04
+    second: {fileID: 2100000, guid: e750c41f65d69e34e9de56ace80b8f69, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_05
+    second: {fileID: 2100000, guid: 97251a8a922886e40ba76da7bba8dd00, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_06
+    second: {fileID: 2100000, guid: c39e21d7c84606141ba2fa64712574a2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Concrete_Cracked_Small
+    second: {fileID: 2100000, guid: 72b42611160432144958759ed42d97ae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Grunge_01
+    second: {fileID: 2100000, guid: 86e1e399ca9d8bd488ecf44fbf2d8a79, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Grunge_02
+    second: {fileID: 2100000, guid: 1aa23d2d58db35942a8f6239c9d1d3f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Grunge_03
+    second: {fileID: 2100000, guid: 0af5ce59440158b47af0efaa6a690d45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Grunge_04
+    second: {fileID: 2100000, guid: d56b7ee6309a755478bdf26d10bd9ce0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Paper_Sheets
+    second: {fileID: 2100000, guid: f6971766d7da1b2408a11e0fbc4e8d1c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Water_Puddles_01
+    second: {fileID: 2100000, guid: 8b7876d483788554cba7d58ab5651c43, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Water_Puddles_02
+    second: {fileID: 2100000, guid: 232409f1f40d3284fa8ba727755235e0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Water_Puddles_03
+    second: {fileID: 2100000, guid: 81f8dbb7507eaeb4d9ce2445c47ec980, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Water_Puddles_04
+    second: {fileID: 2100000, guid: 7f9afd7473c981947946afae43b1a3a4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Decal_Water_Puddles_05
+    second: {fileID: 2100000, guid: 401d4af47e207b94e9ba29a8bce0ddc4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: No Name
+    second: {fileID: 2100000, guid: f6971766d7da1b2408a11e0fbc4e8d1c, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Sewerage_Decals.fbx
+  uploadId: 546897

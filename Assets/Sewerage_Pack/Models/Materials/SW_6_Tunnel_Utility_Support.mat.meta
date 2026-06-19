@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f7ddb408d22925b4985b877cd790729c
+timeCreated: 1534841492
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Support.mat
+  uploadId: 546897

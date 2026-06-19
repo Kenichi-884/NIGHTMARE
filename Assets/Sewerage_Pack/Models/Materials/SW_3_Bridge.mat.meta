@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3c976a8adcde2a3449a7322ae45454e7
+timeCreated: 1518093418
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Bridge.mat
+  uploadId: 546897

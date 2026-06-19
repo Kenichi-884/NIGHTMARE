@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e57963f501a429141b390d86c8d974f2
+timeCreated: 1518158316
+licenseType: Store
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/README.txt
+  uploadId: 546897

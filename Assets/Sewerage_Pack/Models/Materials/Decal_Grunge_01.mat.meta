@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 53b5c24cd366a104f931133cd1878fab
+timeCreated: 1529655343
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Decal_Grunge_01.mat
+  uploadId: 546897

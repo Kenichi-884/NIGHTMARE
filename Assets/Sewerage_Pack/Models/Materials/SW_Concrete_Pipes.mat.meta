@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 5107d412cd6650b4ca967ba619f36b7c
+timeCreated: 1533578671
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Concrete_Pipes.mat
+  uploadId: 546897

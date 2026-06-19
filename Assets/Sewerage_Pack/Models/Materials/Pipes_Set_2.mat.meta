@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: c64d9fc6a7ff1a648986baec1eef26d2
+timeCreated: 1535614256
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Pipes_Set_2.mat
+  uploadId: 546897

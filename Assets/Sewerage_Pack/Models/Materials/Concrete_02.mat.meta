@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: c3d087e46e0527d4688c9fd6d9d77659
+timeCreated: 1517390534
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Concrete_02.mat
+  uploadId: 546897

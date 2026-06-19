@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 1db5bb630707932438a083e464065d85
+timeCreated: 1517648973
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Drain_Room_Small_Room_Fence.mat
+  uploadId: 546897

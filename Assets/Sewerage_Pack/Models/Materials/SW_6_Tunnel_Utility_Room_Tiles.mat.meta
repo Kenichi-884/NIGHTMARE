@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 661df7d0e2875fb4385280850c017f95
+timeCreated: 1535373002
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Room_Tiles.mat
+  uploadId: 546897

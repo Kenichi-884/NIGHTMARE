@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7fec88bc350feb84d8c240e8c0bef088
+timeCreated: 1517406339
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Corridor_Small_Stairs.mat
+  uploadId: 546897

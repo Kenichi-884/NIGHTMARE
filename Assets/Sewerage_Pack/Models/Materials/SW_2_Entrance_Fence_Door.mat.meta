@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: ba4dbb8ce7ee00e4b9f138131eed155a
+timeCreated: 1528711333
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_2_Entrance_Fence_Door.mat
+  uploadId: 546897

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 2b9b5ee9d00015d498d9f0aa89e3c4f8
+timeCreated: 1532236186
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Walking_Platforms_Wall.mat
+  uploadId: 546897

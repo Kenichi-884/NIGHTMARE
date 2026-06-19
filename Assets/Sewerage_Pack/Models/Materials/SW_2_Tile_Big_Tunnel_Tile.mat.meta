@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 75254446dc36aa24890b24076b692a1c
+timeCreated: 1517390534
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_2_Tile_Big_Tunnel_Tile.mat
+  uploadId: 546897

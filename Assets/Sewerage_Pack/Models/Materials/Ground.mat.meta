@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 0500391311915794c95accd23f2d52ba
+timeCreated: 1519655803
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/Ground.mat
+  uploadId: 546897

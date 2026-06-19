@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 10d9c4cb0d93d2c40862b14275670636
+timeCreated: 1535453801
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Wall_5m_Pipes_Hole_02_Hub.mat
+  uploadId: 546897

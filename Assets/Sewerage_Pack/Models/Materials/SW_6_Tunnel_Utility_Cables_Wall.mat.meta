@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 11e92044b2b971c4c919e77a7346a3ef
+timeCreated: 1534840832
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Cables_Wall.mat
+  uploadId: 546897

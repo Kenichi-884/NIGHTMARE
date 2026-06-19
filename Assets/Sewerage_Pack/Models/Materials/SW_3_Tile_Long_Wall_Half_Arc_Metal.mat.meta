@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: a038d3dedc998f04bb41c457893d4297
+timeCreated: 1518187416
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Tile_Long_Wall_Half_Arc_Metal.mat
+  uploadId: 546897

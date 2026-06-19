@@ -1,0 +1,254 @@
+fileFormatVersion: 2
+guid: 78e151de2b3e2c949b7d60d4c19c312a
+timeCreated: 1535614256
+licenseType: Store
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: SW_Pipe_Set_2_Curved_01
+    100004: SW_Pipe_Set_2_Curved_02
+    100006: SW_Pipe_Set_2_Curved_03
+    100008: SW_Pipe_Set_2_Curved_04
+    100010: SW_Pipe_Set_2_Curved_Combined
+    100012: SW_Pipe_Set_2_Pipe_5m
+    100014: SW_Pipe_Set_2_Straight_01
+    100016: SW_Pipe_Set_2_Straight_02
+    100018: SW_Pipe_Set_2_Valve_Big
+    100020: SW_Pipe_Set_2_Valve_Small
+    100022: SW_Pipe_Set_2_Valve_Small_Base
+    100024: Plane.000
+    100026: Plane.004
+    100028: Plane.006
+    100030: Plane.007
+    100032: Plane.008
+    100034: Plane.009
+    100036: Plane.014
+    100038: SW_Pipe_Set_2_Pipe_0.5m_01
+    100040: SW_Pipe_Set_2_Pipe_0.5m_02
+    100042: SW_Pipe_Set_2_Pipe_1m_01
+    100044: SW_Pipe_Set_2_Pipe_1m_02
+    100046: SW_Pipe_Set_2_Pipe_1m_03
+    100048: SW_Pipe_Set_2_Valve_Base
+    100050: SW_Pipe_Set_2_Cross
+    100052: SW_Pipe_Set_2_Cross_Big
+    100054: SW_Pipe_Set_2_T
+    100056: SW_Pipe_Set_2_T_Big
+    100058: SW_Pipe_Set_2_Curve
+    100060: SW_Pipe_Set_2_Brach_Horizontal
+    100062: SW_Pipe_Set_2_Brach_Vertical
+    400000: //RootNode
+    400002: SW_Pipe_Set_2_Curved_01
+    400004: SW_Pipe_Set_2_Curved_02
+    400006: SW_Pipe_Set_2_Curved_03
+    400008: SW_Pipe_Set_2_Curved_04
+    400010: SW_Pipe_Set_2_Curved_Combined
+    400012: SW_Pipe_Set_2_Pipe_5m
+    400014: SW_Pipe_Set_2_Straight_01
+    400016: SW_Pipe_Set_2_Straight_02
+    400018: SW_Pipe_Set_2_Valve_Big
+    400020: SW_Pipe_Set_2_Valve_Small
+    400022: SW_Pipe_Set_2_Valve_Small_Base
+    400024: Plane.000
+    400026: Plane.004
+    400028: Plane.006
+    400030: Plane.007
+    400032: Plane.008
+    400034: Plane.009
+    400036: Plane.014
+    400038: SW_Pipe_Set_2_Pipe_0.5m_01
+    400040: SW_Pipe_Set_2_Pipe_0.5m_02
+    400042: SW_Pipe_Set_2_Pipe_1m_01
+    400044: SW_Pipe_Set_2_Pipe_1m_02
+    400046: SW_Pipe_Set_2_Pipe_1m_03
+    400048: SW_Pipe_Set_2_Valve_Base
+    400050: SW_Pipe_Set_2_Cross
+    400052: SW_Pipe_Set_2_Cross_Big
+    400054: SW_Pipe_Set_2_T
+    400056: SW_Pipe_Set_2_T_Big
+    400058: SW_Pipe_Set_2_Curve
+    400060: SW_Pipe_Set_2_Brach_Horizontal
+    400062: SW_Pipe_Set_2_Brach_Vertical
+    2300000: SW_Pipe_Set_2_Curved_01
+    2300002: SW_Pipe_Set_2_Curved_02
+    2300004: SW_Pipe_Set_2_Curved_03
+    2300006: SW_Pipe_Set_2_Curved_04
+    2300008: SW_Pipe_Set_2_Curved_Combined
+    2300010: SW_Pipe_Set_2_Pipe_5m
+    2300012: SW_Pipe_Set_2_Straight_01
+    2300014: SW_Pipe_Set_2_Straight_02
+    2300016: SW_Pipe_Set_2_Valve_Big
+    2300018: SW_Pipe_Set_2_Valve_Small
+    2300020: SW_Pipe_Set_2_Valve_Small_Base
+    2300022: Plane.000
+    2300024: Plane.004
+    2300026: Plane.006
+    2300028: Plane.007
+    2300030: Plane.008
+    2300032: Plane.009
+    2300034: Plane.014
+    2300036: SW_Pipe_Set_2_Pipe_0.5m_01
+    2300038: SW_Pipe_Set_2_Pipe_0.5m_02
+    2300040: SW_Pipe_Set_2_Pipe_1m_01
+    2300042: SW_Pipe_Set_2_Pipe_1m_02
+    2300044: SW_Pipe_Set_2_Pipe_1m_03
+    2300046: SW_Pipe_Set_2_Valve_Base
+    2300048: SW_Pipe_Set_2_Cross
+    2300050: SW_Pipe_Set_2_Cross_Big
+    2300052: SW_Pipe_Set_2_T
+    2300054: SW_Pipe_Set_2_T_Big
+    2300056: SW_Pipe_Set_2_Curve
+    2300058: SW_Pipe_Set_2_Brach_Horizontal
+    2300060: SW_Pipe_Set_2_Brach_Vertical
+    3300000: SW_Pipe_Set_2_Curved_01
+    3300002: SW_Pipe_Set_2_Curved_02
+    3300004: SW_Pipe_Set_2_Curved_03
+    3300006: SW_Pipe_Set_2_Curved_04
+    3300008: SW_Pipe_Set_2_Curved_Combined
+    3300010: SW_Pipe_Set_2_Pipe_5m
+    3300012: SW_Pipe_Set_2_Straight_01
+    3300014: SW_Pipe_Set_2_Straight_02
+    3300016: SW_Pipe_Set_2_Valve_Big
+    3300018: SW_Pipe_Set_2_Valve_Small
+    3300020: SW_Pipe_Set_2_Valve_Small_Base
+    3300022: Plane.000
+    3300024: Plane.004
+    3300026: Plane.006
+    3300028: Plane.007
+    3300030: Plane.008
+    3300032: Plane.009
+    3300034: Plane.014
+    3300036: SW_Pipe_Set_2_Pipe_0.5m_01
+    3300038: SW_Pipe_Set_2_Pipe_0.5m_02
+    3300040: SW_Pipe_Set_2_Pipe_1m_01
+    3300042: SW_Pipe_Set_2_Pipe_1m_02
+    3300044: SW_Pipe_Set_2_Pipe_1m_03
+    3300046: SW_Pipe_Set_2_Valve_Base
+    3300048: SW_Pipe_Set_2_Cross
+    3300050: SW_Pipe_Set_2_Cross_Big
+    3300052: SW_Pipe_Set_2_T
+    3300054: SW_Pipe_Set_2_T_Big
+    3300056: SW_Pipe_Set_2_Curve
+    3300058: SW_Pipe_Set_2_Brach_Horizontal
+    3300060: SW_Pipe_Set_2_Brach_Vertical
+    4300000: SW_Pipe_Set_2_Valve_Small_Base
+    4300002: SW_Pipe_Set_2_Curved_Combined
+    4300004: SW_Pipe_Set_2_Curved_01
+    4300006: SW_Pipe_Set_2_Curved_02
+    4300008: SW_Pipe_Set_2_Curved_03
+    4300010: SW_Pipe_Set_2_Curved_04
+    4300012: SW_Pipe_Set_2_Straight_01
+    4300014: SW_Pipe_Set_2_Straight_02
+    4300016: SW_Pipe_Set_2_Valve_Big
+    4300018: SW_Pipe_Set_2_Valve_Small
+    4300020: SW_Pipe_Set_2_Pipe_5m
+    4300022: SW_Pipe_Set_2_Pipe_0.5m_01
+    4300024: Plane.014
+    4300026: SW_Pipe_Set_2_Pipe_0.5m_02
+    4300028: Plane.009
+    4300030: Plane.008
+    4300032: Plane.007
+    4300034: Plane.004
+    4300036: SW_Pipe_Set_2_Pipe_1m_02
+    4300038: Plane.006
+    4300040: SW_Pipe_Set_2_Pipe_1m_03
+    4300042: SW_Pipe_Set_2_Pipe_1m_01
+    4300044: Plane.000
+    4300046: SW_Pipe_Set_2_Valve_Base
+    4300048: SW_Pipe_Set_2_T
+    4300050: SW_Pipe_Set_2_Cross
+    4300052: SW_Pipe_Set_2_T_Big
+    4300054: SW_Pipe_Set_2_Cross_Big
+    4300056: SW_Pipe_Set_2_Curve
+    4300058: SW_Pipe_Set_2_Brach_Vertical
+    4300060: SW_Pipe_Set_2_Brach_Horizontal
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pipes_Set_2
+    second: {fileID: 2100000, guid: c64d9fc6a7ff1a648986baec1eef26d2, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 1
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Sewerage_Pipes_Set_2.fbx
+  uploadId: 546897

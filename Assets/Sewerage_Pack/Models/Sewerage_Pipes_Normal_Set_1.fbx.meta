@@ -1,0 +1,200 @@
+fileFormatVersion: 2
+guid: 46b4583837356b5449bf5a42cbbd5ad6
+timeCreated: 1520196134
+licenseType: Store
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Pipe_Tile_1_Arc
+    100002: Pipe_Tile_1_End
+    100004: Pipe_Tile_1_Long
+    100006: Pipe_Tile_1_Ring
+    100008: Pipe_Tile_1_Short
+    100010: Pipe_Tile_1_T
+    100012: Pipe_Tile_1_Valve
+    100014: Pipe_Tile_1_Valve_Head
+    100016: //RootNode
+    100018: Cylinder.099
+    100020: Sphere
+    100022: Pipe_Norm_1_End
+    100024: Pipe_Norm_1_Long
+    100026: Pipe_Norm_1_Ring
+    100028: Pipe_Norm_1_Ring_Bolts
+    100030: Pipe_Norm_1_Short
+    100032: Pipe_Norm_1_T
+    100034: Pipe_Norm_1_Tile_1_Arc
+    100036: Pipe_Norm_1_Valve
+    100038: Pipe_Norm_1_Valve_Head
+    100040: Pipe_Norm_1_Arc
+    400000: Pipe_Tile_1_Arc
+    400002: Pipe_Tile_1_End
+    400004: Pipe_Tile_1_Long
+    400006: Pipe_Tile_1_Ring
+    400008: Pipe_Tile_1_Short
+    400010: Pipe_Tile_1_T
+    400012: Pipe_Tile_1_Valve
+    400014: Pipe_Tile_1_Valve_Head
+    400016: //RootNode
+    400018: Cylinder.099
+    400020: Sphere
+    400022: Pipe_Norm_1_End
+    400024: Pipe_Norm_1_Long
+    400026: Pipe_Norm_1_Ring
+    400028: Pipe_Norm_1_Ring_Bolts
+    400030: Pipe_Norm_1_Short
+    400032: Pipe_Norm_1_T
+    400034: Pipe_Norm_1_Tile_1_Arc
+    400036: Pipe_Norm_1_Valve
+    400038: Pipe_Norm_1_Valve_Head
+    400040: Pipe_Norm_1_Arc
+    2100000: Pipes_Small_Set_1
+    2300000: Pipe_Tile_1_Arc
+    2300002: Pipe_Tile_1_End
+    2300004: Pipe_Tile_1_Long
+    2300006: Pipe_Tile_1_Ring
+    2300008: Pipe_Tile_1_Short
+    2300010: Pipe_Tile_1_T
+    2300012: Pipe_Tile_1_Valve
+    2300014: Pipe_Tile_1_Valve_Head
+    2300016: Cylinder.099
+    2300018: Sphere
+    2300020: Pipe_Norm_1_End
+    2300022: Pipe_Norm_1_Long
+    2300024: Pipe_Norm_1_Ring
+    2300026: Pipe_Norm_1_Ring_Bolts
+    2300028: Pipe_Norm_1_Short
+    2300030: Pipe_Norm_1_T
+    2300032: Pipe_Norm_1_Tile_1_Arc
+    2300034: Pipe_Norm_1_Valve
+    2300036: Pipe_Norm_1_Valve_Head
+    2300038: Pipe_Norm_1_Arc
+    3300000: Pipe_Tile_1_Arc
+    3300002: Pipe_Tile_1_End
+    3300004: Pipe_Tile_1_Long
+    3300006: Pipe_Tile_1_Ring
+    3300008: Pipe_Tile_1_Short
+    3300010: Pipe_Tile_1_T
+    3300012: Pipe_Tile_1_Valve
+    3300014: Pipe_Tile_1_Valve_Head
+    3300016: Cylinder.099
+    3300018: Sphere
+    3300020: Pipe_Norm_1_End
+    3300022: Pipe_Norm_1_Long
+    3300024: Pipe_Norm_1_Ring
+    3300026: Pipe_Norm_1_Ring_Bolts
+    3300028: Pipe_Norm_1_Short
+    3300030: Pipe_Norm_1_T
+    3300032: Pipe_Norm_1_Tile_1_Arc
+    3300034: Pipe_Norm_1_Valve
+    3300036: Pipe_Norm_1_Valve_Head
+    3300038: Pipe_Norm_1_Arc
+    4300000: Pipe_Tile_1_Valve_Head
+    4300002: Pipe_Tile_1_End
+    4300004: Pipe_Tile_1_Valve
+    4300006: Pipe_Tile_1_Ring
+    4300008: Pipe_Tile_1_T
+    4300010: Pipe_Tile_1_Long
+    4300012: Pipe_Tile_1_Short
+    4300014: Pipe_Tile_1_Arc
+    4300016: Cylinder.099
+    4300018: Sphere
+    4300020: Pipe_Norm_1_Tile_1_Arc
+    4300022: Pipe_Norm_1_Ring_Bolts
+    4300024: Pipe_Norm_1_Valve_Head
+    4300026: Pipe_Norm_1_End
+    4300028: Pipe_Norm_1_Valve
+    4300030: Pipe_Norm_1_Ring
+    4300032: Pipe_Norm_1_T
+    4300034: Pipe_Norm_1_Long
+    4300036: Pipe_Norm_1_Short
+    4300038: Pipe_Norm_1_Arc
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pipes_Small_Set_1
+    second: {fileID: 2100000, guid: b5e4a7100aee81a46bd80907b199e123, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Sewerage_Pipes_Normal_Set_1.fbx
+  uploadId: 546897

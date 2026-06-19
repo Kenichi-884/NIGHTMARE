@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: bd227ae6b2a14f64f9588727bebcacb3
+timeCreated: 1535188831
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_6_Tunnel_Utility_Tile_10m_Downstairs_Room.mat
+  uploadId: 546897

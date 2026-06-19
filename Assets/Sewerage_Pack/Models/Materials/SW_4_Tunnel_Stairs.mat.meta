@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 7e9ec877c860b664085f92a2dab905c2
+timeCreated: 1526649436
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_4_Tunnel_Stairs.mat
+  uploadId: 546897

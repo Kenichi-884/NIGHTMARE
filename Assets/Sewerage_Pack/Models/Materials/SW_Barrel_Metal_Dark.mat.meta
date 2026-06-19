@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f77b0ad86d5dc484f96f3dea3c60438e
+timeCreated: 1525330897
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Barrel_Metal_Dark.mat
+  uploadId: 546897

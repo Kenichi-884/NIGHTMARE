@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: a1f1e7d79b91bcb409d7fbb8f8ec600f
+timeCreated: 1520404845
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_3_Corridor_Side_Room_Entrance.mat
+  uploadId: 546897

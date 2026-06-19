@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 23284ac457a43b5439f0434fef4f8381
+timeCreated: 1533018870
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Common_Tunnels_Wall.mat
+  uploadId: 546897

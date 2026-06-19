@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: c658d4bd5161476458d2016e688c3c1d
+timeCreated: 1519808392
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_2_Tunnel_Metal_Ring.mat
+  uploadId: 546897

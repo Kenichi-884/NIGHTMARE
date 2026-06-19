@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: aab30a3f1dc6c704ea1d7084a02013fe
+timeCreated: 1533738252
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Ventilation_Caps.mat
+  uploadId: 546897

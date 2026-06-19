@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3966a5c590a35f8408151c71abe1d95c
+timeCreated: 1527675208
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Metal_Planes.mat
+  uploadId: 546897

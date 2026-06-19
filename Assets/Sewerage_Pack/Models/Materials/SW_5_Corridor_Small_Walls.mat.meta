@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 00fa35dd8ec554a429e7198d74cc2bf2
+timeCreated: 1532507792
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_5_Corridor_Small_Walls.mat
+  uploadId: 546897

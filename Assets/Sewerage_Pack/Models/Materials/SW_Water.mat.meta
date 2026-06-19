@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4b629e3ded5aaac4b9e6af5c3de98240
+timeCreated: 1527398430
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 112692
+  packageName: Sewer/Underground Modular Pack v4.0
+  packageVersion: 4.2
+  assetPath: Assets/Sewerage_Pack/Models/Materials/SW_Water.mat
+  uploadId: 546897
