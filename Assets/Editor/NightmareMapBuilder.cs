@@ -302,19 +302,20 @@ public static class NightmareMapBuilder
     static void InitMaterials()
     {
         // フロア系（テクスチャあり）
-        M("concrete",   new Color(0.40f, 0.40f, 0.43f), "concrete",  8, 8);
-        M("conc_dark",  new Color(0.26f, 0.26f, 0.30f), "concrete",  6, 6);
-        M("b1_floor",   new Color(0.22f, 0.24f, 0.32f), "b1_floor",  6, 6);
-        M("pavement",   new Color(0.32f, 0.30f, 0.27f), "pavement",  6, 6);
-        M("mgr_floor",  new Color(0.32f, 0.07f, 0.07f), "mgr_floor", 4, 4);
+        // UV はワールドサイズに基づくため mainTextureScale = (1,1) = 1タイル/m
+        M("concrete",   new Color(0.40f, 0.40f, 0.43f), "concrete");
+        M("conc_dark",  new Color(0.26f, 0.26f, 0.30f), "concrete");
+        M("b1_floor",   new Color(0.22f, 0.24f, 0.32f), "b1_floor");
+        M("pavement",   new Color(0.32f, 0.30f, 0.27f), "pavement");
+        M("mgr_floor",  new Color(0.32f, 0.07f, 0.07f), "mgr_floor");
 
         // 壁・構造系（テクスチャあり）
-        M("wall",       new Color(0.13f, 0.13f, 0.16f), "wall_dark", 8, 8);
-        M("b1_wall",    new Color(0.09f, 0.09f, 0.13f), "wall_dark", 6, 6);
-        M("door_frame", new Color(0.22f, 0.23f, 0.28f), "metal",     4, 4);
-        M("door_panel", new Color(0.30f, 0.32f, 0.38f), "metal",     4, 4);
-        M("desk",       new Color(0.18f, 0.16f, 0.13f), "wall_dark", 4, 4);
-        M("cctv_body",  new Color(0.18f, 0.18f, 0.22f), "metal",     2, 2);
+        M("wall",       new Color(0.13f, 0.13f, 0.16f), "wall_dark");
+        M("b1_wall",    new Color(0.09f, 0.09f, 0.13f), "wall_dark");
+        M("door_frame", new Color(0.22f, 0.23f, 0.28f), "metal");
+        M("door_panel", new Color(0.30f, 0.32f, 0.38f), "metal");
+        M("desk",       new Color(0.18f, 0.16f, 0.13f), "wall_dark");
+        M("cctv_body",  new Color(0.18f, 0.18f, 0.22f), "metal");
         M("cctv_lens",  new Color(0.04f, 0.06f, 0.10f));
         M("parking",    new Color(0.82f, 0.80f, 0.74f));
         M("arrow",      new Color(1.00f, 0.88f, 0.10f));
@@ -1012,7 +1013,7 @@ public static class NightmareMapBuilder
         return _shader;
     }
 
-    static void M(string key, Color col, string texKey = null, float tx = 4, float ty = 4)
+    static void M(string key, Color col, string texKey = null, float tx = 1, float ty = 1)
     {
         var sh = GetShader(); if (sh == null) return;
         string path = $"{MatDir}/{key}.mat";
@@ -1106,15 +1107,70 @@ public static class NightmareMapBuilder
 
     static GameObject C(string n, GameObject p, Vector3 pos, Vector3 sz, string mk)
     {
-        var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        go.name = n;
+        var go = new GameObject(n);
         go.transform.SetParent(p.transform);
         go.transform.position   = pos;
-        go.transform.localScale = sz;
-        Object.DestroyImmediate(go.GetComponent<Collider>());
+        go.transform.localScale = Vector3.one;
+        go.AddComponent<MeshFilter>().sharedMesh = MakeBox(sz);
+        var mr = go.AddComponent<MeshRenderer>();
         if (Mats.TryGetValue(mk, out var mat))
-            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+            mr.sharedMaterial = mat;
         return go;
+    }
+
+    // ワールドサイズに基づいたUVを持つボックスメッシュを生成
+    // UV = ワールド座標（メートル単位）→ mainTextureScale(1,1) で 1タイル/m
+    // 各面: 頂点順と巻き方向を検証済み（法線=外向き）、UV(0,0)→(us,0)→(us,vs)→(0,vs)
+    static Mesh MakeBox(Vector3 s)
+    {
+        float hx = s.x * 0.5f, hy = s.y * 0.5f, hz = s.z * 0.5f;
+
+        // 頂点レイアウト: v0=UV(0,0), v1=UV(us,0), v2=UV(us,vs), v3=UV(0,vs)
+        // 三角形: (b,b+1,b+2),(b,b+2,b+3) — 全面共通
+        // 頂点順を各面で調整して外向き法線を保証（cross(e1,e2) = outward normal）
+        var verts = new Vector3[]
+        {
+            // Top (+Y): cross(v1-v0, v2-v0)=(2hx,0,0)×(2hx,0,-2hz)→+Y  U=X,V=-Z
+            new(-hx, hy, hz), new( hx, hy, hz), new( hx, hy,-hz), new(-hx, hy,-hz),
+            // Bottom (-Y): cross→-Y  U=X,V=Z
+            new(-hx,-hy,-hz), new( hx,-hy,-hz), new( hx,-hy, hz), new(-hx,-hy, hz),
+            // Front (+Z): cross→+Z  U=X,V=Y
+            new(-hx,-hy, hz), new( hx,-hy, hz), new( hx, hy, hz), new(-hx, hy, hz),
+            // Back (-Z): cross→-Z  U=-X,V=Y
+            new( hx,-hy,-hz), new(-hx,-hy,-hz), new(-hx, hy,-hz), new( hx, hy,-hz),
+            // Left (-X): cross→-X  U=Z,V=Y
+            new(-hx,-hy,-hz), new(-hx,-hy, hz), new(-hx, hy, hz), new(-hx, hy,-hz),
+            // Right (+X): cross→+X  U=-Z,V=Y
+            new( hx,-hy, hz), new( hx,-hy,-hz), new( hx, hy,-hz), new( hx, hy, hz),
+        };
+
+        // UV はすべて (0,0),(us,0),(us,vs),(0,vs) の同一形式
+        // 面の向きは法線方向で保証済みなので、UV は単純に実寸を割り当てる
+        var uvs = new Vector2[]
+        {
+            new(0,0), new(s.x,0), new(s.x,s.z), new(0,s.z), // Top
+            new(0,0), new(s.x,0), new(s.x,s.z), new(0,s.z), // Bottom
+            new(0,0), new(s.x,0), new(s.x,s.y), new(0,s.y), // Front
+            new(0,0), new(s.x,0), new(s.x,s.y), new(0,s.y), // Back
+            new(0,0), new(s.z,0), new(s.z,s.y), new(0,s.y), // Left
+            new(0,0), new(s.z,0), new(s.z,s.y), new(0,s.y), // Right
+        };
+
+        var tris = new int[36];
+        for (int f = 0; f < 6; f++)
+        {
+            int b = f * 4, t = f * 6;
+            tris[t]   = b;   tris[t+1] = b+1; tris[t+2] = b+2;
+            tris[t+3] = b;   tris[t+4] = b+2; tris[t+5] = b+3;
+        }
+
+        var mesh = new Mesh { name = "ProceduralBox" };
+        mesh.vertices  = verts;
+        mesh.uv        = uvs;
+        mesh.triangles = tris;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        return mesh;
     }
 
     static GameObject G(GameObject p, string n)

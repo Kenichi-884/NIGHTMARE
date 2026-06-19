@@ -64,6 +64,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject mapPanel;
     [SerializeField] private Button btnToggleMap;
 
+    [Header("Pause")]
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private Button btnResume;
+    [SerializeField] private Button btnPauseMenu;
+
     private readonly Color colorOpen   = new Color(0.2f, 0.9f, 0.2f);
     private readonly Color colorClosed = new Color(0.9f, 0.2f, 0.2f);
     private readonly Color colorGreen  = new Color(0.2f, 0.9f, 0.2f);
@@ -73,6 +78,7 @@ public class UIManager : MonoBehaviour
     private bool powerPulseActive = false;
     private Coroutine powerPulseRoutine;
     private GamePhase lastPhase;
+    private bool _isPaused = false;
 
     // Mimic 時刻ズレ演出
     private bool wasMimicActive = false;
@@ -111,13 +117,33 @@ public class UIManager : MonoBehaviour
         Bind(backToMenuButton, ReturnToMenu);
         Bind(titleButton,      ReturnToMenu);
         Bind(btnToggleMap,     ToggleMap);
+
+        pausePanel?.SetActive(false);
+        Bind(btnResume,    Resume);
+        Bind(btnPauseMenu, ReturnToMenu);
     }
 
     private void Update()
     {
         if (GameManager.Instance == null) return;
 
-        // Mimic がアクティブなカメラを乗っ取っているとき時刻をズラして表示する
+        // ─── キーボードショートカット ─────────────────────────────
+        // M キー: マップ表示切替
+        if (Input.GetKeyDown(KeyCode.M))
+            ToggleMap();
+
+        // Escape: ポーズトグル（夜間のみ・ゲームオーバー/クリア中は無効）
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            bool nightActive = GameManager.Instance.CurrentState == GameState.Night;
+            bool panelOpen   = (gameOverPanel != null && gameOverPanel.activeSelf)
+                            || (clearPanel    != null && clearPanel.activeSelf)
+                            || (dayTransitionPanel != null && dayTransitionPanel.activeSelf);
+            if (nightActive && !panelOpen)
+                TogglePause();
+        }
+
+        // ─── Mimic がアクティブなカメラを乗っ取っているとき時刻をズラして表示する
         if (timeText)
         {
             bool mimicActive = SecurityCameraSystem.Instance != null && (
@@ -390,6 +416,7 @@ public class UIManager : MonoBehaviour
     // ===== ゲームオーバー =====
     private void OnGameOver()
     {
+        Resume(); // ポーズ中でもゲームオーバーは処理する
         powerPulseActive = false;
         if (killerLabel)
         {
@@ -404,6 +431,7 @@ public class UIManager : MonoBehaviour
     // ===== 日付遷移 =====
     private void OnDayStarted(int day)
     {
+        Resume(); // 新しい夜が始まる前にポーズ解除
         dayTransitionPanel?.SetActive(false);
         gameOverPanel?.SetActive(false);
         clearPanel?.SetActive(false);
@@ -428,6 +456,27 @@ public class UIManager : MonoBehaviour
     }
 
     private void OnTrueEnding() => ShowPanel(clearPanel);
+
+    // ===== ポーズ =====
+    public void TogglePause()
+    {
+        if (_isPaused) Resume(); else Pause();
+    }
+
+    private void Pause()
+    {
+        _isPaused      = true;
+        Time.timeScale = 0f;
+        pausePanel?.SetActive(true);
+    }
+
+    public void Resume()
+    {
+        if (!_isPaused) return;
+        _isPaused      = false;
+        Time.timeScale = 1f;
+        pausePanel?.SetActive(false);
+    }
 
     // ===== マップ / メニュー =====
     public void ToggleMap()
@@ -515,6 +564,9 @@ public class UIManager : MonoBehaviour
         powerWarnText        = FindChild<Text>("PowerWarn");
         mapPanel          = FindChildGO("MapPanel");
         btnToggleMap      = FindChild<Button>("BtnMap");
+        pausePanel        = FindChildGO("PausePanel");
+        btnResume         = FindChildIn<Button>(FindChildGO("PausePanel"), "BtnResume");
+        btnPauseMenu      = FindChildIn<Button>(FindChildGO("PausePanel"), "BtnPauseMenu");
         gameOverPanel     = FindChildGO("GameOverPanel");
         clearPanel        = FindChildGO("ClearPanel");
         dayTransitionPanel = FindChildGO("DayTransitionPanel");

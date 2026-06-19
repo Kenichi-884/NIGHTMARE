@@ -7,7 +7,8 @@ public class RusherAI : MonsterBase
 
     public override void Initialize(FacilityLocation spawnLocation, int day)
     {
-        baseMoveInterval = 10f; // 基本10秒/ステップ
+        baseMoveInterval = 10f;   // 基本10秒/ステップ
+        doorFrontHoldTime = 10f;  // 高速タイプ：扉前待機も短い
         base.Initialize(spawnLocation, day);
     }
 
@@ -25,5 +26,6 @@ public class RusherAI : MonsterBase
     protected override void OnMoved(FacilityLocation loc)
     {
         AudioManager.Instance?.Play("rusher_stomp");
+        base.OnMoved(loc); // B1_DoorFront 到達チェック
     }
 }

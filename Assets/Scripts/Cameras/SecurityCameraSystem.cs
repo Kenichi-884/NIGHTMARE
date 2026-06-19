@@ -29,6 +29,9 @@ public class SecurityCameraSystem : MonoBehaviour
     [SerializeField] private Image    staticOverlay;        // 死亡/Mimic スタティック
     [SerializeField] private Image    monsterOverlay;       // モンスター表示オーバーレイ
 
+    [Header("Ghost Signal")]
+    [SerializeField] private Sprite   ghostSignalSprite;    // GhostSignal 現象で表示するスプライト
+
     // 全 8 台のサイクル順序
     private static readonly CameraID[] CycleOrder =
     {
@@ -50,8 +53,10 @@ public class SecurityCameraSystem : MonoBehaviour
     private readonly Dictionary<CameraID, RenderTexture> renderTextures = new();
     private readonly HashSet<CameraID>                   deadCameras  = new();
     private CameraID? mimicTarget  = null;
-    private bool      flickerActive = false;
-    private bool      lightsOut     = false;
+    private bool      flickerActive  = false;
+    private bool      lightsOut      = false;
+    private bool      _transitioning = false;
+    private Coroutine _transRoutine;
 
     public event Action<CameraID> OnCameraKilled;
 
@@ -151,6 +156,7 @@ public class SecurityCameraSystem : MonoBehaviour
 
     private void RefreshMonitorState()
     {
+        if (_transitioning) return; // カメラ切替トランジション中は更新しない
         if (!configs.TryGetValue(_activeCamera, out var cfg)) return;
 
         bool isDead     = deadCameras.Contains(_activeCamera);
@@ -200,11 +206,36 @@ public class SecurityCameraSystem : MonoBehaviour
     public void SwitchCamera(CameraID id)
     {
         if (!configs.ContainsKey(id)) { Debug.LogWarning($"[CameraSystem] SwitchCamera 失敗: {id}"); return; }
-        Debug.Log($"[CameraSystem] カメラ切替 → {id}");
         _activeCamera = id;
         for (int i = 0; i < CycleOrder.Length; i++)
             if (CycleOrder[i] == id) { _cycleIndex = i; break; }
+
+        // 夜間のみトランジション（初期化時はスキップ）
+        bool isNight = GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Night;
+        if (isNight)
+        {
+            if (_transRoutine != null) StopCoroutine(_transRoutine);
+            _transRoutine = StartCoroutine(SwitchTransitionRoutine());
+        }
+        else
+        {
+            ApplyActiveCamera();
+        }
+    }
+
+    private IEnumerator SwitchTransitionRoutine()
+    {
+        _transitioning = true;
+
+        // 瞬間暗転 + ノイズ音
+        if (monitorDisplay) { monitorDisplay.texture = null; monitorDisplay.color = Color.black; }
+        AudioManager.Instance?.Play("camera_static");
+
+        // ポーズ中でも動作するよう unscaled time を使用
+        yield return new WaitForSecondsRealtime(0.07f);
+
         ApplyActiveCamera();
+        _transitioning = false;
     }
 
     // 後方互換ラッパー（UIManager が SwitchExternal/SwitchInternal を呼ぶため）
@@ -214,17 +245,14 @@ public class SecurityCameraSystem : MonoBehaviour
     // ===== キーボード操作 =====
     public void CycleCamera(int dir)
     {
-        _cycleIndex   = (_cycleIndex + dir + CycleOrder.Length) % CycleOrder.Length;
-        _activeCamera = CycleOrder[_cycleIndex];
-        ApplyActiveCamera();
+        int next = (_cycleIndex + dir + CycleOrder.Length) % CycleOrder.Length;
+        SwitchCamera(CycleOrder[next]);
     }
 
     public void SetCameraByIndex(int idx)
     {
         if (idx < 0 || idx >= CycleOrder.Length) return;
-        _cycleIndex   = idx;
-        _activeCamera = CycleOrder[_cycleIndex];
-        ApplyActiveCamera();
+        SwitchCamera(CycleOrder[idx]);
     }
 
     // アクティブカメラだけ有効化し RenderTexture を表示する
@@ -261,6 +289,22 @@ public class SecurityCameraSystem : MonoBehaviour
     }
 
     public void SetMimicTarget(CameraID? id) => mimicTarget = id;
+
+    // GhostSignal 現象: 現在のカメラに幽霊スプライトを duration 秒表示する
+    public void ShowGhostSignal(float duration)
+        => StartCoroutine(GhostSignalRoutine(duration));
+
+    private IEnumerator GhostSignalRoutine(float duration)
+    {
+        if (monsterOverlay == null || ghostSignalSprite == null) yield break;
+        var prevSprite   = monsterOverlay.sprite;
+        var prevEnabled  = monsterOverlay.enabled;
+        monsterOverlay.sprite  = ghostSignalSprite;
+        monsterOverlay.enabled = true;
+        yield return new WaitForSeconds(duration);
+        monsterOverlay.sprite  = prevSprite;
+        monsterOverlay.enabled = prevEnabled;
+    }
 
     // ===== 現象 =====
     public void TriggerFlicker(bool external, float duration)

@@ -13,6 +13,11 @@ public abstract class MonsterBase : MonoBehaviour
     protected bool isActive = false;
     protected float moveInterval;
 
+    // B1_DoorFront に到達後、一定時間待機してから侵入する
+    [SerializeField] protected float doorFrontHoldTime = 20f;
+    protected bool isAtDoorFront = false;
+    private float attackCountdown = 0f;
+
     public FacilityLocation CurrentLocation => currentLocation;
     public virtual bool IsVisible => true;
     public Sprite CameraSprite => cameraSprite;
@@ -37,8 +42,8 @@ public abstract class MonsterBase : MonoBehaviour
         // パスの先頭がスポーン地点と同じなら1つ飛ばす（最初のステップが no-op になるバグを修正）
         pathIndex = (movePath.Count > 0 && movePath[0] == spawnLocation) ? 1 : 0;
 
-        // 複数体が同時スポーンしても位置が重ならないようにタイマーをずらす
-        moveTimer = Random.Range(0f, moveInterval);
+        // スポーン直後は必ず外部に留まり、1インターバル後に最初の移動を行う
+        moveTimer = 0f;
 
         isActive = true;
     }
@@ -48,6 +53,24 @@ public abstract class MonsterBase : MonoBehaviour
     protected virtual void Update()
     {
         if (!isActive || GameManager.Instance.CurrentState != GameState.Night) return;
+
+        // B1_DoorFront 到達後の侵入カウントダウン
+        if (isAtDoorFront)
+        {
+            // B1廊下ドアが閉じていればカウントを止める（最後の防衛ライン）
+            if (!DoorManager.Instance.IsBlocked(FacilityLocation.B1_DoorFront))
+            {
+                attackCountdown += Time.deltaTime;
+                if (attackCountdown >= doorFrontHoldTime)
+                {
+                    isAtDoorFront = false;
+                    currentLocation = FacilityLocation.ManagersRoom;
+                    OnReachManagersRoom();
+                }
+            }
+            return;
+        }
+
         moveTimer += Time.deltaTime;
         if (moveTimer >= moveInterval)
         {
@@ -76,8 +99,27 @@ public abstract class MonsterBase : MonoBehaviour
             OnReachManagersRoom();
     }
 
-    protected virtual void OnMoved(FacilityLocation loc) { }
+    protected virtual void OnMoved(FacilityLocation loc)
+    {
+        if (loc == FacilityLocation.B1_DoorFront)
+            EnterDoorFrontState();
+    }
+
     protected virtual void OnBlocked(FacilityLocation blockedLoc) { }
+
+    // B1_DoorFront 待機ステートに入る（Lurker のテレポートからも呼ぶ）
+    protected void EnterDoorFrontState()
+    {
+        isAtDoorFront = true;
+        attackCountdown = 0f;
+        OnArrivedAtDoorFront();
+    }
+
+    // 到着演出（サブクラスでオーバーライド可）
+    protected virtual void OnArrivedAtDoorFront()
+    {
+        AudioManager.Instance?.Play("door_pounding");
+    }
 
     protected virtual void OnReachManagersRoom()
     {
@@ -112,9 +154,12 @@ public abstract class MonsterBase : MonoBehaviour
 
         var style = new GUIStyle { fontSize = 9 };
         style.normal.textColor = Color.white;
+        string timerInfo = isAtDoorFront
+            ? $"[扉前] {attackCountdown:F1}/{doorFrontHoldTime:F1}s"
+            : $"step {pathIndex}/{movePath.Count}  {moveTimer:F1}/{moveInterval:F1}s";
         UnityEditor.Handles.Label(
             transform.position + Vector3.up * 1.3f,
-            $"step {pathIndex}/{movePath.Count}  {moveTimer:F1}/{moveInterval:F1}s",
+            timerInfo,
             style);
     }
 

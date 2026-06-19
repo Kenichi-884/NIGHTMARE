@@ -30,6 +30,9 @@ public class LurkerAI : MonsterBase
     {
         if (!isActive || GameManager.Instance.CurrentState != GameState.Night) return;
 
+        // 扉前待機中はベースクラスの攻撃カウントダウンに委譲
+        if (isAtDoorFront) { base.Update(); return; }
+
         bool currentlyVisible = SecurityCameraSystem.Instance.IsLocationVisible(currentLocation);
 
         if (currentlyVisible)
@@ -57,8 +60,10 @@ public class LurkerAI : MonsterBase
 
     private void TeleportToDoor()
     {
+        if (isAtDoorFront) return; // 既に扉前にいる場合は再テレポート不要
         currentLocation = FacilityLocation.B1_DoorFront;
-        pathIndex = movePath.IndexOf(FacilityLocation.ManagersRoom);
+        pathIndex = movePath.Count; // パスを終端に設定（通常移動を停止）
         AudioManager.Instance?.Play("lurker_appear");
+        EnterDoorFrontState();
     }
 }

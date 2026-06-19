@@ -49,6 +49,20 @@ public class MonsterManager : MonoBehaviour
 
         var monster = Instantiate(prefab, transform);
         monster.Initialize(spawnAt, day);
+
+        // Jammer: スポーン地点に対応するカメラをターゲットに設定
+        if (monster is JammerAI jammer)
+        {
+            CameraID target = spawnAt switch
+            {
+                FacilityLocation.Outside_East  => CameraID.OUT_E,
+                FacilityLocation.Outside_West  => CameraID.OUT_W,
+                FacilityLocation.Outside_North => CameraID.OUT_N,
+                _                              => CameraID.OUT_E
+            };
+            jammer.SetTarget(target);
+        }
+
         active.Add(monster);
     }
 

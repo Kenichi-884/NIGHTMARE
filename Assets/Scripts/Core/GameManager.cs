@@ -20,7 +20,8 @@ public class GameManager : MonoBehaviour
 
     // 20時スタートで30時(翌6時)まで = 内部的に20～30
     private float phaseTimer = 0f;
-    private bool isActive = false;
+    private bool  isActive = false;
+    private float _timeWarpMult = 1f;   // TimeWarp 現象で一時的に加速
 
     public MonsterType? LastKillerType { get; private set; }
 
@@ -68,7 +69,7 @@ public class GameManager : MonoBehaviour
     {
         if (!isActive || CurrentState != GameState.Night) return;
 
-        phaseTimer += Time.deltaTime;
+        phaseTimer += Time.deltaTime * _timeWarpMult;
 
         if (phaseTimer >= realSecondsPerGameHour)
         {
@@ -117,6 +118,17 @@ public class GameManager : MonoBehaviour
 
     // 現在のフェーズの進捗(0-1)
     public float PhaseProgress => phaseTimer / realSecondsPerGameHour;
+
+    // TimeWarp 現象: 指定倍速で duration 秒間ゲーム時間を加速する
+    public void TriggerTimeWarp(float multiplier = 3f, float duration = 10f)
+        => StartCoroutine(TimeWarpRoutine(multiplier, duration));
+
+    private System.Collections.IEnumerator TimeWarpRoutine(float mult, float dur)
+    {
+        _timeWarpMult = mult;
+        yield return new WaitForSeconds(dur);
+        _timeWarpMult = 1f;
+    }
 
     public void TriggerGameOver(MonsterType? killerType = null)
     {

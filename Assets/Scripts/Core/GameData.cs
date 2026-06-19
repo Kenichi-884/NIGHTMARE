@@ -71,11 +71,14 @@ public enum PhenomenaType
 {
     CameraFlicker,      // カメラが一瞬切れる
     PowerFluctuation,   // 電力が急激に減る
-    LightFailure,       // カメラ映像が暗くなる
-    AudioDistortion,    // 足音フェイクが鳴る
+    LightFailure,       // 内部カメラ映像が暗くなる
+    AudioDistortion,    // 偽足音が鳴る
     TimeWarp,           // ゲーム内時計が加速する
     GhostSignal,        // 偽モンスターがカメラに映る
-    Blackout            // 全カメラが5秒暗転する
+    Blackout,           // 全カメラが暗転する
+    TemperatureDrop,    // 気温急降下・冷気演出
+    DoorBang,           // ドアへの強烈な衝撃音
+    StaticBurst,        // 全カメラに激しいノイズ嵐
 }
 
 public enum WeatherType

@@ -57,7 +57,8 @@ public class AudioManager : MonoBehaviour
         "knock_regular", "knock_irregular", "lurker_appear", "rusher_stomp",
         "power_out", "power_restore", "power_flicker", "fake_footstep",
         "time_warp", "ghost_signal", "blackout", "menu_ambience",
-        "door_close", "door_open", "button_click",
+        "door_close", "door_open", "door_pounding", "button_click",
+        "temperature_drop", "door_bang", "static_burst",
     };
 
     private void Awake()
