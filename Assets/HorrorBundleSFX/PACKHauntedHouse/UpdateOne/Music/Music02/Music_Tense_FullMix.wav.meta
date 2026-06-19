@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 25b51ea524452a9468a55eb5a3200a1d
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 231304
+  packageName: Horror Bundle - Sound Effects
+  packageVersion: 6.0
+  assetPath: Assets/HorrorBundleSFX/PACKHauntedHouse/UpdateOne/Music/Music02/Music_Tense_FullMix.wav
+  uploadId: 918906

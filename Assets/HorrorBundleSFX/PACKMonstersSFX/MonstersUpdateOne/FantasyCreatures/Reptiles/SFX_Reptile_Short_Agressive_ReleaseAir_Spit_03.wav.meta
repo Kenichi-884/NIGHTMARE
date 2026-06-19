@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 9e57af51a2e68f6499b0d0b8a5369894
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 231304
+  packageName: Horror Bundle - Sound Effects
+  packageVersion: 6.0
+  assetPath: Assets/HorrorBundleSFX/PACKMonstersSFX/MonstersUpdateOne/FantasyCreatures/Reptiles/SFX_Reptile_Short_Agressive_ReleaseAir_Spit_03.wav
+  uploadId: 918906

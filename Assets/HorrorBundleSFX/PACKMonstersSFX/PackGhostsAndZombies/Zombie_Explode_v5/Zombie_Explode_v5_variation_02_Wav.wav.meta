@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: 273142c64fed4ac459433e1c01cf6af7
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 231304
+  packageName: Horror Bundle - Sound Effects
+  packageVersion: 6.0
+  assetPath: Assets/HorrorBundleSFX/PACKMonstersSFX/PackGhostsAndZombies/Zombie_Explode_v5/Zombie_Explode_v5_variation_02_Wav.wav
+  uploadId: 918906
