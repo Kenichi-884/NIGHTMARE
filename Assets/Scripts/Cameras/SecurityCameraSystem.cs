@@ -50,6 +50,14 @@ public class SecurityCameraSystem : MonoBehaviour
     [Tooltip("電子音の音量。0=無音、1=最大。")]
     [SerializeField, Range(0f, 1f)] private float beepVolume = 0.5f;
 
+    [Header("Camera FOV / Resolution")]
+    [Tooltip("各監視カメラの視野角。大きいほど広角になる。監視カメラらしくするなら 75〜90 推奨。")]
+    [SerializeField, Range(30f, 120f)] private float cameraFOV = 80f;
+    [Tooltip("RenderTextureの幅(px)。TVが16:9なら 512、4:3なら 512 のまま。")]
+    [SerializeField] private int rtWidth  = 512;
+    [Tooltip("RenderTextureの高さ(px)。16:9なら 288、4:3なら 384。")]
+    [SerializeField] private int rtHeight = 288;
+
     [Header("Monitor CRT Effect")]
     [Tooltip("ONにするとGraphics.BlitでCRTシェーダーを適用する。OFFだとカメラ映像そのまま。")]
     [SerializeField] private bool   enableCRTEffect   = true;
@@ -146,10 +154,11 @@ public class SecurityCameraSystem : MonoBehaviour
             if (cam == null) continue;
 
             // RenderTexture を生成してカメラに割り当て
-            var rt = new RenderTexture(512, 384, 16, RenderTextureFormat.Default);
+            var rt = new RenderTexture(rtWidth, rtHeight, 16, RenderTextureFormat.Default);
             rt.name = $"RT_{cfg.id}";
-            cam.targetTexture = rt;
-            cam.enabled = false;  // 表示中のカメラだけ有効化
+            cam.targetTexture  = rt;
+            cam.fieldOfView    = cameraFOV;
+            cam.enabled        = false;  // 表示中のカメラだけ有効化
             sceneCams[cfg.id]    = cam;
             renderTextures[cfg.id] = rt;
         }
@@ -457,7 +466,7 @@ public class SecurityCameraSystem : MonoBehaviour
 
         // シェーダーマテリアル & 加工先 RT を作成
         _secCamMat  = new Material(shader);
-        _processedRT = new RenderTexture(512, 384, 0, RenderTextureFormat.Default);
+        _processedRT = new RenderTexture(rtWidth, rtHeight, 0, RenderTextureFormat.Default);
         _processedRT.name = "RT_CRT_Processed";
         ApplyShaderParams();
 

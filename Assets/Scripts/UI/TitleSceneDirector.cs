@@ -16,7 +16,15 @@ public class TitleSceneDirector : MonoBehaviour
     [SerializeField] Text     titleText;
     [SerializeField] Text     titleSubText;
 
+    [Header("タイトル中に隠すゲーム用Canvas")]
+    [Tooltip("タイトル表示中は非表示にするゲームHUD/パネルのCanvas（複数可）")]
+    [SerializeField] Canvas[] gameCanvases;
+
     Camera        _bgCam;
+    Camera        _mainCam;             // タイトル中は描画を封じるゲームカメラ
+    CameraClearFlags _mainCamOrigFlags;
+    Color            _mainCamOrigBG;
+    int              _mainCamOrigMask;
     RenderTexture _rt;
     RawImage      _bgDisplay;
     Material      _bgMat;        // NIGHTMARE/TitleBG
@@ -81,6 +89,24 @@ public class TitleSceneDirector : MonoBehaviour
             _titleOrigText  = titleText.text;
         }
 
+        // ゲーム用Canvasをタイトル中は非表示にする
+        if (gameCanvases != null)
+            foreach (var c in gameCanvases)
+                if (c != null) c.gameObject.SetActive(false);
+
+        // タイトル中は MainCamera を「真っ黒・何も描かない」状態にする
+        // （無効化すると画面に映すカメラがゼロになり "No Camera" が出る）
+        _mainCam = Camera.main;
+        if (_mainCam != null)
+        {
+            _mainCamOrigFlags = _mainCam.clearFlags;
+            _mainCamOrigBG    = _mainCam.backgroundColor;
+            _mainCamOrigMask  = _mainCam.cullingMask;
+            _mainCam.clearFlags      = CameraClearFlags.SolidColor;
+            _mainCam.backgroundColor = Color.black;
+            _mainCam.cullingMask     = 0; // 何も描画しない
+        }
+
         _swingT  = swingPhaseOffset * Mathf.PI * 2f;
         _running = true;
         StartCoroutine(HorrorLoop());
@@ -114,7 +140,9 @@ public class TitleSceneDirector : MonoBehaviour
         cam.nearClipPlane   = 0.1f;
         cam.farClipPlane    = 35f;
         cam.targetTexture   = _rt;
-        cam.depth           = -10; // 最背面
+        cam.depth           = -10;
+        cam.allowHDR        = false; // タイトルRTにHDR不要
+        cam.allowMSAA       = false; // RTのMSAA不要（アンチエイリアスはなくてよい）
         go.transform.position = new Vector3(ROOM_OFFSET.x, camHeight, camLookAtZ + camOrbitRadius);
         go.transform.LookAt(new Vector3(ROOM_OFFSET.x, 1.0f, camLookAtZ));
         return cam;
@@ -464,6 +492,18 @@ public class TitleSceneDirector : MonoBehaviour
     {
         _running = false;
         StopAllCoroutines();
+        // ゲーム用Canvasを復元
+        if (gameCanvases != null)
+            foreach (var c in gameCanvases)
+                if (c != null) c.gameObject.SetActive(true);
+
+        // ゲーム開始時に MainCamera の設定を復元してから TitleBGCamera を止める
+        if (_mainCam != null)
+        {
+            _mainCam.clearFlags      = _mainCamOrigFlags;
+            _mainCam.backgroundColor = _mainCamOrigBG;
+            _mainCam.cullingMask     = _mainCamOrigMask;
+        }
         if (_bgCam  != null) _bgCam.gameObject.SetActive(false);
         if (_roomRoot!= null) _roomRoot.SetActive(false);
         if (_bgDisplay != null) _bgDisplay.gameObject.SetActive(false);
@@ -558,7 +598,11 @@ public class TitleSceneDirector : MonoBehaviour
         go.transform.SetParent(_roomRoot.transform);
         go.transform.localPosition = ROOM_OFFSET + pos;
         var l = go.AddComponent<Light>();
-        l.type = type; l.color = col; l.intensity = intensity; l.range = range;
+        l.type      = type;
+        l.color     = col;
+        l.intensity = intensity;
+        l.range     = range;
+        l.shadows   = LightShadows.None; // RTに映るだけなのでシャドウ不要
         return l;
     }
 

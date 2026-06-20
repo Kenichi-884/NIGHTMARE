@@ -49,8 +49,10 @@ Shader "NIGHTMARE/SecurityCamera"
             {
                 float2 uv = i.uv;
 
-                // ── 低解像度化 (監視カメラの粗さ) ──
-                float2 pixUV = (floor(uv * _PixelScale) + 0.5) / _PixelScale;
+                // ── 低解像度化 (監視カメラの粗さ、アスペクト比対応) ──
+                float aspect = _MainTex_TexelSize.z / _MainTex_TexelSize.w; // width/height
+                float2 pixCount = float2(_PixelScale, _PixelScale / aspect);
+                float2 pixUV = (floor(uv * pixCount) + 0.5) / pixCount;
 
                 // ── クロマティックアベレーション (ピクセル化UV基準) ──
                 float2 fromCenter = pixUV - 0.5;
