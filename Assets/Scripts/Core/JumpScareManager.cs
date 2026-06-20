@@ -42,6 +42,15 @@ public class JumpScareManager : MonoBehaviour
     [SerializeField] private Sprite faceMimic;
     [SerializeField] private Sprite faceKnocker;
 
+    [Header("Monster Jumpscare Sounds")]
+    [SerializeField] private AudioClip scareSoundCrawler;
+    [SerializeField] private AudioClip scareSoundRusher;
+    [SerializeField] private AudioClip scareSoundJammer;
+    [SerializeField] private AudioClip scareSoundLurker;
+    [SerializeField] private AudioClip scareSoundMimic;
+    [SerializeField] private AudioClip scareSoundKnocker;
+    [SerializeField, Range(0f, 1f)] private float scareSoundVolume = 1f;
+
     [Header("Timing")]
     [SerializeField] private float preStaticDuration = 0.25f;
     [SerializeField] private float blackDuration     = 0.07f;
@@ -141,7 +150,11 @@ public class JumpScareManager : MonoBehaviour
         SetAlpha(scareFaceImage, 1f);
 
         // ジャンプスケア音・シェイク・レンズ歪み・色収差 最大
-        AudioManager.Instance?.Play("jumpscare_stinger");
+        var scareClip = GetScareSound(GameManager.Instance.LastKillerType);
+        if (scareClip != null)
+            AudioPoolManager.Instance?.Play2D(scareClip, scareSoundVolume);
+        else
+            AudioManager.Instance?.Play("jumpscare_stinger");
         ScreenShakeEffect.Instance?.Shake(faceDuration + 0.4f, 0.09f);
         PostProcessChainUI.Instance?.PulseLens(faceDuration + 0.4f, 0.075f);
         PostProcessChainUI.Instance?.SetChromaticAberration(1f);
@@ -256,6 +269,21 @@ public class JumpScareManager : MonoBehaviour
             MonsterType.Mimic   => faceMimic,
             MonsterType.Knocker => faceKnocker,
             _                   => faceCrawler
+        };
+    }
+
+    private AudioClip GetScareSound(MonsterType? type)
+    {
+        if (type == null) return scareSoundCrawler;
+        return type switch
+        {
+            MonsterType.Crawler => scareSoundCrawler,
+            MonsterType.Rusher  => scareSoundRusher,
+            MonsterType.Jammer  => scareSoundJammer,
+            MonsterType.Lurker  => scareSoundLurker,
+            MonsterType.Mimic   => scareSoundMimic,
+            MonsterType.Knocker => scareSoundKnocker,
+            _                   => scareSoundCrawler
         };
     }
 

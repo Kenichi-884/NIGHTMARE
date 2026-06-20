@@ -451,13 +451,24 @@ public class DebugOverlay : MonoBehaviour
         Sep();
 
         // ── モンスタースポーン ──
-        GUILayout.Label("<b>■ スポーン (Outside_North)</b>", _labelBold);
+        GUILayout.Label("<b>■ スポーン (N=北/E=東/W=西)</b>", _labelBold);
         GUILayout.BeginHorizontal();
         foreach (MonsterType mt in System.Enum.GetValues(typeof(MonsterType)))
         {
             string mc = MonColTag.TryGetValue(mt, out var tc2) ? tc2 : "#FFFFFF";
             if (GUILayout.Button($"<color={mc}>{mt}</color>", _btnSmall))
-                mm?.Spawn(mt, FacilityLocation.Outside_North);
+            {
+                // Night状態でなければ自動起動
+                if (gm?.CurrentState != GameState.Night) gm?.StartNight();
+                FacilityLocation spawnLoc = mt switch
+                {
+                    MonsterType.Rusher => FacilityLocation.Outside_East,
+                    MonsterType.Jammer => FacilityLocation.Outside_East,
+                    MonsterType.Lurker => FacilityLocation.Outside_West,
+                    _ => FacilityLocation.Outside_North
+                };
+                mm?.Spawn(mt, spawnLoc);
+            }
         }
         GUILayout.EndHorizontal();
 

@@ -22,6 +22,11 @@ public class CameraViewEffect : MonoBehaviour
     [SerializeField] private float baseNoiseAlpha       = 0.025f;
     [SerializeField, Range(0f, 0.6f)] private float phosphorPersistence = 0.28f;
 
+    [Header("Security Camera Mode")]
+    [SerializeField] private bool  securityCameraMode = false;
+    [SerializeField, Range(0f, 1f)] private float noiseMultiplier = 1.0f;  // ノイズ量を下げる
+    [SerializeField] private Color securityNoiseColor  = new Color(0.35f, 1.0f, 0.35f, 1f);  // 緑系ノイズ
+
     // ── UI レイヤー ───────────────────────────────────────────────
     private RawImage scanlineImage;
     private RawImage noiseImage;
@@ -218,8 +223,8 @@ public class CameraViewEffect : MonoBehaviour
         {
             noiseClock = 0f;
             WriteNoise(
-                Mathf.Lerp(0.025f, 0.72f, glitchIntensity),
-                Mathf.Lerp(baseNoiseAlpha, 0.92f, glitchIntensity)
+                Mathf.Lerp(0.025f, 0.72f, glitchIntensity) * noiseMultiplier,
+                Mathf.Lerp(baseNoiseAlpha, 0.92f, glitchIntensity) * noiseMultiplier
             );
         }
 
@@ -240,10 +245,18 @@ public class CameraViewEffect : MonoBehaviour
         }
         if (noiseImage)
         {
-            // ノイズを暖色気味に（ホスファグロー）
-            noiseImage.color = flickerDim
-                ? new Color(1f, 0.94f, 0.85f, Random.Range(0.25f, 0.80f))
-                : new Color(1f, 0.96f, 0.90f, 1f);
+            if (securityCameraMode)
+            {
+                // 監視カメラ: 緑系ノイズ、フリッカーなし
+                noiseImage.color = securityNoiseColor;
+            }
+            else
+            {
+                // CRT: 暖色ホスファグロー
+                noiseImage.color = flickerDim
+                    ? new Color(1f, 0.94f, 0.85f, Random.Range(0.25f, 0.80f))
+                    : new Color(1f, 0.96f, 0.90f, 1f);
+            }
         }
 
         // ── RGB シフト（色収差）──────────────────────────────────
@@ -255,13 +268,17 @@ public class CameraViewEffect : MonoBehaviour
             rgbShiftImage.uvRect = new Rect(aberr, 0f, 1f, 1f);
         }
 
-        // ── カラーフリンジ（赤フラッシュ）────────────────────────
+        // ── カラーフリンジ ────────────────────────────────────────
         if (colorFringeImage)
         {
             float a = glitchIntensity > 0.50f
                 ? Mathf.Abs(Mathf.Sin(Time.time * 24f)) * (glitchIntensity - 0.50f) * 0.55f
                 : 0f;
-            var c = colorFringeImage.color; c.a = a; colorFringeImage.color = c;
+            // 監視カメラモードは緑フリンジ、通常は赤フリンジ
+            Color fringeCol = securityCameraMode
+                ? new Color(0.1f, 0.9f, 0.1f, a)
+                : new Color(0.9f, 0.05f, 0.05f, a);
+            colorFringeImage.color = fringeCol;
         }
 
         // ── ビネット パルス ───────────────────────────────────────
@@ -362,4 +379,16 @@ public class CameraViewEffect : MonoBehaviour
 
     /// <summary>0 = 通常, 1 = フルグリッチ（カメラ死亡 / ジャンプスケア直前）。</summary>
     public void SetGlitchIntensity(float t) => glitchTarget = Mathf.Clamp01(t);
+
+    /// <summary>
+    /// 監視カメラプリセットを適用する。
+    /// noiseScale: ノイズ量の倍率（0.1 = 通常の10%）
+    /// </summary>
+    public void ApplySecurityCameraPreset(float noiseScale = 0.12f)
+    {
+        securityCameraMode = true;
+        noiseMultiplier    = noiseScale;
+        // シェーダー側でビネットを処理するのでCPU生成ビネットは無効化
+        if (vignetteImage != null) vignetteImage.gameObject.SetActive(false);
+    }
 }

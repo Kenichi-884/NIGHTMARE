@@ -6,6 +6,10 @@ public abstract class MonsterBase : MonoBehaviour
     [SerializeField] protected Sprite cameraSprite;
     [SerializeField] protected float baseMoveInterval = 60f;
 
+    [Header("Move Sound")]
+    [SerializeField] protected AudioClip moveSound;
+    [SerializeField, Range(0f, 1f)] protected float moveSoundVolume = 0.8f;
+
     protected FacilityLocation currentLocation;
     protected List<FacilityLocation> movePath;
     protected int pathIndex = 0;
@@ -36,7 +40,8 @@ public abstract class MonsterBase : MonoBehaviour
         float speedMultiplier = 1f - Mathf.Min((day - 1) * 0.07f, 0.5f);
         // 天気による速度補正（雨=0.85倍、嵐=0.70倍）
         float weatherMult = WeatherManager.Instance != null ? WeatherManager.Instance.MoveIntervalMultiplier : 1f;
-        moveInterval = baseMoveInterval * speedMultiplier * weatherMult;
+        float jitter = UnityEngine.Random.Range(0.85f, 1.15f);
+        moveInterval = baseMoveInterval * speedMultiplier * weatherMult * jitter;
         movePath = BuildPath();
 
         // パスの先頭がスポーン地点と同じなら1つ飛ばす（最初のステップが no-op になるバグを修正）
@@ -101,6 +106,9 @@ public abstract class MonsterBase : MonoBehaviour
 
     protected virtual void OnMoved(FacilityLocation loc)
     {
+        if (moveSound != null)
+            AudioPoolManager.Instance?.Play2D(moveSound, moveSoundVolume);
+
         if (loc == FacilityLocation.B1_DoorFront)
             EnterDoorFrontState();
     }

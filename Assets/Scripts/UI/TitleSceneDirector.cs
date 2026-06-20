@@ -25,6 +25,7 @@ public class TitleSceneDirector : MonoBehaviour
     Light         _overheadLight;
     bool          _running;
     float         _camAngle;
+    float         _swingT;
 
     // タイトルテキスト初期値（StopEffects で復元）
     Vector2 _titleOrigPos;
@@ -33,10 +34,21 @@ public class TitleSceneDirector : MonoBehaviour
 
     const string SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&!?";
 
-    // カメラ軌道
-    const float ORBIT_R   = 3.0f;
-    const float ORBIT_SPD = 0.016f;
-    const float CAM_H     = 1.55f;
+    [Header("タイトルカメラ位置")]
+    [Tooltip("カメラが部屋のどのZ位置を中心に見るか。小さい(マイナス)ほど奥の壁寄り。")]
+    [SerializeField] private float camLookAtZ     = -4.5f;
+    [Tooltip("注視点からのカメラ距離。小さいほど前（注視点に近い）。")]
+    [SerializeField] private float camOrbitRadius = 3.0f;
+    [Tooltip("カメラの高さ。")]
+    [SerializeField] private float camHeight      = 1.55f;
+
+    [Header("タイトルカメラスイング")]
+    [Tooltip("中心から左右に振れる最大角度（度）。30で±30度スイング。")]
+    [SerializeField] private float swingAngleDeg   = 30f;
+    [Tooltip("スイングの速さ。大きいほど速く往復する。0.03 = 約210秒で1往復。")]
+    [SerializeField] private float swingSpeed      = 0.03f;
+    [Tooltip("スイング開始位置。0=中央(右へ), 0.25=右端, 0.5=中央(左へ), 0.75=左端")]
+    [SerializeField, Range(0f, 1f)] private float swingPhaseOffset = 0f;
     // ゲームステージと被らないよう大きくオフセット
     static readonly Vector3 ROOM_OFFSET = new Vector3(5000f, 0f, 0f);
     static readonly Vector3 LOOK_AT     = new Vector3(5000f, 1.0f, -4.5f);
@@ -69,6 +81,7 @@ public class TitleSceneDirector : MonoBehaviour
             _titleOrigText  = titleText.text;
         }
 
+        _swingT  = swingPhaseOffset * Mathf.PI * 2f;
         _running = true;
         StartCoroutine(HorrorLoop());
         // StartCoroutine(TitleBreathing());
@@ -79,12 +92,14 @@ public class TitleSceneDirector : MonoBehaviour
     void Update()
     {
         if (!_running || _bgCam == null) return;
-        _camAngle += ORBIT_SPD * Time.deltaTime;
+        _swingT  += Time.deltaTime * swingSpeed;
+        _camAngle  = Mathf.Sin(_swingT) * swingAngleDeg * Mathf.Deg2Rad;
         float s = Mathf.Sin(_camAngle);
         float c = Mathf.Cos(_camAngle);
-        float h = CAM_H + Mathf.Sin(Time.time * 0.38f) * 0.05f;
-        _bgCam.transform.position = new Vector3(ROOM_OFFSET.x + s * ORBIT_R, h, LOOK_AT.z + c * ORBIT_R);
-        _bgCam.transform.LookAt(LOOK_AT + new Vector3(0, Mathf.Sin(Time.time * 0.18f) * 0.04f, 0));
+        float h = camHeight + Mathf.Sin(Time.time * 0.38f) * 0.05f;
+        _bgCam.transform.position = new Vector3(ROOM_OFFSET.x + s * camOrbitRadius, h, camLookAtZ + c * camOrbitRadius);
+        var lookAt = new Vector3(ROOM_OFFSET.x, 1.0f, camLookAtZ);
+        _bgCam.transform.LookAt(lookAt + new Vector3(0, Mathf.Sin(Time.time * 0.18f) * 0.04f, 0));
     }
 
     // ─── カメラ & RenderTexture ───────────────────────────────────
@@ -100,8 +115,8 @@ public class TitleSceneDirector : MonoBehaviour
         cam.farClipPlane    = 35f;
         cam.targetTexture   = _rt;
         cam.depth           = -10; // 最背面
-        go.transform.position = new Vector3(ROOM_OFFSET.x, CAM_H, LOOK_AT.z + ORBIT_R);
-        go.transform.LookAt(LOOK_AT);
+        go.transform.position = new Vector3(ROOM_OFFSET.x, camHeight, camLookAtZ + camOrbitRadius);
+        go.transform.LookAt(new Vector3(ROOM_OFFSET.x, 1.0f, camLookAtZ));
         return cam;
     }
 
@@ -320,7 +335,7 @@ public class TitleSceneDirector : MonoBehaviour
             yield return new WaitForSeconds(0.033f);
         }
         titleText.color = origCol;
-        rt.anchoredPosition = _titleOrigPos;
+        // rt.anchoredPosition = _titleOrigPos;
     }
 
     // クロマティックアベレーション急増 + 静電ノイズ同時発動
@@ -459,8 +474,8 @@ public class TitleSceneDirector : MonoBehaviour
         // タイトルテキストを元の状態に戻す
         if (titleText != null)
         {
-            titleText.rectTransform.localScale       = _titleOrigScale != Vector3.zero ? _titleOrigScale : Vector3.one;
-            titleText.rectTransform.anchoredPosition = _titleOrigPos;
+            // titleText.rectTransform.localScale       = _titleOrigScale != Vector3.zero ? _titleOrigScale : Vector3.one;
+            // titleText.rectTransform.anchoredPosition = _titleOrigPos;
             if (!string.IsNullOrEmpty(_titleOrigText)) titleText.text = _titleOrigText;
         }
         if (titleSubText != null && !string.IsNullOrEmpty(titleSubText.text))

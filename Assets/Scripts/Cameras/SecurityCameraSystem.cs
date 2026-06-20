@@ -19,18 +19,66 @@ public class SecurityCameraSystem : MonoBehaviour
     public static SecurityCameraSystem Instance { get; private set; }
 
     [Header("Camera Definitions")]
+    [Tooltip("各監視カメラの設定リスト（ID・表示名・カバーエリア・内外判定）。空欄だとデフォルト8台構成が自動生成される。")]
     [SerializeField] private List<CameraConfig> cameraConfigs;
 
     [Header("Monitor (1台)")]
-    [SerializeField] private RawImage monitorDisplay;       // RenderTexture を表示する RawImage
-    [SerializeField] private Text     cameraNameText;       // カメラ名ラベル
-    [SerializeField] private Text     cameraLocationText;   // 監視中の場所テキスト
-    [SerializeField] private Image    noiseOverlay;         // Jammer ノイズ
-    [SerializeField] private Image    staticOverlay;        // 死亡/Mimic スタティック
-    [SerializeField] private Image    monsterOverlay;       // モンスター表示オーバーレイ
+    [Tooltip("カメラ映像を表示するRawImage。RenderTextureが割り当てられる。")]
+    [SerializeField] private RawImage monitorDisplay;
+    [Tooltip("現在選択中のカメラ名を表示するTextコンポーネント。")]
+    [SerializeField] private Text     cameraNameText;
+    [Tooltip("監視中のエリア名（日本語）を表示するTextコンポーネント。")]
+    [SerializeField] private Text     cameraLocationText;
+    [Tooltip("Jammerが近くにいるときに表示するノイズオーバーレイImage。")]
+    [SerializeField] private Image    noiseOverlay;
+    [Tooltip("カメラが死亡またはMimicに乗っ取られたときに表示するスタティックオーバーレイImage。")]
+    [SerializeField] private Image    staticOverlay;
+    [Tooltip("モンスターのカメラスプライトを表示するオーバーレイImage。")]
+    [SerializeField] private Image    monsterOverlay;
 
     [Header("Ghost Signal")]
-    [SerializeField] private Sprite   ghostSignalSprite;    // GhostSignal 現象で表示するスプライト
+    [Tooltip("GhostSignal現象が発生したときに一時的にカメラに映るスプライト。")]
+    [SerializeField] private Sprite   ghostSignalSprite;
+
+    [Header("Camera Ambient Beeps")]
+    [Tooltip("カメラ使用中にランダム再生する電子音クリップ。複数登録するとランダムに選ばれる。")]
+    [SerializeField] private AudioClip[] beepSounds;
+    [Tooltip("電子音が鳴る間隔の最小秒数。")]
+    [SerializeField] private float beepIntervalMin = 3f;
+    [Tooltip("電子音が鳴る間隔の最大秒数。")]
+    [SerializeField] private float beepIntervalMax = 10f;
+    [Tooltip("電子音の音量。0=無音、1=最大。")]
+    [SerializeField, Range(0f, 1f)] private float beepVolume = 0.5f;
+
+    [Header("Monitor CRT Effect")]
+    [Tooltip("ONにするとGraphics.BlitでCRTシェーダーを適用する。OFFだとカメラ映像そのまま。")]
+    [SerializeField] private bool   enableCRTEffect   = true;
+    [Tooltip("NIGHTMARE/SecurityCamera シェーダーをここにアサインする。空欄だとShader.Findで自動検索。")]
+    [SerializeField] private Shader securityCamShader;
+    [Tooltip("色収差の強さ。端に向かうほどRGBがズレる。大きいほど端がにじむ。")]
+    [SerializeField, Range(0f, 0.02f)] private float chromaStr      = 0.004f;
+    [Tooltip("走査線の濃さ。大きいほど横線が目立つ。0で無効。")]
+    [SerializeField, Range(0f, 1f)]    private float scanlineAlpha  = 0.28f;
+    [Tooltip("走査線の本数。多いほど線が細かくなる。")]
+    [SerializeField, Range(80f,300f)]  private float scanlineCount  = 180f;
+    [Tooltip("フィルムグレイン（砂粒ノイズ）の強さ。大きいほどザラザラ感が増す。")]
+    [SerializeField, Range(0f, 0.3f)]  private float grainStr       = 0.038f;
+    [Tooltip("画面周辺の暗さ。大きいほど端が暗くなる。1.0が標準的な監視カメラ感。")]
+    [SerializeField, Range(0f, 2f)]    private float vignetteStr    = 1.0f;
+    [Tooltip("色の鮮やかさ。0=完全白黒、1=元の色のまま。監視カメラらしくするには0に近い値を推奨。")]
+    [SerializeField, Range(0f, 1f)]    private float saturation     = 0.0f;
+    [Tooltip("映像全体の明るさ倍率。1.0が等倍。高くすると白飛び気味になる。")]
+    [SerializeField, Range(0.5f,2f)]   private float brightness     = 1.10f;
+    [Tooltip("映像を寒色系の白に近づける強さ。0=効果なし、高いほど青白い監視カメラらしい色温度になる。")]
+    [SerializeField, Range(0f, 1f)]    private float whiteTint      = 0.15f;
+    [Tooltip("画質の粗さ。小さいほどブロック状にピクセル化されて低解像度カメラっぽくなる。512=劣化なし。")]
+    [SerializeField, Range(32f,512f)]  private float pixelScale     = 160f;
+    [Tooltip("常時かかる軽いグリッチの強さ。0で無効、高いほど常にちらつく。")]
+    [SerializeField, Range(0f, 1f)]    private float glitchBase     = 0.08f;
+    [Tooltip("ランダムなCRTパルス（色収差急増）が起きる間隔の最小秒数。")]
+    [SerializeField] private float crtPulseIntervalMin = 6f;
+    [Tooltip("ランダムなCRTパルスが起きる間隔の最大秒数。")]
+    [SerializeField] private float crtPulseIntervalMax = 20f;
 
     // 全 8 台のサイクル順序
     private static readonly CameraID[] CycleOrder =
@@ -48,6 +96,17 @@ public class SecurityCameraSystem : MonoBehaviour
     public int      CameraCount        => CycleOrder.Length;
     public int      CurrentCameraIndex => _cycleIndex;
 
+    // TVMonitorDisplay が TV メッシュに貼り付けるための RenderTexture
+    public RenderTexture MonitorRenderTexture
+    {
+        get
+        {
+            if (enableCRTEffect && _processedRT != null) return _processedRT;
+            renderTextures.TryGetValue(_activeCamera, out var rt);
+            return rt;
+        }
+    }
+
     private readonly Dictionary<CameraID, CameraConfig> configs      = new();
     private readonly Dictionary<CameraID, Camera>       sceneCams    = new();
     private readonly Dictionary<CameraID, RenderTexture> renderTextures = new();
@@ -57,6 +116,12 @@ public class SecurityCameraSystem : MonoBehaviour
     private bool      lightsOut      = false;
     private bool      _transitioning = false;
     private Coroutine _transRoutine;
+    private Coroutine _beepRoutine;
+
+    private CameraViewEffect _glitchEffect;
+    private Material         _secCamMat;
+    private RenderTexture    _processedRT;
+    private Coroutine        _chromaPulseRoutine;
 
     public event Action<CameraID> OnCameraKilled;
 
@@ -95,10 +160,16 @@ public class SecurityCameraSystem : MonoBehaviour
     private void Start()
     {
         if (GameManager.Instance != null)
-            GameManager.Instance.OnDayStarted += _ => ResetAllCameras();
+        {
+            GameManager.Instance.OnDayStarted  += OnDayStarted;
+            GameManager.Instance.OnNightCleared += _ => StopBeepLoop();
+            GameManager.Instance.OnGameOver     += StopBeepLoop;
+        }
 
         ApplyActiveCamera();
         RefreshMonitorState();  // 初期テクスチャをセット
+
+        if (enableCRTEffect) ApplyMonitorCRTEffect();
 
         Debug.Log($"[CameraSystem] 起動 monitor={monitorDisplay != null} " +
                   $"sceneCams={sceneCams.Count} configs={configs.Count}");
@@ -196,8 +267,14 @@ public class SecurityCameraSystem : MonoBehaviour
             {
                 bool dark = lightsOut && !cfg.isExternal;
                 monitorDisplay.color = dark ? new Color(0.15f, 0.15f, 0.15f) : Color.white;
-                renderTextures.TryGetValue(_activeCamera, out var rt);
-                monitorDisplay.texture = rt;
+                // CRTエフェクトON時は _processedRT (CRTBlitLoop が毎フレーム更新)
+                if (enableCRTEffect && _processedRT != null)
+                    monitorDisplay.texture = _processedRT;
+                else
+                {
+                    renderTextures.TryGetValue(_activeCamera, out var rt);
+                    monitorDisplay.texture = rt;
+                }
             }
         }
     }
@@ -362,6 +439,153 @@ public class SecurityCameraSystem : MonoBehaviour
         FacilityLocation.B1_DoorFront  => "B1 管理人室前",
         _ => loc.ToString()
     };
+
+    // ===== Monitor CRT Effect =====
+    private void ApplyMonitorCRTEffect()
+    {
+        if (monitorDisplay == null) return;
+
+        var shader = securityCamShader != null
+            ? securityCamShader
+            : Shader.Find("NIGHTMARE/SecurityCamera");
+
+        if (shader == null)
+        {
+            Debug.LogWarning("[CameraSystem] NIGHTMARE/SecurityCamera シェーダーが見つかりません。Inspector でアサインしてください。");
+            return;
+        }
+
+        // シェーダーマテリアル & 加工先 RT を作成
+        _secCamMat  = new Material(shader);
+        _processedRT = new RenderTexture(512, 384, 0, RenderTextureFormat.Default);
+        _processedRT.name = "RT_CRT_Processed";
+        ApplyShaderParams();
+
+        // CameraViewEffect: ダイナミックグリッチ専用（ノイズは最小限）
+        _glitchEffect = monitorDisplay.GetComponent<CameraViewEffect>();
+        if (_glitchEffect == null)
+            _glitchEffect = monitorDisplay.gameObject.AddComponent<CameraViewEffect>();
+        _glitchEffect.ApplySecurityCameraPreset(0.05f); // ノイズほぼゼロ
+        _glitchEffect.SetGlitchIntensity(glitchBase);
+
+        // monitorDisplay に加工済み RT を表示（RefreshMonitorState で毎フレーム更新される）
+        monitorDisplay.texture = _processedRT;
+
+        StartCoroutine(CRTBlitLoop());
+
+        if (_chromaPulseRoutine != null) StopCoroutine(_chromaPulseRoutine);
+        _chromaPulseRoutine = StartCoroutine(MonitorCRTPulseLoop());
+    }
+
+    private void ApplyShaderParams()
+    {
+        if (_secCamMat == null) return;
+        _secCamMat.SetFloat("_ChromaStr",     chromaStr);
+        _secCamMat.SetFloat("_ScanlineAlpha", scanlineAlpha);
+        _secCamMat.SetFloat("_ScanlineCount", scanlineCount);
+        _secCamMat.SetFloat("_GrainStr",      grainStr);
+        _secCamMat.SetFloat("_VignetteStr",   vignetteStr);
+        _secCamMat.SetFloat("_Saturation",    saturation);
+        _secCamMat.SetFloat("_Brightness",    brightness);
+        _secCamMat.SetFloat("_WhiteTint",     whiteTint);
+        _secCamMat.SetFloat("_PixelScale",    pixelScale);
+    }
+
+    // フレーム末尾にアクティブカメラの RT をシェーダー処理して _processedRT に書き込む
+    private IEnumerator CRTBlitLoop()
+    {
+        var wait = new WaitForEndOfFrame();
+        while (true)
+        {
+            yield return wait;
+            if (_secCamMat == null || _processedRT == null) yield break;
+            if (renderTextures.TryGetValue(_activeCamera, out var src) && src != null)
+                Graphics.Blit(src, _processedRT, _secCamMat);
+        }
+    }
+
+    private IEnumerator MonitorCRTPulseLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(
+                UnityEngine.Random.Range(crtPulseIntervalMin, crtPulseIntervalMax));
+
+            if (_secCamMat == null) yield break;
+
+            float peakChroma = chromaStr * 4.0f;
+
+            // ランプアップ
+            float t = 0f;
+            while (t < 0.10f)
+            {
+                t += Time.deltaTime;
+                float n = t / 0.10f;
+                _secCamMat.SetFloat("_ChromaStr", Mathf.Lerp(chromaStr, peakChroma, n));
+                _glitchEffect?.SetGlitchIntensity(Mathf.Lerp(glitchBase, 0.45f, n));
+                yield return null;
+            }
+
+            // ホールド
+            float hold = UnityEngine.Random.Range(0.1f, 0.5f);
+            t = 0f;
+            while (t < hold) { t += Time.deltaTime; yield return null; }
+
+            // ランプダウン
+            t = 0f;
+            while (t < 0.35f)
+            {
+                t += Time.deltaTime;
+                float n = t / 0.35f;
+                _secCamMat.SetFloat("_ChromaStr", Mathf.Lerp(peakChroma, chromaStr, n));
+                _glitchEffect?.SetGlitchIntensity(Mathf.Lerp(0.45f, glitchBase, n));
+                yield return null;
+            }
+
+            _secCamMat.SetFloat("_ChromaStr", chromaStr);
+            _glitchEffect?.SetGlitchIntensity(glitchBase);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (_secCamMat   != null) Destroy(_secCamMat);
+        if (_processedRT != null) { _processedRT.Release(); Destroy(_processedRT); }
+    }
+
+    // ===== 電子音ループ =====
+    private void OnDayStarted(int day)
+    {
+        ResetAllCameras();
+        StartBeepLoop();
+    }
+
+    private void StartBeepLoop()
+    {
+        if (_beepRoutine != null) StopCoroutine(_beepRoutine);
+        _beepRoutine = StartCoroutine(BeepLoopRoutine());
+    }
+
+    private void StopBeepLoop()
+    {
+        if (_beepRoutine == null) return;
+        StopCoroutine(_beepRoutine);
+        _beepRoutine = null;
+    }
+
+    private IEnumerator BeepLoopRoutine()
+    {
+        if (beepSounds == null || beepSounds.Length == 0) yield break;
+
+        while (true)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(beepIntervalMin, beepIntervalMax));
+
+            var clip = beepSounds[UnityEngine.Random.Range(0, beepSounds.Length)];
+            if (clip != null)
+                AudioPoolManager.Instance?.Play2D(clip, beepVolume);
+        }
+    }
 
     private void ResetAllCameras()
     {

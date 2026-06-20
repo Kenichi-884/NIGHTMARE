@@ -685,6 +685,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 442ea875c57109c4f8f56949a5677d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSprite: {fileID: 21300000, guid: b226ad2f16197ec41af536405b2dec43, type: 3}
+  cameraSprite: {fileID: 21300000, guid: 538e7fd3a9b17a1458d1d3fc4fac7a85, type: 3}
   baseMoveInterval: 60
+  moveSound: {fileID: 8300000, guid: 211f76400f088144bbecc75217cfe7a2, type: 3}
+  moveSoundVolume: 0.8
+  doorFrontHoldTime: 20
   targetCameraID: 1

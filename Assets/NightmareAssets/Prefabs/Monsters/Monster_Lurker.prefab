@@ -426,8 +426,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 354ffab16860d19439a9c48274b40c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSprite: {fileID: 21300000, guid: 523e854d80e081041933b6309b22d344, type: 3}
+  cameraSprite: {fileID: 21300000, guid: 538e7fd3a9b17a1458d1d3fc4fac7a85, type: 3}
   baseMoveInterval: 60
+  moveSound: {fileID: 8300000, guid: eb51388b177ca3849b41dbc18d837ecd, type: 3}
+  moveSoundVolume: 0.8
+  doorFrontHoldTime: 20
 --- !u!1 &6127828142008758169
 GameObject:
   m_ObjectHideFlags: 0

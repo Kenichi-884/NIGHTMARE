@@ -23,31 +23,31 @@ MonoBehaviour:
     phases: 00000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 8300000, guid: 651a044eefa12214cb1a94f22c077fd7, type: 3}
+    clip: {fileID: 8300000, guid: eadea7d6bddcac1428724c969d8c145a, type: 3}
     volume: 0.6
   - id: omen
     phases: 01000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 224bad7ae7b3ae34cbe3492b4c885c73, type: 3}
     volume: 0.7
   - id: contact
     phases: 0200000003000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 4071d4daa8c95b346af151f3285dd44a, type: 3}
     volume: 0.8
   - id: intense
     phases: 040000000500000006000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: 88e3e68d74248294e9b1699a57ff8e75, type: 3}
     volume: 0.85
   - id: critical
     phases: 070000000800000009000000
     fromDay: 0
     day7Only: 0
-    clip: {fileID: 0}
+    clip: {fileID: 8300000, guid: a48ea6aaece3d0d49a5b1e673325125f, type: 3}
     volume: 0.9
   - id: final
     phases: 0200000003000000040000000500000006000000070000000800000009000000
