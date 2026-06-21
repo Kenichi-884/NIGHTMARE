@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d191ef3c46c7ca64cab974ac90723144
+guid: e19be1756a590e54da11e1582bae1a5c
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -72,7 +72,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,11 +113,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 150668
-  packageName: Forest Environment - Dynamic Nature
-  packageVersion: 1.9
-  assetPath: Assets/NatureManufacture Assets/Forest Environment Dynamic Nature/Demo
-    Scenes/Forest Demo Scene/Lightmap-0_comp_light.exr
-  uploadId: 736787

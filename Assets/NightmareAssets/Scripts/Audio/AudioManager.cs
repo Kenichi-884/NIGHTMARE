@@ -143,7 +143,33 @@ public class AudioManager : MonoBehaviour
             }
         }
 
-        if (target != null) CrossfadeBGM(target, fadeDur);
+        if (target != null)
+            CrossfadeBGM(target, fadeDur);
+        else if (phase == GamePhase.Silence)
+            FadeOutBGM(fadeDur);
+    }
+
+    private void FadeOutBGM(float fadeDur)
+    {
+        if (!bgmSource.isPlaying) return;
+        if (crossfadeRoutine != null) StopCoroutine(crossfadeRoutine);
+        crossfadeRoutine = StartCoroutine(FadeOutRoutine(fadeDur));
+    }
+
+    private IEnumerator FadeOutRoutine(float dur)
+    {
+        float half = dur * 0.5f;
+        float start = bgmSource.volume;
+        float t = 0f;
+        while (t < half)
+        {
+            t += Time.deltaTime;
+            bgmSource.volume = Mathf.Lerp(start, 0f, t / half);
+            yield return null;
+        }
+        bgmSource.Stop();
+        bgmSource.clip = null;
+        bgmSource.volume = bgmVolume;
     }
 
     // "gameover" / "clear" など汎用イベントBGMを取得

@@ -15,11 +15,11 @@ public class SecurityCameraPan : MonoBehaviour
     [SerializeField] private float panAngle  = 22f;
 
     [Tooltip("1往復にかかる秒数（大きいほど遅い）")]
-    [SerializeField] private float panPeriod = 18f;
+    [SerializeField] private float panPeriod = 20f;
 
     [Header("微小ティルト（上下の揺れ感）")]
-    [SerializeField] private float tiltAngle  = 1.5f;
-    [SerializeField] private float tiltPeriod = 5.3f;
+    [SerializeField] private float tiltAngle  = 0f;
+    [SerializeField] private float tiltPeriod = 8.0f;
 
     [Header("位相オフセット（複数カメラがバラバラに動くように）")]
     [SerializeField, Range(0f, 1f)] private float phaseOffset = 0f;
@@ -34,7 +34,7 @@ public class SecurityCameraPan : MonoBehaviour
     {
         panAngle    = isInternal ? 14f : 22f;
         panPeriod   = isInternal ? 22f : UnityEngine.Random.Range(16f, 24f);
-        tiltAngle   = isInternal ? 1.0f : 1.5f;
+        tiltAngle   = 0f;
         phaseOffset = phase;
     }
 
@@ -101,8 +101,8 @@ public class SecurityCameraPan : MonoBehaviour
                 // 外部カメラは広め、内部は狭め
                 bool isInternal = t.name.Contains("IN_");
                 pan.panAngle  = isInternal ? 14f : 22f;
-                pan.panPeriod = isInternal ? 11f : Random.Range(8f, 12f);
-                pan.tiltAngle = isInternal ? 1.0f : 1.5f;
+                pan.panPeriod = isInternal ? 22f : Random.Range(18f, 26f);
+                pan.tiltAngle = 0f;
 
                 // フェーズをカメラごとにずらす
                 pan.phaseOffset = idx < phases.Length ? phases[idx] : Random.value;

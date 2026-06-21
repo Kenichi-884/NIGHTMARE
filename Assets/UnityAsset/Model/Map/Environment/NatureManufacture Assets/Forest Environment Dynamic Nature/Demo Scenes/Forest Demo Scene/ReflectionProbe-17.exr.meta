@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 03b8da48afc384a43830bb0c93f32fff
+guid: 3ba44201f060a4d47b7f139b8d92fec9
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -113,11 +113,3 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
-AssetOrigin:
-  serializedVersion: 1
-  productId: 150668
-  packageName: Forest Environment - Dynamic Nature
-  packageVersion: 1.9
-  assetPath: Assets/NatureManufacture Assets/Forest Environment Dynamic Nature/Demo
-    Scenes/Forest Demo Scene/ReflectionProbe-17.exr
-  uploadId: 736787
