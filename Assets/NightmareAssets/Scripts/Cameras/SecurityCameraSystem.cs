@@ -51,8 +51,8 @@ public class SecurityCameraSystem : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float beepVolume = 0.5f;
 
     [Header("Camera FOV / Resolution")]
-    [Tooltip("各監視カメラの視野角。大きいほど広角になる。監視カメラらしくするなら 75〜90 推奨。")]
-    [SerializeField, Range(30f, 120f)] private float cameraFOV = 80f;
+    [Tooltip("各監視カメラの視野角。大きいほど広角になる。監視カメラらしくするなら 90〜100 推奨。")]
+    [SerializeField, Range(30f, 120f)] private float cameraFOV = 95f;
     [Tooltip("RenderTextureの幅(px)。TVが16:9なら 512、4:3なら 512 のまま。")]
     [SerializeField] private int rtWidth  = 512;
     [Tooltip("RenderTextureの高さ(px)。16:9なら 288、4:3なら 384。")]
@@ -161,6 +161,16 @@ public class SecurityCameraSystem : MonoBehaviour
             cam.enabled        = false;  // 表示中のカメラだけ有効化
             sceneCams[cfg.id]    = cam;
             renderTextures[cfg.id] = rt;
+
+            // SecurityCameraPan が未アタッチなら自動追加
+            if (go.GetComponent<SecurityCameraPan>() == null)
+            {
+                bool isInternal = cfg.id.ToString().StartsWith("IN_");
+                var pan         = go.AddComponent<SecurityCameraPan>();
+                // phaseOffset でカメラごとにパンのタイミングをずらす
+                float phase = (float)sceneCams.Count / 8f;
+                pan.SetDefaults(isInternal, phase);
+            }
         }
 
         if (monitorDisplay == null) AutoFindMonitors();
@@ -180,8 +190,10 @@ public class SecurityCameraSystem : MonoBehaviour
 
         if (enableCRTEffect) ApplyMonitorCRTEffect();
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log($"[CameraSystem] 起動 monitor={monitorDisplay != null} " +
                   $"sceneCams={sceneCams.Count} configs={configs.Count}");
+#endif
     }
 
     // ===== 毎フレーム更新 =====

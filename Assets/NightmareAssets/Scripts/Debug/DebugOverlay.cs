@@ -19,7 +19,7 @@ public class DebugOverlay : MonoBehaviour
     [SerializeField] private int     panelWidth    = 620;
 
     // ─── 状態 ───────────────────────────────────────────────
-    private bool  _show  = false;
+    private bool  _show;  // Awake で showOnStart から初期化
     private bool  _pause = false;
 
     // セクション開閉フラグ
@@ -72,6 +72,8 @@ public class DebugOverlay : MonoBehaviour
     };
 
     // ═══════════════════════════════════════════════════════════
+    private void Awake() { _show = showOnStart; }
+
     private void Update()
     {
         if (Input.GetKeyDown(toggleKey)) _show = !_show;

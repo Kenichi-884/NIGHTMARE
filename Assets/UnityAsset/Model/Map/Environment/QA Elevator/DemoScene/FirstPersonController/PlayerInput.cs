@@ -34,7 +34,9 @@ using UnityEngine.InputSystem;
         public UnityAction OnJumpPressed;
 
 #if ENABLE_INPUT_SYSTEM
+#pragma warning disable CS0414
     [SerializeField] private Key interactionKey = Key.E;
+#pragma warning restore CS0414
 #else
 
         private string vAxisName = "Vertical";

@@ -40,6 +40,8 @@ public class AtmosphericAudioController : MonoBehaviour
     private AudioHighPassFilter _hvacHpf;
 
     private float _humPhase;
+    private float _pitchTimer;
+    private const float PitchInterval = 0.05f; // 20fps — ±0.01 のピッチ変化は耳で区別不可能
     private float _creakTimer;
     private float _dripTimer;
     private int   _currentDay;
@@ -98,10 +100,12 @@ public class AtmosphericAudioController : MonoBehaviour
     {
         if (GameManager.Instance?.CurrentState != GameState.Night) return;
 
-        // 電気系ハム音の有機的ピッチ揺れ（2種の正弦波で「電磁干渉」感）
+        // 電気系ハム音の有機的ピッチ揺れ（20fpsで更新 — ±0.01の変化は耳で区別不可能）
         _humPhase += Time.deltaTime;
-        if (_humSrc)
+        _pitchTimer += Time.deltaTime;
+        if (_pitchTimer >= PitchInterval && _humSrc)
         {
+            _pitchTimer = 0f;
             _humSrc.pitch = 1f
                 + Mathf.Sin(_humPhase * 2.17f) * 0.007f
                 + Mathf.Sin(_humPhase * 7.63f) * 0.003f;

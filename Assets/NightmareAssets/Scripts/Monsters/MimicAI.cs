@@ -5,6 +5,8 @@ using System.Collections.Generic;
 // 見破り方: 画面右下の時刻がズレている / ドアの開閉状態と映像が一致しない
 public class MimicAI : MonsterBase
 {
+    private static readonly CameraID[] AllCameraIDs = (CameraID[])System.Enum.GetValues(typeof(CameraID));
+
     private float mimicDuration = 60f;
     private float timer = 0f;
     private CameraID currentTarget;
@@ -38,8 +40,7 @@ public class MimicAI : MonsterBase
 
     private void PickNewTarget()
     {
-        var all = System.Enum.GetValues(typeof(CameraID));
-        currentTarget = (CameraID)all.GetValue(Random.Range(0, all.Length));
+        currentTarget = AllCameraIDs[Random.Range(0, AllCameraIDs.Length)];
         SecurityCameraSystem.Instance.SetMimicTarget(currentTarget);
     }
 

@@ -147,7 +147,9 @@ public class PhenomenaManager : MonoBehaviour
         }
 
         OnPhenomenaTriggered?.Invoke(type);
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log($"[Phenomena] {type} triggered on Day {day}");
+#endif
     }
 
     // ─── コルーチン ───────────────────────────────────────────────────
@@ -186,7 +188,7 @@ public class PhenomenaManager : MonoBehaviour
         AudioManager.Instance?.Play("static_burst");
         UIManager.Instance?.ShowPhenomenaWarning("強電波障害");
         // 全 CameraViewEffect を強グリッチ状態にして 3〜4 秒維持
-        var effects = FindObjectsOfType<CameraViewEffect>();
+        var effects = FindObjectsByType<CameraViewEffect>(FindObjectsSortMode.None);
         foreach (var e in effects) e.SetGlitchIntensity(0.85f);
         yield return new WaitForSeconds(Random.Range(3f, 4.5f));
         foreach (var e in effects) e.SetGlitchIntensity(0f);

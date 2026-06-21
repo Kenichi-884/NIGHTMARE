@@ -60,7 +60,9 @@ public class TVModeController : MonoBehaviour
         float scale = tvWidth / referenceWidth;
         hudCanvas.transform.localScale = Vector3.one * scale;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log($"[TVModeController] World Space 配置完了 scale={scale:F5} pos={hudCanvas.transform.position}");
+#endif
     }
 
 #if UNITY_EDITOR

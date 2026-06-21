@@ -94,7 +94,7 @@ public class UIManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        if (timeText == null) AutoFindChildren();
+        if (timeText == null || pausePanel == null) AutoFindChildren();
     }
 
     private void Start()

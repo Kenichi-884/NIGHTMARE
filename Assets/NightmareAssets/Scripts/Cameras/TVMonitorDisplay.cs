@@ -26,13 +26,14 @@ public class TVMonitorDisplay : MonoBehaviour
     [Tooltip("エミッション強度。0で発光なし。")]
     [SerializeField, Range(0f, 3f)] private float emissionIntensity = 1.0f;
 
-    private Renderer _rend;
-    private Material _mat;
+    private Renderer       _rend;
+    private Material       _mat;
+    private RenderTexture  _lastRT; // 変化時のみマテリアルを更新
 
     void Start()
     {
         _rend = GetComponent<Renderer>();
-        _mat  = _rend.material; // マテリアルをインスタンス化（元を汚さない）
+        _mat  = _rend.material;
     }
 
     void LateUpdate()
@@ -40,10 +41,10 @@ public class TVMonitorDisplay : MonoBehaviour
         if (_mat == null) return;
 
         var rt = SecurityCameraSystem.Instance?.MonitorRenderTexture;
-        if (rt == null) return;
+        if (rt == null || rt == _lastRT) return; // RT が変わっていなければスキップ
+        _lastRT = rt;
 
         _mat.SetTexture(textureProperty, rt);
-
         if (applyToEmission)
         {
             _mat.EnableKeyword("_EMISSION");

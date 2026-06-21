@@ -15,7 +15,7 @@ public class SecurityCameraPan : MonoBehaviour
     [SerializeField] private float panAngle  = 22f;
 
     [Tooltip("1往復にかかる秒数（大きいほど遅い）")]
-    [SerializeField] private float panPeriod = 9f;
+    [SerializeField] private float panPeriod = 18f;
 
     [Header("微小ティルト（上下の揺れ感）")]
     [SerializeField] private float tiltAngle  = 1.5f;
@@ -28,6 +28,15 @@ public class SecurityCameraPan : MonoBehaviour
 
     private Quaternion _baseRotation;
     private float      _t;
+
+    /// <summary>SecurityCameraSystem から動的に追加されたときの初期値設定。</summary>
+    public void SetDefaults(bool isInternal, float phase)
+    {
+        panAngle    = isInternal ? 14f : 22f;
+        panPeriod   = isInternal ? 22f : UnityEngine.Random.Range(16f, 24f);
+        tiltAngle   = isInternal ? 1.0f : 1.5f;
+        phaseOffset = phase;
+    }
 
     private void Start()
     {

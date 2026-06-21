@@ -101,7 +101,7 @@ public class JumpScareManager : MonoBehaviour
 
     private IEnumerator JumpScareRoutine()
     {
-        var camEffects = FindObjectsOfType<CameraViewEffect>();
+        var camEffects = FindObjectsByType<CameraViewEffect>(FindObjectsSortMode.None);
 
         // ── 0. 予兆：グリッチ加速 + 色収差 ─────────────────────
         foreach (var e in camEffects) e.SetGlitchIntensity(1f);

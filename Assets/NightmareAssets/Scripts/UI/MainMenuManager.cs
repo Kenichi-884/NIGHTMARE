@@ -187,15 +187,11 @@ public class MainMenuManager : MonoBehaviour
         _titleDirector?.StopEffects();
         AudioManager.Instance?.StopLoop();
         yield return Fade(0f, 1f, 0.45f);
-        Debug.Log("[MMM] フェードアウト完了");
         HideAllPanels();
         mainMenuPanel?.SetActive(false);
-        Debug.Log($"[MMM] mainCanvas={mainCanvas}, gameScreen={gameScreen}");
         mainCanvas?.SetActive(false);
         gameScreen?.SetActive(true);
-        Debug.Log($"[MMM] gameScreen.activeSelf={gameScreen?.activeSelf}");
         yield return Fade(1f, 0f, 0.45f);
-        Debug.Log("[MMM] フェードイン完了");
         if (GameManager.Instance == null)
         {
             Debug.LogError("[MainMenuManager] GameManager.Instance が null です。シーンに GameManager を配置してください。");
@@ -344,7 +340,7 @@ public class MainMenuManager : MonoBehaviour
 
     private T FindChild<T>(string name) where T : Component
     {
-        foreach (var c in FindObjectsOfType<T>(true))
+        foreach (var c in FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             if (c.gameObject.name == name) return c;
         return null;
     }

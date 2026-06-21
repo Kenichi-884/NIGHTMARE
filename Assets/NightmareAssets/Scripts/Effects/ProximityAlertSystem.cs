@@ -15,6 +15,8 @@ public class ProximityAlertSystem : MonoBehaviour
 
     private DangerLevel currentLevel = DangerLevel.None;
     private float       heartbeatTimer = 0f;
+    private float       _evalTimer = 0f;
+    private const float EvalInterval = 0.2f; // 5fps — モンスター移動は30-60秒ごとなのでこれで十分
     private Coroutine   vignetteRoutine;
 
     private enum DangerLevel { None, Lobby, Mid, High }
@@ -43,17 +45,23 @@ public class ProximityAlertSystem : MonoBehaviour
         if (GameManager.Instance?.CurrentState != GameState.Night) return;
         if (MonsterManager.Instance == null) return;
 
-        var newLevel = EvaluateDanger();
-        if (newLevel != currentLevel)
+        // 危険レベル評価は5fps（モンスター移動は30-60秒ごとなので十分）
+        _evalTimer += Time.deltaTime;
+        if (_evalTimer >= EvalInterval)
         {
-            var prev = currentLevel;
-            currentLevel = newLevel;
-            OnLevelChanged(prev, newLevel);
+            _evalTimer = 0f;
+            var newLevel = EvaluateDanger();
+            if (newLevel != currentLevel)
+            {
+                var prev = currentLevel;
+                currentLevel = newLevel;
+                OnLevelChanged(prev, newLevel);
+            }
         }
 
         if (currentLevel == DangerLevel.None) return;
 
-        // ハートビート間隔
+        // ハートビートは毎フレーム計測（タイミング精度が必要）
         float interval = currentLevel switch
         {
             DangerLevel.High  => highDangerHeartbeatInterval,

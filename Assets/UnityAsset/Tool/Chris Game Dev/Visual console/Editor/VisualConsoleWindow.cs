@@ -82,16 +82,16 @@ namespace chrisGameDev.VisualConsole
             logQueue = new List<logData>();
 
             // Import UXML
-            //VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Chris Game Dev/Visual console/uxml/consoleVisualTree.uxml");
+            //VisualTreeAsset visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UnityAsset/Tool/Chris Game Dev/Visual console/uxml/consoleVisualTree.uxml");
             //VisualElement labelFromUXML = visualTree.Instantiate();
             //rootVisualElement.Add(labelFromUXML);
             //
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/Chris Game Dev/Visual console/uxml/consoleVisualTree.uxml");
+            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UnityAsset/Tool/Chris Game Dev/Visual console/uxml/consoleVisualTree.uxml");
             visualTree.CloneTree(rootVisualElement);
 
 
             // Import USS:
-            StyleSheet uss = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Chris Game Dev/Visual console/uss/consoleStyles.uss");
+            StyleSheet uss = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/UnityAsset/Tool/Chris Game Dev/Visual console/uss/consoleStyles.uss");
             rootVisualElement.styleSheets.Add(uss);
 
             // Load buttons from UI Document (UXML):

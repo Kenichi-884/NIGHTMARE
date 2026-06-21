@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         // MainMenuManagerがある場合はそちらから StartNight() を呼ぶ
-        if (FindObjectOfType<MainMenuManager>() == null)
+        if (FindFirstObjectByType<MainMenuManager>() == null)
             StartNight();
     }
 
@@ -53,7 +53,9 @@ public class GameManager : MonoBehaviour
         phaseTimer = 0f;
         CurrentPhase = GamePhase.Silence;
         isActive = true;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Debug.Log($"[GameManager] StartNight Day={CurrentDay} → State=Night");
+#endif
         OnDayStarted?.Invoke(CurrentDay);
         OnPhaseChanged?.Invoke(CurrentPhase);
     }
