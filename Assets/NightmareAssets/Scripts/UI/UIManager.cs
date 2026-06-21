@@ -84,6 +84,12 @@ public class UIManager : MonoBehaviour
     private bool wasMimicActive = false;
     private float mimicFakeHourOffset = 0f;
 
+    // キャッシュ — 変化時のみテキストを更新してGCと Canvas dirty を抑制
+    private int _lastTimeH = -1, _lastTimeM = -1;
+    private string _lastFakeTimeStr = "";
+    private bool _dayTextDirty = true;
+    private WeatherType _lastWeather = (WeatherType)(-1);
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -102,8 +108,9 @@ public class UIManager : MonoBehaviour
         GameManager.Instance.OnDayStarted    += OnDayStarted;
         GameManager.Instance.OnPhaseChanged  += OnPhaseChanged;
 
-        DoorManager.Instance.OnDoorChanged   += OnDoorChangedAnim;
-        PowerManager.Instance.OnPowerOut     += OnPowerOut;
+        DoorManager.Instance.OnDoorChanged    += OnDoorChangedAnim;
+        PowerManager.Instance.OnPowerChanged  += OnPowerChangedUI;
+        PowerManager.Instance.OnPowerOut      += OnPowerOut;
         PowerManager.Instance.OnPowerRestored += OnPowerRestored;
 
         gameOverPanel?.SetActive(false);
@@ -128,11 +135,9 @@ public class UIManager : MonoBehaviour
         if (GameManager.Instance == null) return;
 
         // ─── キーボードショートカット ─────────────────────────────
-        // M キー: マップ表示切替
         if (Input.GetKeyDown(KeyCode.M))
             ToggleMap();
 
-        // Escape: ポーズトグル（夜間のみ・ゲームオーバー/クリア中は無効）
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             bool nightActive = GameManager.Instance.CurrentState == GameState.Night;
@@ -143,60 +148,67 @@ public class UIManager : MonoBehaviour
                 TogglePause();
         }
 
-        // ─── Mimic がアクティブなカメラを乗っ取っているとき時刻をズラして表示する
+        // ─── 時刻表示（ゲーム内分が変わったときだけ更新）─────────
         if (timeText)
         {
             bool mimicActive = SecurityCameraSystem.Instance != null && (
                 SecurityCameraSystem.Instance.IsCameraMimicked(SecurityCameraSystem.Instance.ActiveExternal) ||
                 SecurityCameraSystem.Instance.IsCameraMimicked(SecurityCameraSystem.Instance.ActiveInternal));
             if (mimicActive && !wasMimicActive)
-                mimicFakeHourOffset = Random.Range(-2f, -0.5f); // 30〜120分前の映像に見せる
+                mimicFakeHourOffset = Random.Range(-2f, -0.5f);
             wasMimicActive = mimicActive;
-            timeText.text = mimicActive ? GetFakeDisplayTime() : GameManager.Instance.GetDisplayTime();
-        }
-        if (dayText)
-        {
-            string wStr = WeatherManager.Instance != null ? $"  [{WeatherJP(WeatherManager.Instance.CurrentWeather)}]" : "";
-            dayText.text = $"Day {GameManager.Instance.CurrentDay}  ―  {PhaseJP(GameManager.Instance.CurrentPhase)}{wStr}";
-        }
 
-        if (PowerManager.Instance != null && powerSlider)
-        {
-            float pct = PowerManager.Instance.PowerPercent;
-            powerSlider.value = pct;
-            if (powerText) powerText.text = $"{(int)(pct * 100)}%";
-            UpdatePowerColor(pct);
-            HandlePowerPulse(pct);
-
-            // 電力警告テキスト
-            if (powerWarnText)
+            if (mimicActive)
             {
-                if (PowerManager.Instance.IsPowerOut)
+                string fake = GetFakeDisplayTime();
+                if (fake != _lastFakeTimeStr) { _lastFakeTimeStr = fake; timeText.text = fake; }
+            }
+            else
+            {
+                float gth = GameManager.Instance.GameTimeInHours;
+                float displayHour = gth >= 24f ? gth - 24f : gth;
+                int h = (int)displayHour;
+                int m = (int)(GameManager.Instance.PhaseProgress * 60f);
+                if (h != _lastTimeH || m != _lastTimeM)
                 {
-                    powerWarnText.text  = "!! 停電中 !!";
-                    powerWarnText.color = new Color(1f, 0.2f, 0.1f);
-                }
-                else if (pct <= 0.1f)
-                {
-                    powerWarnText.text  = "電力危機";
-                    powerWarnText.color = new Color(1f, 0.3f, 0.1f);
-                }
-                else if (pct <= 0.25f)
-                {
-                    powerWarnText.text  = "電力低下";
-                    powerWarnText.color = new Color(1f, 0.75f, 0.1f);
-                }
-                else
-                {
-                    powerWarnText.text = "";
+                    _lastTimeH = h; _lastTimeM = m;
+                    timeText.text = $"{h:D2}:{m:D2}";
                 }
             }
         }
 
-        // 天候表示
-        if (weatherStatusText && WeatherManager.Instance != null)
+        // ─── Day/Phase/Weather テキスト（変化時のみ）─────────────
+        if (dayText)
         {
-            var weather = WeatherManager.Instance.CurrentWeather;
+            // 天候変化もここで検出（WeatherManager にイベントがないためポーリング）
+            var curWeather = WeatherManager.Instance != null
+                ? WeatherManager.Instance.CurrentWeather : _lastWeather;
+            if (curWeather != _lastWeather) { _lastWeather = curWeather; _dayTextDirty = true; }
+
+            if (_dayTextDirty)
+            {
+                _dayTextDirty = false;
+                string wStr = WeatherManager.Instance != null
+                    ? $"  [{WeatherJP(curWeather)}]" : "";
+                dayText.text = $"Day {GameManager.Instance.CurrentDay}  ―  {PhaseJP(GameManager.Instance.CurrentPhase)}{wStr}";
+
+                // 天候表示も同タイミングで更新
+                RefreshWeatherUI(curWeather);
+            }
+        }
+        // dayText が null でも天候変化だけは検出する
+        else if (WeatherManager.Instance != null)
+        {
+            var curWeather = WeatherManager.Instance.CurrentWeather;
+            if (curWeather != _lastWeather) { _lastWeather = curWeather; RefreshWeatherUI(curWeather); }
+        }
+    }
+
+    // 天候UIをまとめて更新（Update内で毎フレーム呼ぶのではなく変化時のみ）
+    private void RefreshWeatherUI(WeatherType weather)
+    {
+        if (weatherStatusText)
+        {
             switch (weather)
             {
                 case WeatherType.Sunny:
@@ -213,12 +225,45 @@ public class UIManager : MonoBehaviour
                     break;
             }
         }
-        if (weatherTimerText && WeatherManager.Instance != null)
+        if (weatherTimerText)
         {
-            var weather = WeatherManager.Instance.CurrentWeather;
             weatherTimerText.text = weather == WeatherType.Sunny ? ""
                 : weather == WeatherType.Rain  ? "敵+15%速  現象+30%"
                 :                                "敵+30%速  現象+60%";
+        }
+    }
+
+    // 電力UIはOnPowerChangedイベントで更新（Update内ポーリング廃止）
+    private void OnPowerChangedUI(float power)
+    {
+        if (PowerManager.Instance == null) return;
+        float pct = PowerManager.Instance.PowerPercent;
+        if (powerSlider) powerSlider.value = pct;
+        if (powerText) powerText.text = $"{(int)(pct * 100)}%";
+        UpdatePowerColor(pct);
+        HandlePowerPulse(pct);
+
+        if (powerWarnText)
+        {
+            if (PowerManager.Instance.IsPowerOut)
+            {
+                powerWarnText.text  = "!! 停電中 !!";
+                powerWarnText.color = new Color(1f, 0.2f, 0.1f);
+            }
+            else if (pct <= 0.1f)
+            {
+                powerWarnText.text  = "電力危機";
+                powerWarnText.color = new Color(1f, 0.3f, 0.1f);
+            }
+            else if (pct <= 0.25f)
+            {
+                powerWarnText.text  = "電力低下";
+                powerWarnText.color = new Color(1f, 0.75f, 0.1f);
+            }
+            else
+            {
+                powerWarnText.text = "";
+            }
         }
     }
 
@@ -332,6 +377,7 @@ public class UIManager : MonoBehaviour
     {
         if (phase == lastPhase) return;
         lastPhase = phase;
+        _dayTextDirty = true;
         StartCoroutine(PhaseFlash());
     }
 
@@ -431,11 +477,13 @@ public class UIManager : MonoBehaviour
     // ===== 日付遷移 =====
     private void OnDayStarted(int day)
     {
-        Resume(); // 新しい夜が始まる前にポーズ解除
+        Resume();
         dayTransitionPanel?.SetActive(false);
         gameOverPanel?.SetActive(false);
         clearPanel?.SetActive(false);
         powerPulseActive = false;
+        _dayTextDirty = true;
+        _lastTimeH = -1; _lastTimeM = -1; // 時刻表示を強制リフレッシュ
     }
 
     private void OnNightCleared(int day)

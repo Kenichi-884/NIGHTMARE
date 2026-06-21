@@ -115,6 +115,8 @@ public class FacilityMapUI : MonoBehaviour
     // ─────────────────────────────────────────────────────
     private float mapW, mapH, contentH;
     private float blinkTimer;
+    private float _updateTimer = 0f;
+    private const float UpdateInterval = 0.1f; // マップは10fpsで更新すれば十分
 
     private readonly Dictionary<FacilityLocation, MapRoomNode> roomNodes   = new();
     private readonly Dictionary<DoorID,           Image>       doorBars    = new();
@@ -179,6 +181,12 @@ public class FacilityMapUI : MonoBehaviour
     {
         if (!gameObject.activeSelf) return;
         blinkTimer += Time.deltaTime;
+
+        // マップ更新は10fpsで十分（毎フレームSetActive/color変更でCanvasをdirtyにしない）
+        _updateTimer += Time.deltaTime;
+        if (_updateTimer < UpdateInterval) return;
+        _updateTimer = 0f;
+
         UpdateDoors();
         UpdateCameras();
         UpdateMonsters();

@@ -45,6 +45,7 @@ public class CameraViewEffect : MonoBehaviour
     private Color32[] noisePixels;
     private Color32[] noisePrev;         // ホスファ残像バッファ
     private Color32[] glitchPixels;
+    private bool      _glitchBarCleared = true; // テクスチャが既にクリア済みかどうか
 
     // ── 状態 ─────────────────────────────────────────────────────
     private float uvY             = 0f;
@@ -293,14 +294,19 @@ public class CameraViewEffect : MonoBehaviour
 
     private void WriteGlitchBars()
     {
-        ClearGlitchPixels();
         if (glitchIntensity < 0.04f)
         {
+            // テクスチャが既に全透明なら再アップロード不要
+            if (_glitchBarCleared) return;
+            ClearGlitchPixels();
             glitchBarTex.SetPixels32(glitchPixels);
-            glitchBarTex.Apply();
+            glitchBarTex.Apply(false);
+            _glitchBarCleared = true;
             return;
         }
 
+        _glitchBarCleared = false;
+        ClearGlitchPixels();
         int h       = glitchBarTex.height;
         int numBars = Mathf.Max(1, (int)(glitchIntensity * 14));
         for (int b = 0; b < numBars; b++)
@@ -320,7 +326,7 @@ public class CameraViewEffect : MonoBehaviour
             }
         }
         glitchBarTex.SetPixels32(glitchPixels);
-        glitchBarTex.Apply();
+        glitchBarTex.Apply(false);
     }
 
     private void ClearGlitchPixels()
@@ -372,7 +378,7 @@ public class CameraViewEffect : MonoBehaviour
         }
 
         noiseTex.SetPixels32(noisePixels);
-        noiseTex.Apply();
+        noiseTex.Apply(false);
     }
 
     // ── Public API ─────────────────────────────────────────────────

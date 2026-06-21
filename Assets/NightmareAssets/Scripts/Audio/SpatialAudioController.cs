@@ -47,6 +47,9 @@ public class SpatialAudioController : MonoBehaviour
     private readonly Dictionary<FacilityLocation, AudioLowPassFilter> _lpfs    = new();
     private readonly Dictionary<MonsterBase, FacilityLocation>        _prevLocs = new();
 
+    private bool _lastGate, _lastEntr, _lastStairs, _lastB1c;
+    private bool _occlusionDirty = true;
+
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -96,13 +99,31 @@ public class SpatialAudioController : MonoBehaviour
         lpf.cutoffFrequency   = 22000f;
         lpf.lowpassResonanceQ = 0.75f;
 
-        _sources[loc] = src;
-        _lpfs[loc]    = lpf;
+        _sources[loc]   = src;
+        _lpfs[loc]      = lpf;
+        _occlusionDirty = true;
         return src;
     }
 
     private void UpdateOcclusion()
     {
+        var dm = DoorManager.Instance;
+        if (dm == null) return;
+
+        bool gate   = dm.IsClosed(DoorID.Gate);
+        bool entr   = dm.IsClosed(DoorID.Entrance);
+        bool stairs = dm.IsClosed(DoorID.BasementStairs);
+        bool b1c    = dm.IsClosed(DoorID.B1Corridor);
+
+        if (!_occlusionDirty && gate == _lastGate && entr == _lastEntr && stairs == _lastStairs && b1c == _lastB1c)
+            return;
+
+        _lastGate   = gate;
+        _lastEntr   = entr;
+        _lastStairs = stairs;
+        _lastB1c    = b1c;
+        _occlusionDirty = false;
+
         foreach (var kv in _lpfs)
             kv.Value.cutoffFrequency = ComputeCutoff(kv.Key);
     }

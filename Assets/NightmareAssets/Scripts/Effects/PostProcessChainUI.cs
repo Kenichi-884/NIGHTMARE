@@ -6,7 +6,7 @@ using System.Collections;
 /// UI レイヤーによる疑似ポストプロセスチェーン。
 ///
 /// シェーダー不使用で以下の AAA エフェクトをシミュレートする:
-///   1. フィルムグレイン  — 高頻度ノイズテクスチャ更新
+///   1. フィルムグレイン  — 事前生成フレームのサイクル（ランタイムのApply不要）
 ///   2. 色調補正          — フェーズごとに変化するカラーグレード Tint
 ///   3. 色収差            — 赤/青チャンネルを水平方向にオフセットした半透明 Image
 ///   4. レンズ歪み        — HUD Canvas を弾性スケールで変形
@@ -45,12 +45,17 @@ public class PostProcessChainUI : MonoBehaviour
     private Image    _chromaRed;
     private Image    _chromaBlue;
     private RawImage _grainOverlay;
-    private Texture2D _grainTex;
-    private Color32[] _grainPixels;
+
+    // 起動時に事前生成したグレインフレーム群（ランタイムの Apply 不要）
+    private const int GRAIN_FRAME_COUNT = 12;
+    private const int GRAIN_SZ = 128;
+    private Texture2D[] _grainFrames;
+    private int   _grainFrameIndex   = 0;
+    private float _grainClock        = 0f;
+    private float _bakedIntensity    = -1f;
 
     private Color     _currentGrade;
     private Color     _targetGrade;
-    private float     _grainClock;
     private Coroutine _distortRoutine;
     private Coroutine _chromaRoutine;
 
@@ -80,7 +85,6 @@ public class PostProcessChainUI : MonoBehaviour
         gm.OnGameOver     += OnGameOver;
         gm.OnDayStarted   += _ => { _targetGrade = gradeCalm; SetChromaticAberration(0f); };
 
-        // lensTarget が未アサインなら親 Canvas を探す
         if (lensTarget == null)
         {
             var canvas = GetComponentInParent<Canvas>();
@@ -94,21 +98,18 @@ public class PostProcessChainUI : MonoBehaviour
         _currentGrade = Color.Lerp(_currentGrade, _targetGrade, Time.deltaTime * gradeBlendSpeed);
         if (_gradeOverlay) _gradeOverlay.color = _currentGrade;
 
-        // フィルムグレイン更新
+        // 事前生成グレインフレームをサイクル（Apply不要）
         _grainClock += Time.deltaTime;
         if (_grainClock >= grainUpdateRate)
         {
             _grainClock = 0f;
-            RefreshGrain();
+            _grainFrameIndex = (_grainFrameIndex + 1) % GRAIN_FRAME_COUNT;
+            if (_grainOverlay) _grainOverlay.texture = _grainFrames[_grainFrameIndex];
         }
     }
 
     // ─── Public API ────────────────────────────────────────────────
 
-    /// <summary>
-    /// 色収差強度を設定する（0=なし, 1=最大）。
-    /// ジャンプスケア・グリッチ演出時に呼ぶ。
-    /// </summary>
     public void SetChromaticAberration(float t)
     {
         t = Mathf.Clamp01(t);
@@ -125,19 +126,12 @@ public class PostProcessChainUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 色収差を duration 秒かけてフェードアウト。
-    /// SetChromaticAberration(1f) を呼んだあとに使う。
-    /// </summary>
     public void FadeOutChroma(float duration = 0.5f)
     {
         if (_chromaRoutine != null) StopCoroutine(_chromaRoutine);
         _chromaRoutine = StartCoroutine(FadeChromaRoutine(duration));
     }
 
-    /// <summary>
-    /// レンズ歪みパルスを発生させる（衝撃・ジャンプスケア・ドア強打）。
-    /// </summary>
     public void PulseLens(float duration = 0.45f, float magnitude = -1f)
     {
         if (magnitude < 0f) magnitude = lensDistortionMax;
@@ -145,8 +139,14 @@ public class PostProcessChainUI : MonoBehaviour
         _distortRoutine = StartCoroutine(LensRoutine(duration, magnitude));
     }
 
-    /// <summary>フィルムグレイン強度を変更する（停電・ジャンプスケア後など）。</summary>
-    public void SetGrainIntensity(float v) => grainIntensity = Mathf.Clamp01(v);
+    /// <summary>グレイン強度を変更する。強度が大きく変化した場合はフレームを再ベイクする。</summary>
+    public void SetGrainIntensity(float v)
+    {
+        v = Mathf.Clamp01(v);
+        grainIntensity = v;
+        if (Mathf.Abs(v - _bakedIntensity) > 0.02f)
+            RebakeGrainFrames(v);
+    }
 
     // ─── ゲームイベント ───────────────────────────────────────────
 
@@ -167,27 +167,61 @@ public class PostProcessChainUI : MonoBehaviour
 
     private void BuildChromaLayers()
     {
-        // 赤チャンネル（左にオフセット）
         _chromaRed  = MakeFullscreenImage("_ChromaRed",  new Color(1f, 0.06f, 0.0f, 0f));
-        // 青チャンネル（右にオフセット）
         _chromaBlue = MakeFullscreenImage("_ChromaBlue", new Color(0.0f, 0.06f, 1.0f, 0f));
     }
 
     private void BuildGrainLayer()
     {
-        const int SZ = 128;
-        _grainTex = new Texture2D(SZ, SZ, TextureFormat.RGBA32, false);
-        _grainTex.filterMode = FilterMode.Point;
-        _grainTex.wrapMode   = TextureWrapMode.Repeat;
-        _grainPixels = new Color32[SZ * SZ];
+        _grainFrames = BakeGrainFrames(grainIntensity);
+        _bakedIntensity = grainIntensity;
 
         var go = new GameObject("_FilmGrain", typeof(RectTransform), typeof(RawImage));
         go.transform.SetParent(transform, false);
         StretchRT(go.GetComponent<RectTransform>());
         _grainOverlay = go.GetComponent<RawImage>();
         _grainOverlay.raycastTarget = false;
-        _grainOverlay.texture = _grainTex;
-        RefreshGrain();
+        _grainOverlay.texture = _grainFrames[0];
+    }
+
+    private void RebakeGrainFrames(float intensity)
+    {
+        if (_grainFrames != null)
+            foreach (var t in _grainFrames) if (t) Destroy(t);
+
+        _grainFrames     = BakeGrainFrames(intensity);
+        _bakedIntensity  = intensity;
+        _grainFrameIndex = 0;
+        if (_grainOverlay) _grainOverlay.texture = _grainFrames[0];
+    }
+
+    private static Texture2D[] BakeGrainFrames(float intensity)
+    {
+        var frames   = new Texture2D[GRAIN_FRAME_COUNT];
+        var pixels   = new Color32[GRAIN_SZ * GRAIN_SZ];
+        byte maxAlpha = (byte)Mathf.Clamp(intensity * 80f, 3f, 80f);
+
+        for (int f = 0; f < GRAIN_FRAME_COUNT; f++)
+        {
+            for (int i = 0; i < pixels.Length; i++)
+            {
+                if (Random.value < intensity)
+                {
+                    byte v = (byte)Random.Range(80, 255);
+                    byte a = (byte)Random.Range(2, maxAlpha);
+                    pixels[i] = new Color32(v, v, v, a);
+                }
+                else pixels[i] = new Color32(0, 0, 0, 0);
+            }
+
+            var tex         = new Texture2D(GRAIN_SZ, GRAIN_SZ, TextureFormat.RGBA32, false);
+            tex.filterMode  = FilterMode.Point;
+            tex.wrapMode    = TextureWrapMode.Repeat;
+            tex.SetPixels32(pixels);
+            tex.Apply(false);
+            frames[f] = tex;
+        }
+        return frames;
     }
 
     private Image MakeFullscreenImage(string goName, Color col)
@@ -237,31 +271,10 @@ public class PostProcessChainUI : MonoBehaviour
         while (t < dur)
         {
             t += Time.deltaTime;
-            float n = 1f - t / dur;
-            SetChromaticAberration(n);
+            SetChromaticAberration(1f - t / dur);
             yield return null;
         }
         SetChromaticAberration(0f);
-    }
-
-    // ─── テクスチャ書き換え ───────────────────────────────────────
-
-    private void RefreshGrain()
-    {
-        float intensity = grainIntensity;
-        byte maxAlpha   = (byte)Mathf.Clamp(intensity * 80f, 3f, 80f);
-        for (int i = 0; i < _grainPixels.Length; i++)
-        {
-            if (Random.value < intensity)
-            {
-                byte v = (byte)Random.Range(80, 255);
-                byte a = (byte)Random.Range(2, maxAlpha);
-                _grainPixels[i] = new Color32(v, v, v, a);
-            }
-            else _grainPixels[i] = new Color32(0, 0, 0, 0);
-        }
-        _grainTex.SetPixels32(_grainPixels);
-        _grainTex.Apply();
     }
 
     // ─── ヘルパー ─────────────────────────────────────────────────
@@ -274,4 +287,10 @@ public class PostProcessChainUI : MonoBehaviour
         GamePhase.Collapse or GamePhase.Abyss or GamePhase.BeforeDawn           => gradeCritical,
         _ => gradeCalm
     };
+
+    private void OnDestroy()
+    {
+        if (_grainFrames != null)
+            foreach (var t in _grainFrames) if (t) Destroy(t);
+    }
 }

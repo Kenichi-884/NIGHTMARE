@@ -31,17 +31,19 @@ public class WeatherVisualEffect : MonoBehaviour
     private Image     _tintLayer;
     private Image     _thunderLayer;
 
-    private Texture2D _rainTex;
-    private Color32[] _rainPx;
-
+    // 起動時に事前生成した雨フレーム群（ゲームプレイ中はApply不要）
+    private const int FRAME_COUNT = 16;
     private const int W = 64;
     private const int H = 256;
+    private Texture2D[] _rainFrames;
+    private Texture2D[] _stormFrames;
+    private int   _frameIndex   = 0;
+    private float _frameTimer   = 0f;
 
     // ─── 状態 ────────────────────────────────────────────────────
     private WeatherType _weather      = WeatherType.Sunny;
     private float       _scrollY      = 0f;
     private float       _scrollX      = 0f;
-    private float       _rebuildTimer = 0f;
     private float       _thunderTimer = 0f;
     private bool        _active       = false;
 
@@ -81,26 +83,29 @@ public class WeatherVisualEffect : MonoBehaviour
         // ─ 雨ストリーク スクロール ─
         float speed = _weather == WeatherType.Storm ? stormScrollSpeed : rainScrollSpeed;
         _scrollY += Time.deltaTime * speed;
-        _scrollX += Time.deltaTime * speed * 0.12f; // 微妙な斜め（右方向）
+        _scrollX += Time.deltaTime * speed * 0.12f;
         if (_scrollY > 1f) _scrollY -= 1f;
         if (_scrollX > 1f) _scrollX -= 1f;
 
         if (_rainLayer)
         {
-            // 内部カメラ表示中は雨を薄くする（屋内なので）
             bool isExt = IsExternalCameraActive();
             float alpha = isExt ? 1f : 0.15f;
-            _rainLayer.color   = new Color(1f, 1f, 1f, alpha);
-            _rainLayer.uvRect  = new Rect(_scrollX, _scrollY, 1.35f, 1.35f);
+            _rainLayer.color  = new Color(1f, 1f, 1f, alpha);
+            _rainLayer.uvRect = new Rect(_scrollX, _scrollY, 1.35f, 1.35f);
         }
 
-        // ─ 雨テクスチャを定期再生成 ─
-        _rebuildTimer += Time.deltaTime;
-        float rebuildRate = _weather == WeatherType.Storm ? 0.045f : 0.080f;
-        if (_rebuildTimer >= rebuildRate)
+        // ─ 事前生成フレームをサイクル（Apply不要） ─
+        float frameRate = _weather == WeatherType.Storm ? 0.045f : 0.080f;
+        _frameTimer += Time.deltaTime;
+        if (_frameTimer >= frameRate)
         {
-            _rebuildTimer = 0f;
-            RebuildRainTexture();
+            _frameTimer = 0f;
+            _frameIndex = (_frameIndex + 1) % FRAME_COUNT;
+            if (_rainLayer != null)
+                _rainLayer.texture = _weather == WeatherType.Storm
+                    ? _stormFrames[_frameIndex]
+                    : _rainFrames[_frameIndex];
         }
 
         // ─ 嵐：稲妻フラッシュ ─
@@ -127,7 +132,11 @@ public class WeatherVisualEffect : MonoBehaviour
         Color tint = w == WeatherType.Storm ? stormTint : rainTint;
         if (_tintLayer) _tintLayer.color = tint;
 
-        RebuildRainTexture();
+        _frameIndex = 0;
+        _frameTimer = 0f;
+        if (_rainLayer != null)
+            _rainLayer.texture = w == WeatherType.Storm ? _stormFrames[0] : _rainFrames[0];
+
         _scrollY = Random.value;
         _scrollX = Random.value;
     }
@@ -137,41 +146,6 @@ public class WeatherVisualEffect : MonoBehaviour
         _active = on;
         if (_rainLayer)  _rainLayer.gameObject.SetActive(on);
         if (_tintLayer)  _tintLayer.gameObject.SetActive(on);
-        // 雷レイヤーは常に存在（フラッシュ時のみ表示）
-    }
-
-    // ─── 雨テクスチャ生成 ─────────────────────────────────────────
-
-    private void RebuildRainTexture()
-    {
-        for (int i = 0; i < _rainPx.Length; i++) _rainPx[i] = new Color32(0, 0, 0, 0);
-
-        float density = _weather == WeatherType.Storm ? stormDensity : rainDensity;
-        int streaks   = Mathf.RoundToInt(density * W * H * 0.6f);
-
-        for (int s = 0; s < streaks; s++)
-        {
-            int x   = Random.Range(0, W);
-            int y   = Random.Range(0, H);
-            int len = Random.Range(4, _weather == WeatherType.Storm ? 24 : 14);
-
-            // 青みがかった白（雨粒の色）
-            byte r   = (byte)Random.Range(155, 210);
-            byte g   = (byte)Random.Range(170, 225);
-            byte b   = (byte)Random.Range(210, 255);
-            byte alf = (byte)Random.Range(45, 140);
-
-            for (int i = 0; i < len; i++)
-            {
-                int py = y - i;
-                int px = x + Mathf.RoundToInt(i * 0.28f);
-                if (py < 0 || py >= H || px < 0 || px >= W) continue;
-                byte fade = (byte)(alf * (1f - (float)i / len));
-                _rainPx[py * W + px] = new Color32(r, g, b, fade);
-            }
-        }
-        _rainTex.SetPixels32(_rainPx);
-        _rainTex.Apply();
     }
 
     // ─── 稲妻フラッシュ ──────────────────────────────────────────
@@ -189,7 +163,6 @@ public class WeatherVisualEffect : MonoBehaviour
         yield return new WaitForSeconds(0.06f);
         _thunderLayer.color = new Color(1f, 1f, 1f, 0f);
 
-        // 30% 確率でダブルフラッシュ
         if (Random.value < 0.30f)
         {
             yield return new WaitForSeconds(Random.Range(0.07f, 0.20f));
@@ -213,17 +186,56 @@ public class WeatherVisualEffect : MonoBehaviour
 
     private void BuildRainLayer()
     {
-        _rainTex            = new Texture2D(W, H, TextureFormat.RGBA32, false);
-        _rainTex.wrapMode   = TextureWrapMode.Repeat;
-        _rainTex.filterMode = FilterMode.Bilinear;
-        _rainPx             = new Color32[W * H];
+        // 雨・嵐それぞれのフレームを起動時に一括生成（ゲームプレイ中はApply不要）
+        _rainFrames  = BakeFrames(rainDensity,  maxStreakLen: 14);
+        _stormFrames = BakeFrames(stormDensity, maxStreakLen: 24);
 
         var go = new GameObject("_RainStreaks", typeof(RectTransform), typeof(RawImage));
         go.transform.SetParent(transform, false);
         Stretch(go.GetComponent<RectTransform>());
-        _rainLayer              = go.GetComponent<RawImage>();
+        _rainLayer               = go.GetComponent<RawImage>();
         _rainLayer.raycastTarget = false;
-        _rainLayer.texture      = _rainTex;
+        _rainLayer.texture       = _rainFrames[0];
+    }
+
+    private Texture2D[] BakeFrames(float density, int maxStreakLen)
+    {
+        var frames = new Texture2D[FRAME_COUNT];
+        var buf    = new Color32[W * H];
+        int streaks = Mathf.RoundToInt(density * W * H * 0.6f);
+
+        for (int f = 0; f < FRAME_COUNT; f++)
+        {
+            for (int i = 0; i < buf.Length; i++) buf[i] = new Color32(0, 0, 0, 0);
+
+            for (int s = 0; s < streaks; s++)
+            {
+                int sx  = Random.Range(0, W);
+                int sy  = Random.Range(0, H);
+                int len = Random.Range(4, maxStreakLen);
+                byte r   = (byte)Random.Range(155, 210);
+                byte g   = (byte)Random.Range(170, 225);
+                byte b   = (byte)Random.Range(210, 255);
+                byte alf = (byte)Random.Range(45, 140);
+
+                for (int k = 0; k < len; k++)
+                {
+                    int py = sy - k;
+                    int px = sx + Mathf.RoundToInt(k * 0.28f);
+                    if (py < 0 || py >= H || px < 0 || px >= W) continue;
+                    byte fade = (byte)(alf * (1f - (float)k / len));
+                    buf[py * W + px] = new Color32(r, g, b, fade);
+                }
+            }
+
+            var tex         = new Texture2D(W, H, TextureFormat.RGBA32, false);
+            tex.wrapMode    = TextureWrapMode.Repeat;
+            tex.filterMode  = FilterMode.Bilinear;
+            tex.SetPixels32(buf);
+            tex.Apply(false);
+            frames[f] = tex;
+        }
+        return frames;
     }
 
     private void BuildTintLayer()
@@ -251,5 +263,11 @@ public class WeatherVisualEffect : MonoBehaviour
         rt.anchorMin = rt.offsetMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
         rt.offsetMax = Vector2.zero;
+    }
+
+    private void OnDestroy()
+    {
+        if (_rainFrames  != null) foreach (var t in _rainFrames)  if (t) Destroy(t);
+        if (_stormFrames != null) foreach (var t in _stormFrames) if (t) Destroy(t);
     }
 }

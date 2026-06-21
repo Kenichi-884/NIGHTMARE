@@ -13,8 +13,12 @@ public class PowerManager : MonoBehaviour
     private readonly Dictionary<string, float> drains = new Dictionary<string, float>();
     private bool isPowerOut = false;
     private float restoreTimer = 0f;
-    private const float RESTORE_DELAY = 300f; // 5分後に予備電源
+    private const float RESTORE_DELAY = 300f;
     private const float RESTORE_AMOUNT = 10f;
+
+    private float _cachedTotalDrain   = 0f;   // drains 変化時のみ再計算
+    private float _lastBroadcastPower = -1f;  // OnPowerChanged の過剰発火を防ぐ
+    private const float BroadcastThreshold = 0.5f; // 0.5% 変化で発火
 
     public float CurrentPower => currentPower;
     public float PowerPercent => currentPower / maxPower;
@@ -33,6 +37,7 @@ public class PowerManager : MonoBehaviour
     private void Start()
     {
         drains["natural"] = baseDrainPerSecond;
+        RecalcDrainCache();
         GameManager.Instance.OnPhaseChanged += AdjustNaturalDrain;
         GameManager.Instance.OnDayStarted += ResetPower;
     }
@@ -55,11 +60,14 @@ public class PowerManager : MonoBehaviour
             return;
         }
 
-        float total = 0f;
-        foreach (var v in drains.Values) total += v;
+        currentPower = Mathf.Clamp(currentPower - _cachedTotalDrain * Time.deltaTime, 0f, maxPower);
 
-        currentPower = Mathf.Clamp(currentPower - total * Time.deltaTime, 0f, maxPower);
-        OnPowerChanged?.Invoke(currentPower);
+        // 前回の通知から BroadcastThreshold 以上変化したときのみ発火
+        if (Mathf.Abs(currentPower - _lastBroadcastPower) >= BroadcastThreshold)
+        {
+            _lastBroadcastPower = currentPower;
+            OnPowerChanged?.Invoke(currentPower);
+        }
 
         if (currentPower <= 0f) TriggerPowerOut();
     }
@@ -73,16 +81,16 @@ public class PowerManager : MonoBehaviour
             GamePhase.BeforeDawn => 3f,
             _ => 1f
         };
-        // 日数が増えるほど消費倍率も掛ける (ApplyDayDifficultyと同じ式)
         float dayMultiplier = 1f + (GameManager.Instance.CurrentDay - 1) * 0.1f;
         drains["natural"] = (perMin / 60f) * dayMultiplier;
+        RecalcDrainCache();
     }
 
-    // 日付が上がるほど自然消費増加
     public void ApplyDayDifficulty(int day)
     {
-        float multiplier = 1f + (day - 1) * 0.1f; // 1日ごとに10%増
+        float multiplier = 1f + (day - 1) * 0.1f;
         drains["natural"] = (baseDrainPerSecond * multiplier);
+        RecalcDrainCache();
     }
 
     private void ResetPower(int day)
@@ -92,25 +100,28 @@ public class PowerManager : MonoBehaviour
         drains.Clear();
         drains["natural"] = baseDrainPerSecond;
         ApplyDayDifficulty(day);
+        _lastBroadcastPower = currentPower;
         OnPowerChanged?.Invoke(currentPower);
     }
 
-    public void AddDrain(string key, float perSecond) => drains[key] = perSecond;
-    public void RemoveDrain(string key) => drains.Remove(key);
+    public void AddDrain(string key, float perSecond) { drains[key] = perSecond; RecalcDrainCache(); }
+    public void RemoveDrain(string key) { drains.Remove(key); RecalcDrainCache(); }
 
     public void AddPower(float amount)
     {
         currentPower = Mathf.Clamp(currentPower + amount, 0f, maxPower);
+        _lastBroadcastPower = currentPower;
         OnPowerChanged?.Invoke(currentPower);
     }
 
-    // デバッグ用: 現在の合計ドレイン速度 (%/秒) と個別ドレインのスナップショット
-    public float TotalDrainPerSecond()
+    private void RecalcDrainCache()
     {
-        float total = 0f;
-        foreach (var v in drains.Values) total += v;
-        return total;
+        _cachedTotalDrain = 0f;
+        foreach (var v in drains.Values) _cachedTotalDrain += v;
     }
+
+    // デバッグ用: 現在の合計ドレイン速度 (%/秒)
+    public float TotalDrainPerSecond() => _cachedTotalDrain;
     public Dictionary<string, float> DrainSnapshot()
         => new Dictionary<string, float>(drains);
 
@@ -127,6 +138,7 @@ public class PowerManager : MonoBehaviour
     public void ApplyFluctuation(float amount)
     {
         currentPower = Mathf.Max(0f, currentPower - amount);
+        _lastBroadcastPower = currentPower;
         OnPowerChanged?.Invoke(currentPower);
         if (currentPower <= 0f) TriggerPowerOut();
     }
@@ -136,6 +148,7 @@ public class PowerManager : MonoBehaviour
         isPowerOut = true;
         restoreTimer = 0f;
         drains.Clear();
+        RecalcDrainCache();
         OnPowerOut?.Invoke();
     }
 
@@ -144,6 +157,8 @@ public class PowerManager : MonoBehaviour
         isPowerOut = false;
         currentPower = RESTORE_AMOUNT;
         drains["natural"] = baseDrainPerSecond;
+        RecalcDrainCache();
+        _lastBroadcastPower = currentPower;
         OnPowerRestored?.Invoke();
     }
 }

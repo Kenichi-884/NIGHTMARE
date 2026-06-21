@@ -185,13 +185,16 @@ public class SecurityCameraSystem : MonoBehaviour
     }
 
     // ===== 毎フレーム更新 =====
-    private float _dbgTimer = 0f;
+    private float _dbgTimer     = 0f;
+    private float _overlayTimer = 0f;
+    private const float OverlayInterval = 0.1f; // モンスターオーバーレイは10fpsで十分
 
     private void Update()
     {
         bool isNight = GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Night;
         if (!isNight) return;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         _dbgTimer += Time.deltaTime;
         if (_dbgTimer >= 5f)
         {
@@ -199,9 +202,16 @@ public class SecurityCameraSystem : MonoBehaviour
             Debug.Log($"[CameraSystem] Active={_activeCamera} " +
                       $"sceneCam={sceneCams.ContainsKey(_activeCamera)} monitor={monitorDisplay != null}");
         }
+#endif
 
         RefreshMonitorState();
-        RefreshMonsterOverlay();
+
+        _overlayTimer += Time.deltaTime;
+        if (_overlayTimer >= OverlayInterval)
+        {
+            _overlayTimer = 0f;
+            RefreshMonsterOverlay();
+        }
     }
 
     private void RefreshMonsterOverlay()
