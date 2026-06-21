@@ -186,6 +186,9 @@ public class MainMenuManager : MonoBehaviour
     {
         _titleDirector?.StopEffects();
         AudioManager.Instance?.StopLoop();
+        // canvas 無効化よりも前に BGM をフェードアウト開始
+        // （canvas 無効化後に StartCoroutine を呼ぶと非アクティブ状態でコルーチンが失敗するため）
+        AudioManager.Instance?.FadeOutBGM(0.4f);
         yield return Fade(0f, 1f, 0.45f);
         HideAllPanels();
         mainMenuPanel?.SetActive(false);

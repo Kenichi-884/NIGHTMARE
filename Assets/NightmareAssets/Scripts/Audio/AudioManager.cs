@@ -149,11 +149,12 @@ public class AudioManager : MonoBehaviour
             FadeOutBGM(fadeDur);
     }
 
-    private void FadeOutBGM(float fadeDur)
+    public void FadeOutBGM(float fadeDur = -1f)
     {
         if (!bgmSource.isPlaying) return;
         if (crossfadeRoutine != null) StopCoroutine(crossfadeRoutine);
-        crossfadeRoutine = StartCoroutine(FadeOutRoutine(fadeDur));
+        float dur = fadeDur < 0f ? crossfadeDuration : fadeDur;
+        crossfadeRoutine = StartCoroutine(FadeOutRoutine(dur));
     }
 
     private IEnumerator FadeOutRoutine(float dur)
