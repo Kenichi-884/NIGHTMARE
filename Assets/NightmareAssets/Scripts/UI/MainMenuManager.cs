@@ -1,10 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using Michsky.UI.Dark;
 
 // メインメニューを管理する
-// 「開始する」でステージ選択パネルを開き、解放済みの日を選んで GameManager.StartNight(day) を呼ぶ
-// ステージ解放状況は StageProgressManager (PlayerPrefs) で管理する
+// Dark UI (MainPanelManager) の Home/Settings/Story/Help パネルと連携し、
+// ESC キーで前のパネルに戻る機能を提供する
 public class MainMenuManager : MonoBehaviour
 {
     public static MainMenuManager Instance { get; private set; }
@@ -35,6 +36,9 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Text   loreText;
     [SerializeField] private Button btnLoreBack;
 
+    [Header("Dark UI Integration")]
+    [SerializeField] private MainPanelManager darkPanelManager;
+
     [Header("Game Screen")]
     [SerializeField] private GameObject gameScreen;
     [SerializeField] private GameObject mainCanvas;
@@ -50,6 +54,10 @@ public class MainMenuManager : MonoBehaviour
     // パネルスライドアニメーション幅 (px)
     private const float SLIDE_DIST    = 80f;
     private const float SLIDE_DUR     = 0.18f;
+
+    // パネルの設計時 anchoredPosition を保持（スライド中断時に復元）
+    private readonly System.Collections.Generic.Dictionary<GameObject, Vector2> _panelOrigPos
+        = new System.Collections.Generic.Dictionary<GameObject, Vector2>();
 
     private const string LORE_TEXT =
         "<b>202X年 某所</b>\n\n" +
@@ -71,6 +79,65 @@ public class MainMenuManager : MonoBehaviour
         Instance = this;
         if (mainMenuPanel == null) AutoFindChildren();
         _titleDirector = GetComponent<TitleSceneDirector>();
+        if (darkPanelManager == null)
+        {
+            // シーンに複数の MainPanelManager が存在するため、
+            // panels[0].panelName == "Home" のルートマネージャを特定する
+            foreach (var mgr in FindObjectsByType<MainPanelManager>(
+                         FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (mgr.panels.Count > 0 && mgr.panels[0].panelName == "Home")
+                {
+                    darkPanelManager = mgr;
+                    break;
+                }
+            }
+        }
+        ReparentSubPanelsIfNeeded();
+        CachePanelPositions();
+    }
+
+    // SettingsPanel / LorePanel / StageSelectPanel が scale=0 の祖先に入っている場合、
+    // TitleCanvas (mainCanvas) 直下に移動して可視にする
+    private void ReparentSubPanelsIfNeeded()
+    {
+        if (mainCanvas == null) return;
+        var canvasT = mainCanvas.transform;
+        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
+        {
+            if (p == null || p.transform.parent == canvasT) continue;
+            var t = p.transform.parent;
+            while (t != null && t != canvasT)
+            {
+                if (t.localScale.sqrMagnitude < 0.01f)
+                {
+                    p.transform.SetParent(canvasT, false);
+                    break;
+                }
+                t = t.parent;
+            }
+        }
+    }
+
+    private void CachePanelPositions()
+    {
+        _panelOrigPos.Clear();
+        foreach (var p in new[] { mainMenuPanel, stageSelectPanel, settingsPanel, lorePanel })
+        {
+            if (p == null) continue;
+            var rt = p.GetComponent<RectTransform>();
+            if (rt != null) _panelOrigPos[p] = rt.anchoredPosition;
+        }
+    }
+
+    private void RestorePanelPositions()
+    {
+        foreach (var kv in _panelOrigPos)
+        {
+            if (kv.Key == null) continue;
+            var rt = kv.Key.GetComponent<RectTransform>();
+            if (rt != null) rt.anchoredPosition = kv.Value;
+        }
     }
 
     private void Start()
@@ -84,6 +151,27 @@ public class MainMenuManager : MonoBehaviour
 
         AudioManager.Instance?.PlayTitleBGM();
         AudioManager.Instance?.Play("menu_ambience");
+    }
+
+    private void Update()
+    {
+        // ESC キーでサブパネルからホームに戻る
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+        Debug.Log($"[ESC] dark={(darkPanelManager != null ? $"idx={darkPanelManager.currentPanelIndex} go={darkPanelManager.gameObject.name}" : "NULL")}");
+
+        // Dark UI (MainPanelManager) がアクティブな場合: Home 以外ならホームへ
+        if (darkPanelManager != null && darkPanelManager.currentPanelIndex != 0)
+        {
+            darkPanelManager.OpenFirstTab();
+            return;
+        }
+
+        // フォールバック: 独自サブパネルが開いている場合
+        bool ss = stageSelectPanel != null && stageSelectPanel.activeSelf;
+        bool sp = settingsPanel    != null && settingsPanel.activeSelf;
+        bool lp = lorePanel        != null && lorePanel.activeSelf;
+        if (ss || sp || lp) SlideToMainMenu();
     }
 
     // ── 起動演出: フェードイン + タイトルフリッカー ─────────────────────
@@ -184,15 +272,16 @@ public class MainMenuManager : MonoBehaviour
 
     private IEnumerator StartGameRoutine(int day)
     {
+        // スライド中の場合も即座に中断・位置リセット
+        if (_slideRoutine != null) { StopCoroutine(_slideRoutine); RestorePanelPositions(); _slideRoutine = null; }
         _titleDirector?.StopEffects();
         AudioManager.Instance?.StopLoop();
         // canvas 無効化よりも前に BGM をフェードアウト開始
         // （canvas 無効化後に StartCoroutine を呼ぶと非アクティブ状態でコルーチンが失敗するため）
         AudioManager.Instance?.FadeOutBGM(0.4f);
         yield return Fade(0f, 1f, 0.45f);
-        HideAllPanels();
-        mainMenuPanel?.SetActive(false);
-        mainCanvas?.SetActive(false);
+        HideSubPanels();
+        mainCanvas?.SetActive(false); // TitleCanvas 全体を非表示（ゲーム画面へ移行）
         gameScreen?.SetActive(true);
         yield return Fade(1f, 0f, 0.45f);
         if (GameManager.Instance == null)
@@ -214,37 +303,39 @@ public class MainMenuManager : MonoBehaviour
     // ===== パネル切替 (スライドアニメーション付き) =====
 
     private Coroutine _slideRoutine;
+    private GameObject _currentPanel;
 
     private void ShowMainMenu()
     {
-        // gameScreen?.SetActive(false);
-        // mainMenuPanel?.SetActive(true);
-        // stageSelectPanel?.SetActive(false);
-        // settingsPanel?.SetActive(false);
-        // lorePanel?.SetActive(false);
+        gameScreen?.SetActive(false);
+        // mainMenuPanel は TitleCanvas 全体を指しているため SetActive しない
+        HideSubPanels();
     }
 
     private void SlideToMainMenu()
     {
-        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
-        _slideRoutine = StartCoroutine(SlideTransition(null, mainMenuPanel));
+        if (_slideRoutine != null) { StopCoroutine(_slideRoutine); RestorePanelPositions(); }
+        // サブパネルのみスライドアウトし、ホーム（常時表示）に戻す
+        GameObject from = null;
+        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
+            if (p != null && p.activeSelf) { from = p; break; }
+        _slideRoutine = StartCoroutine(SlideTransition(from, null));
     }
 
     private void SlideToPanel(GameObject next)
     {
-        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
-        // 現在表示中のパネルを探す
+        if (next == null || (next.activeSelf && _slideRoutine == null)) return;
+        if (_slideRoutine != null) { StopCoroutine(_slideRoutine); RestorePanelPositions(); }
+        // sub-panel 間のみスライド（mainMenuPanel = TitleCanvas は対象外）
         GameObject current = null;
-        foreach (var p in new[] { mainMenuPanel, stageSelectPanel, settingsPanel, lorePanel })
-        {
+        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
             if (p != null && p.activeSelf) { current = p; break; }
-        }
         _slideRoutine = StartCoroutine(SlideTransition(current, next));
     }
 
     private IEnumerator SlideTransition(GameObject from, GameObject to)
     {
-        // from をスライドアウト (右→見えなくなる)
+        // from をスライドアウト (右へ消える)
         if (from != null)
         {
             var rt = from.GetComponent<RectTransform>();
@@ -261,14 +352,14 @@ public class MainMenuManager : MonoBehaviour
                 }
                 rt.anchoredPosition = origin;
             }
-            // from.SetActive(false);
+            from.SetActive(false);
         }
 
-        // to をスライドイン (左から右へ)
+        // to をスライドイン (左から)。null のときはホームに戻るだけ
         if (to != null)
         {
-            HideAllPanels();
-            // to.SetActive(true);
+            HideSubPanels();
+            to.SetActive(true);
             var rt = to.GetComponent<RectTransform>();
             if (rt != null)
             {
@@ -289,13 +380,19 @@ public class MainMenuManager : MonoBehaviour
         _slideRoutine = null;
     }
 
+    // mainMenuPanel(TitleCanvas) には触らず、サブパネルのみ隠す
+    private void HideSubPanels()
+    {
+        stageSelectPanel?.SetActive(false);
+        settingsPanel?.SetActive(false);
+        lorePanel?.SetActive(false);
+    }
+
     private void HideAllPanels()
     {
-        // gameScreen?.SetActive(false);
-        // mainMenuPanel?.SetActive(false);
-        // stageSelectPanel?.SetActive(false);
-        // settingsPanel?.SetActive(false);
-        // lorePanel?.SetActive(false);
+        stageSelectPanel?.SetActive(false);
+        settingsPanel?.SetActive(false);
+        lorePanel?.SetActive(false);
     }
 
     // ===== フェード =====

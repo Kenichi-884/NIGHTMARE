@@ -35,7 +35,8 @@ namespace Michsky.UI.Dark
 
         IEnumerator StartDissolveIn()
         {
-            yield return new WaitForSecondsRealtime(screenTime - dissolveEffect.animationSpeed * transitionMultiplier);
+            float waitTime = Mathf.Max(0f, screenTime - dissolveEffect.animationSpeed * transitionMultiplier);
+            yield return new WaitForSecondsRealtime(waitTime);
             dissolveEffect.DissolveIn();
 
             if (soundSource != null && inSound != null)

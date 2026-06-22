@@ -117,16 +117,9 @@ namespace Michsky.UI.Dark
                 currentTitleDuration = splashScreenTitles[currentTitleIndex].screenTime;
                 currentTitleObj = splashScreenTitles[currentTitleIndex].gameObject;
 
-                if (startDelay == 0)
-                {
-                    currentTitleObj.SetActive(true);
-                    EnableTransition();
-                }
-
-                else
-                {
-                    StartCoroutine("ProcessStartDelay");
-                }
+                // startDelay の値に関わらず常にコルーチン経由で開始し、
+                // 初回の重いフレーム（シェーダーコンパイル等）を1フレーム吸収する
+                StartCoroutine("ProcessStartDelay");
             }
         }
 
@@ -138,8 +131,11 @@ namespace Michsky.UI.Dark
 
         IEnumerator ProcessStartDelay()
         {
-            yield return new WaitForSecondsRealtime(startDelay);
-        
+            // 初回フレームが重い場合でも正確な時間を確保するため1フレーム待機
+            yield return null;
+            if (startDelay > 0)
+                yield return new WaitForSecondsRealtime(startDelay);
+
             currentTitleObj.SetActive(true);
 
             StopCoroutine("ProcessStartDelay");

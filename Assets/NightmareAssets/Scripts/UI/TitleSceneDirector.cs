@@ -160,6 +160,8 @@ public class TitleSceneDirector : MonoBehaviour
         var go  = new GameObject("TitleBGDisplay", typeof(RectTransform), typeof(RawImage));
         go.transform.SetParent(mmRoot, false);
         go.transform.SetAsFirstSibling();
+        // LayoutGroup があっても他パネルの位置に影響しないようにする
+        go.AddComponent<UnityEngine.UI.LayoutElement>().ignoreLayout = true;
         var rt  = go.GetComponent<RectTransform>();
         rt.anchorMin = Vector2.zero; rt.anchorMax = Vector2.one;
         rt.offsetMin = rt.offsetMax = Vector2.zero;
@@ -181,6 +183,7 @@ public class TitleSceneDirector : MonoBehaviour
             _crtOverlayMat = new Material(overlayShader);
             var overlayGO = new GameObject("TitleCRTOverlay", typeof(RectTransform), typeof(UnityEngine.UI.Image));
             overlayGO.transform.SetParent(mmRoot, false);
+            overlayGO.AddComponent<UnityEngine.UI.LayoutElement>().ignoreLayout = true;
             var ort = overlayGO.GetComponent<RectTransform>();
             ort.anchorMin = Vector2.zero; ort.anchorMax = Vector2.one;
             ort.offsetMin = ort.offsetMax = Vector2.zero;

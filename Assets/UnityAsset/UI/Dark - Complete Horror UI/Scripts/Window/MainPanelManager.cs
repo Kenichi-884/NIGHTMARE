@@ -83,13 +83,28 @@ namespace Michsky.UI.Dark
         {
             try
             {
+                var rt = panels[currentPanelIndex].panelObject.GetComponent<RectTransform>();
                 panels[currentPanelIndex].panelObject.GetComponent<Animator>().Play("Instant In");
-                panels[currentPanelIndex].panelButton.GetComponent<Animator>().Play("Instant In");
+                // panelButton が null の場合でも ForceUpdateCanvases を確実に実行する
+                if (panels[currentPanelIndex].panelButton != null)
+                    panels[currentPanelIndex].panelButton.GetComponent<Animator>().Play("Instant In");
                 Canvas.ForceUpdateCanvases();
-                LayoutRebuilder.ForceRebuildLayoutImmediate(panels[currentPanelIndex].panelObject.GetComponent<RectTransform>());
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+                // Animator が値を適用した後にもう一度レイアウトを再構築する
+                StartCoroutine(RebuildLayoutAfterFrame(rt));
             }
 
             catch { }
+        }
+
+        IEnumerator RebuildLayoutAfterFrame(RectTransform rt)
+        {
+            yield return null; // Animator の更新フェーズを1フレーム待つ
+            if (rt != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
+            }
         }
 
         public void OpenFirstTab()
