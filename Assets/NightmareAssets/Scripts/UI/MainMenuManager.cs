@@ -26,6 +26,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Button btnStageSelectBack;
     private readonly Button[] dayButtons  = new Button[7];
     private readonly Text[]   dayBtnTexts = new Text[7];
+    private CanvasGroup _stageCG;
 
     [Header("Settings")]
     [SerializeField] private Slider bgmSlider;
@@ -93,6 +94,10 @@ public class MainMenuManager : MonoBehaviour
                 }
             }
         }
+        // StageSelectPanel は常時アクティブのまま CanvasGroup で表示制御
+        if (stageSelectPanel != null)
+            _stageCG = stageSelectPanel.GetComponent<CanvasGroup>()
+                    ?? stageSelectPanel.AddComponent<CanvasGroup>();
         ReparentSubPanelsIfNeeded();
         CachePanelPositions();
     }
@@ -103,7 +108,7 @@ public class MainMenuManager : MonoBehaviour
     {
         if (mainCanvas == null) return;
         var canvasT = mainCanvas.transform;
-        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
+        foreach (var p in new[] { settingsPanel, lorePanel })
         {
             if (p == null || p.transform.parent == canvasT) continue;
             var t = p.transform.parent;
@@ -168,9 +173,9 @@ public class MainMenuManager : MonoBehaviour
         }
 
         // フォールバック: 独自サブパネルが開いている場合
-        bool ss = stageSelectPanel != null && stageSelectPanel.activeSelf;
-        bool sp = settingsPanel    != null && settingsPanel.activeSelf;
-        bool lp = lorePanel        != null && lorePanel.activeSelf;
+        bool ss = IsStageSelectShown();
+        bool sp = settingsPanel != null && settingsPanel.activeSelf;
+        bool lp = lorePanel     != null && lorePanel.activeSelf;
         if (ss || sp || lp) SlideToMainMenu();
     }
 
@@ -242,8 +247,23 @@ public class MainMenuManager : MonoBehaviour
 
     private void ShowStageSelect()
     {
+        ForceAncestorsVisible(stageSelectPanel);
         RefreshDayButtons();
         SlideToPanel(stageSelectPanel);
+    }
+
+    // Dark UI が親パネルを scale=0 で隠している場合に scale=1 へ強制する
+    private void ForceAncestorsVisible(GameObject go)
+    {
+        if (go == null || mainCanvas == null) return;
+        var canvasT = mainCanvas.transform;
+        var t = go.transform.parent;
+        while (t != null && t != canvasT)
+        {
+            if (t.localScale.sqrMagnitude < 0.01f)
+                t.localScale = Vector3.one;
+            t = t.parent;
+        }
     }
 
     private void RefreshDayButtons()
@@ -315,21 +335,23 @@ public class MainMenuManager : MonoBehaviour
     private void SlideToMainMenu()
     {
         if (_slideRoutine != null) { StopCoroutine(_slideRoutine); RestorePanelPositions(); }
-        // サブパネルのみスライドアウトし、ホーム（常時表示）に戻す
         GameObject from = null;
-        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
-            if (p != null && p.activeSelf) { from = p; break; }
+        if (IsStageSelectShown()) from = stageSelectPanel;
+        else if (settingsPanel != null && settingsPanel.activeSelf) from = settingsPanel;
+        else if (lorePanel     != null && lorePanel.activeSelf)     from = lorePanel;
         _slideRoutine = StartCoroutine(SlideTransition(from, null));
     }
 
     private void SlideToPanel(GameObject next)
     {
-        if (next == null || (next.activeSelf && _slideRoutine == null)) return;
+        if (next == null) return;
+        bool alreadyShown = next == stageSelectPanel ? IsStageSelectShown() : next.activeSelf;
+        if (alreadyShown && _slideRoutine == null) return;
         if (_slideRoutine != null) { StopCoroutine(_slideRoutine); RestorePanelPositions(); }
-        // sub-panel 間のみスライド（mainMenuPanel = TitleCanvas は対象外）
         GameObject current = null;
-        foreach (var p in new[] { stageSelectPanel, settingsPanel, lorePanel })
-            if (p != null && p.activeSelf) { current = p; break; }
+        if (IsStageSelectShown()) current = stageSelectPanel;
+        else if (settingsPanel != null && settingsPanel.activeSelf) current = settingsPanel;
+        else if (lorePanel     != null && lorePanel.activeSelf)     current = lorePanel;
         _slideRoutine = StartCoroutine(SlideTransition(current, next));
     }
 
@@ -352,14 +374,16 @@ public class MainMenuManager : MonoBehaviour
                 }
                 rt.anchoredPosition = origin;
             }
-            from.SetActive(false);
+            if (from == stageSelectPanel) SetStageSelectShown(false);
+            else from.SetActive(false);
         }
 
         // to をスライドイン (左から)。null のときはホームに戻るだけ
         if (to != null)
         {
             HideSubPanels();
-            to.SetActive(true);
+            if (to == stageSelectPanel) SetStageSelectShown(true);
+            else to.SetActive(true);
             var rt = to.GetComponent<RectTransform>();
             if (rt != null)
             {
@@ -383,16 +407,26 @@ public class MainMenuManager : MonoBehaviour
     // mainMenuPanel(TitleCanvas) には触らず、サブパネルのみ隠す
     private void HideSubPanels()
     {
-        stageSelectPanel?.SetActive(false);
+        SetStageSelectShown(false);
         settingsPanel?.SetActive(false);
         lorePanel?.SetActive(false);
     }
 
     private void HideAllPanels()
     {
-        stageSelectPanel?.SetActive(false);
+        SetStageSelectShown(false);
         settingsPanel?.SetActive(false);
         lorePanel?.SetActive(false);
+    }
+
+    private bool IsStageSelectShown() => _stageCG != null && _stageCG.alpha > 0.5f;
+
+    private void SetStageSelectShown(bool show)
+    {
+        if (_stageCG == null) return;
+        _stageCG.alpha = show ? 1f : 0f;
+        _stageCG.blocksRaycasts = show;
+        _stageCG.interactable = show;
     }
 
     // ===== フェード =====
