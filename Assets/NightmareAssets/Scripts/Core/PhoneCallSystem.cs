@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Audio;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -36,17 +35,17 @@ public class PhoneCallSystem : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float ringVolume   = 0.85f;
     [SerializeField, Range(0f, 1f)] private float pickupVolume = 1.0f;
     [SerializeField, Range(0f, 1f)] private float voiceVolume  = 1.0f;
-    [Tooltip("通話音声にかけるAudio Mixer Group（電話エフェクト用）。nullなら素の音声をそのまま再生。")]
-    [SerializeField] private AudioMixerGroup phoneMixerGroup;
 
     public bool IsRinging { get; private set; }
     public bool IsInCall  { get; private set; }
 
-    private PhoneDayConfig  _current;
-    private AudioSource     _ringSource;
-    private AudioSource     _voiceSource;
-    private Coroutine       _sequence;
-    private Coroutine       _voiceRoutine;
+    private PhoneDayConfig   _current;
+    private AudioSource      _ringSource;
+    private AudioSource      _voiceSource;
+    private PhoneVoiceFilter _ringFilter;
+    private PhoneVoiceFilter _voiceFilter;
+    private Coroutine        _sequence;
+    private Coroutine        _voiceRoutine;
     private System.Action<int> _onNightCleared;
 
     private void Awake()
@@ -54,23 +53,27 @@ public class PhoneCallSystem : MonoBehaviour
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
 
-        _ringSource              = gameObject.AddComponent<AudioSource>();
-        _ringSource.loop         = true;
+        // 着信音用の子オブジェクト + DSPフィルター
+        var ringGO           = new GameObject("_PhoneRing");
+        ringGO.transform.SetParent(transform);
+        _ringSource          = ringGO.AddComponent<AudioSource>();
+        _ringSource.loop     = true;
         _ringSource.playOnAwake  = false;
         _ringSource.spatialBlend = 0f;
+        _ringFilter = ringGO.AddComponent<PhoneVoiceFilter>();
 
-        _voiceSource              = gameObject.AddComponent<AudioSource>();
-        _voiceSource.loop         = false;
+        // 通話音声用の子オブジェクト + DSPフィルター
+        var voiceGO          = new GameObject("_PhoneVoice");
+        voiceGO.transform.SetParent(transform);
+        _voiceSource         = voiceGO.AddComponent<AudioSource>();
+        _voiceSource.loop    = false;
         _voiceSource.playOnAwake  = false;
         _voiceSource.spatialBlend = 0f;
+        _voiceFilter = voiceGO.AddComponent<PhoneVoiceFilter>();
     }
 
     private void Start()
     {
-        // SerializeField は Awake より後に確定するため Start で適用する
-        _voiceSource.outputAudioMixerGroup = phoneMixerGroup;
-        _ringSource.outputAudioMixerGroup  = phoneMixerGroup;
-
         var gm = GameManager.Instance;
         if (gm != null)
         {
@@ -96,10 +99,13 @@ public class PhoneCallSystem : MonoBehaviour
 
     private void Update()
     {
-        if (!IsRinging || _current == null) return;
+        if (_current == null) return;
         if (GameManager.Instance?.CurrentState != GameState.Night) return;
-        if (Input.GetKeyDown(_current.answerKey))
+
+        if (IsRinging && Input.GetKeyDown(_current.answerKey))
             AnswerPhone();
+        else if (IsInCall && Input.GetKeyDown(_current.answerKey))
+            HangUpCall();
     }
 
     // ─── Day開始 ───────────────────────────────────────────────
@@ -142,11 +148,13 @@ public class PhoneCallSystem : MonoBehaviour
         if (cfg.ringClip == null) return;
         _ringSource.clip   = cfg.ringClip;
         _ringSource.volume = ringVolume;
+        _ringFilter.isActive = true;
         _ringSource.Play();
     }
 
     private void StopRing()
     {
+        _ringFilter.isActive = false;
         _ringSource.Stop();
         _ringSource.clip = null;
     }
@@ -165,7 +173,8 @@ public class PhoneCallSystem : MonoBehaviour
 
     private IEnumerator VoiceRoutine(AudioClip voice)
     {
-        // 受話器を取る音
+        _voiceFilter.isActive = true;
+
         if (pickupClip != null)
         {
             _voiceSource.PlayOneShot(pickupClip, pickupVolume);
@@ -183,7 +192,14 @@ public class PhoneCallSystem : MonoBehaviour
         EndCall();
     }
 
-    // ─── 不在着信・通話終了 ────────────────────────────────────
+    // ─── 強制切断・不在着信・通話終了 ──────────────────────────
+
+    private void HangUpCall()
+    {
+        if (_voiceRoutine != null) StopCoroutine(_voiceRoutine);
+        _voiceRoutine = null;
+        EndCall();
+    }
 
     private void MissedCall()
     {
@@ -194,6 +210,7 @@ public class PhoneCallSystem : MonoBehaviour
     private void EndCall()
     {
         IsInCall = false;
+        _voiceFilter.isActive = false;
         _voiceSource.Stop();
     }
 
@@ -205,6 +222,8 @@ public class PhoneCallSystem : MonoBehaviour
         _voiceRoutine = null;
         IsRinging = false;
         IsInCall  = false;
+        if (_ringFilter  != null) _ringFilter.isActive  = false;
+        if (_voiceFilter != null) _voiceFilter.isActive = false;
         if (_ringSource  != null) { _ringSource.Stop();  _ringSource.clip  = null; }
         if (_voiceSource != null) { _voiceSource.Stop(); _voiceSource.clip = null; }
     }
