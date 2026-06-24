@@ -7,9 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Door_B
-  m_Shader: {fileID: -6465566751694194690, guid: 1545f6f7d5d1da74f90338ce7b3fc991,
-    type: 3}
+  m_Name: PC_A
+  m_Shader: {fileID: -6465566751694194690, guid: 1545f6f7d5d1da74f90338ce7b3fc991, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
@@ -20,7 +19,8 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -30,7 +30,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorMap:
-        m_Texture: {fileID: 2800000, guid: c58f3829ca87e12489850a2978f1a778, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0e7fa884d9905e54c8c753df5b11cc2e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -58,11 +58,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicMap:
-        m_Texture: {fileID: 2800000, guid: 80d6095d0da839d4d8c55c62885fae2f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4c66685801a6b8e4a8677c22fb2306cd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalMap:
-        m_Texture: {fileID: 2800000, guid: 1c49ae41a101a5d45a29742f7ac41d5b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3038da71fa1f4fb43a513888c24bce3c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -74,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RoughnessMap:
-        m_Texture: {fileID: 2800000, guid: c3ae175474a53da49b6af1d25aa64386, type: 3}
+        m_Texture: {fileID: 2800000, guid: 7c731cca08eb24449890a3f492f1970a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -123,3 +123,4 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _UVOffset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

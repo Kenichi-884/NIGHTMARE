@@ -92,6 +92,9 @@ public static class NightmareSceneSetup
         sys.AddComponent<ProximityAlertSystem>();
         sys.AddComponent<InputHandler>();
         sys.AddComponent<DebugOverlay>();
+
+        var phone = Child(root, "PhoneCallSystem");
+        phone.AddComponent<PhoneCallSystem>();
     }
 
     // ===== セキュリティカメラ (3D空間用 Unity Camera × 8) =====
