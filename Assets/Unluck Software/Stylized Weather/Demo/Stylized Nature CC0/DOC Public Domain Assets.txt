@@ -1,0 +1,12 @@
+
+
+
+The models and textures in this folder (Stylized Nature CC0) are based on a small selection of models from a public domain asset package. *
+
+https://quaternius.com/packs/stylizednaturemegakit.html (public domain)
+The full package can be bought here. (not public domain)
+https://assetstore.unity.com/packages/3d/environments/stylized-nature-megakit-298130?aid=1101lGph
+
+* Files have been compressed and reduced in size for the purposes of this demo, original content provided in the links is of higher quality.
+
+

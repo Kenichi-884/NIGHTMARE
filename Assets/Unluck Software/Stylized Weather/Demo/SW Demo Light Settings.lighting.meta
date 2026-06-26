@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 36850f8775e9c1942bbb9f35c18b88fb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Demo/SW Demo Light Settings.lighting
+  uploadId: 903780

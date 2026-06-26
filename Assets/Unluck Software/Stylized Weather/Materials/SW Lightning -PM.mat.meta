@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 99038061b568306479d8975921b9e722
+timeCreated: 1535030745
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Materials/SW Lightning -PM.mat
+  uploadId: 903780

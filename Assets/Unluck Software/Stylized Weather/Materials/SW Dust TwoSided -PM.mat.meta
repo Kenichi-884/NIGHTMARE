@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 599bb220905a6a548a5cd79503e9bc9b
+timeCreated: 1535030745
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Materials/SW Dust TwoSided -PM.mat
+  uploadId: 903780

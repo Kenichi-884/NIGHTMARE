@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d72b43b8d0e74754582a284572835008
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Prefabs/Standalone/Cloudy Standalone.prefab
+  uploadId: 903780

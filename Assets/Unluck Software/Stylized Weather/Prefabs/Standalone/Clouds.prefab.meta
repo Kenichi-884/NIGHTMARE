@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 88d81610aa00b5048b06bfeb77767437
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Prefabs/Standalone/Clouds.prefab
+  uploadId: 903780

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8fa61de36cf5f9744b237666424d2919
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 8574412962073106934
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Demo/Terrain/SW Demo Terrain
+    Layer.terrainlayer
+  uploadId: 903780

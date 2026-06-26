@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9dc888cf976766e48952fd38b9db244e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Prefabs/Weather Controller.prefab
+  uploadId: 903780

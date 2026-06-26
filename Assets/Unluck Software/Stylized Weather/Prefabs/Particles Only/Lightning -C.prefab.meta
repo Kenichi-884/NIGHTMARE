@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 64ae02535496619408f8a54d124c6743
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Prefabs/Particles Only/Lightning
+    -C.prefab
+  uploadId: 903780

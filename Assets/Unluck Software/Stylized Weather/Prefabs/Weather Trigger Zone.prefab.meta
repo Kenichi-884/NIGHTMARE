@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5ae214e7b37686b45b21f11145b836c8
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Prefabs/Weather Trigger Zone.prefab
+  uploadId: 903780

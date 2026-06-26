@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 048ac954c2c992f47b172dfc840bf68c
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Stylized Weather/Scripts/StylizedWeatherParticleWrapper.cs
+  uploadId: 903780

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 25d03585024c5d34086271b3e2faf8a2
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Demo Character/Scripts/DC_AnimTriggers.cs
+  uploadId: 903780

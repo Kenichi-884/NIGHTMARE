@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 16e553e4e3b1b0749b981877988f42f7
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223439
+  packageName: Stylized Weather System
+  packageVersion: 1.0.2
+  assetPath: Assets/Unluck Software/Simple Particle Scaler/Simple Particle Scaler
+    - Readme.txt
+  uploadId: 903780
